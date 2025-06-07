@@ -12,7 +12,7 @@
 #include <sstream>
 #include <vector>
 #include <utility>
-
+#include <algorithm>
 
 #include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"

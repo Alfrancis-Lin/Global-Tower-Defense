@@ -3,6 +3,7 @@
 //
 
 #include <string>
+#include <cmath>
 
 #include "PlaneEnemy.hpp"
 

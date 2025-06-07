@@ -42,6 +42,7 @@ public:
     static const Engine::Point SpawnGridPoint;
     static const Engine::Point EndGridPoint;
     static const std::vector<int> code;
+    static bool shovelActive;
     int MapId;
     float ticks;
     float deathCountDown;
@@ -58,6 +59,7 @@ public:
     Engine::Label *UILives;
     Engine::Image *imgTarget;
     Engine::Sprite *dangerIndicator;
+    Engine::Sprite *shovel;
     Turret *preview;
     std::vector<std::vector<TileType>> mapState;
     std::vector<std::vector<int>> mapDistance;
