@@ -21,6 +21,8 @@ protected:
     virtual void OnExplode();
 
 public:
+    float slowTime;
+    bool slowing;
     float reachEndTime;
     std::list<Turret *> lockedTurrets;
     std::list<Bullet *> lockedBullets;
