@@ -29,6 +29,25 @@ void StageSelectScene::Initialize() {
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Stage 2", "pirulen.ttf", 48, halfW, halfH / 2 + 150, 0, 0, 0, 255, 0.5, 0.5));
 
+    btn = new Engine::ImageButton("stage-select/dirt.png",
+                                  "stage-select/floor.png", halfW - 200,
+                                  (double)halfH / 2 + 200, 400, 100);
+    btn->SetOnClickCallback(std::bind(&StageSelectScene::PlayOnClick, this, 3));
+    AddNewControlObject(btn);
+    AddNewObject(new Engine::Label("Stage ?", "pirulen.ttf", 48, halfW,
+                                   (double)halfH / 2 + 250, 0, 0, 0, 255, 0.5,
+                                   0.5));
+
+    btn = new Engine::ImageButton("stage-select/dirt.png",
+                                  "stage-select/floor.png", halfW - 200,
+                                  (double)halfH * 3 / 2 - 50, 400, 100);
+    btn->SetOnClickCallback(std::bind(&StageSelectScene::BackOnClick, this, 1));
+    AddNewControlObject(btn);
+    AddNewObject(new Engine::Label("Back", "pirulen.ttf", 48, halfW,
+                                   (double)halfH * 3 / 2, 0, 0, 0, 255, 0.5,
+                                   0.5));
+
+
     /*Slider *sliderBGM, *sliderSFX;
     sliderBGM = new Slider(40 + halfW - 95, halfH - 50 - 2, 190, 4);
     sliderBGM->SetOnValueChangedCallback(std::bind(&StageSelectScene::BGMSlideOnValueChanged, this, std::placeholders::_1));

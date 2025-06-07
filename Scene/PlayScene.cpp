@@ -5,9 +5,11 @@
 #include <functional>
 #include <memory>
 #include <queue>
+#include <random>
 #include <string>
 #include <vector>
 
+#include "Enemy/BinaryEnemy.hpp"
 #include "Enemy/Enemy.hpp"
 #include "Enemy/NewEnemy.hpp"
 #include "Enemy/PlaneEnemy.hpp"
@@ -18,6 +20,7 @@
 #include "Engine/Group.hpp"
 #include "Engine/LOG.hpp"
 #include "Engine/Resources.hpp"
+#include "Generator/ProceduralMapGenerator.hpp"
 #include "PlayScene.hpp"
 #include "Turret/AntiAirTurret.hpp"
 #include "Turret/FreezeTurret.hpp"
@@ -27,15 +30,6 @@
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
 #include "UI/Component/Label.hpp"
-
-// TODO HACKATHON-4 (1/3): Trace how the game handles keyboard input.
-// TODO HACKATHON-4 (2/3): Find the cheat code sequence in this file.
-// TODO HACKATHON-4 (3/3): When the cheat code is entered, a plane should be
-// spawned and added to the scene.
-// TODO HACKATHON-5 (1/4): There's a bug in this file, which crashes the game
-// when you win. Try to find it.
-// TODO HACKATHON-5 (2/4): The "LIFE" label are not updated when you lose a
-// life. Try to fix it.
 
 bool PlayScene::shovelActive = false;
 
@@ -91,6 +85,7 @@ void PlayScene::Initialize()
     Engine::Resources::GetInstance().GetBitmap("lose/benjamin-happy.png");
     // Start BGM.
     bgmId = AudioHelper::PlayBGM("play.ogg");
+    shovelActive = false;
 }
 void PlayScene::Terminate()
 {
@@ -185,9 +180,6 @@ void PlayScene::Update(float deltaTime)
             EnemyGroup->AddNewObject(
                 enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
             break;
-        // TODO HACKATHON-3 (2/3): Add your new enemy here.
-        // case 2:
-        //     ...
         case 2:
             EnemyGroup->AddNewObject(
                 enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
@@ -200,6 +192,10 @@ void PlayScene::Update(float deltaTime)
         case 4:
             EnemyGroup->AddNewObject(
                 enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+            break;
+        case 5:
+            EnemyGroup->AddNewObject(
+                enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
             break;
         default:
             continue;
@@ -403,6 +399,30 @@ void PlayScene::EarnMoney(int money)
 }
 void PlayScene::ReadMap()
 {
+    if (MapId == 3) {
+        auto seed = std::random_device{}();
+        ProceduralMapGenerator generator(seed);
+        auto proceduralMap = generator.generateMap(3);
+
+        // convert to mapState format
+        mapState = std::vector<std::vector<TileType>>(
+            MapHeight, std::vector<TileType>(MapWidth));
+        for (int i = 0; i < MapHeight; i++) {
+            for (int j = 0; j < MapWidth; j++) {
+                mapState[i][j] = proceduralMap[i][j] ? TILE_FLOOR : TILE_DIRT;
+                if (proceduralMap[i][j])
+                    TileMapGroup->AddNewObject(
+                        new Engine::Image("play/floor.png", j * BlockSize,
+                                          i * BlockSize, BlockSize, BlockSize));
+                else
+                    TileMapGroup->AddNewObject(
+                        new Engine::Image("play/dirt.png", j * BlockSize,
+                                          i * BlockSize, BlockSize, BlockSize));
+            }
+        }
+        return;
+    }
+
     std::string filename =
         std::string("Resource/map") + std::to_string(MapId) + ".txt";
     // Read map file.
@@ -528,6 +548,18 @@ void PlayScene::ConstructUI()
         new Engine::Sprite("play/benjamin.png", w - shift, h - shift);
     dangerIndicator->Tint.a = 0;
     UIGroup->AddNewObject(dangerIndicator);
+
+    double halfW = (double)w / 2;
+    double halfH = (double)h / 2;
+    Engine::ImageButton *btn1;
+    btn1 = new Engine::ImageButton("stage-select/dirt.png",
+                                   "stage-select/floor.png", halfW * 1.8,
+                                   (double)halfH * 1.8 - 50, 100, 100);
+    btn1->SetOnClickCallback(std::bind(&PlayScene::BackOnClick, this, 0));
+    AddNewControlObject(btn1);
+    AddNewObject(new Engine::Label("HOME", "pirulen.ttf", 20, halfW * 1.8 + 50,
+                                   (double)halfH * 1.8, 0, 0, 0, 255, 0.5,
+                                   0.5));
 }
 
 void PlayScene::UIBtnClicked(int id)
@@ -558,7 +590,6 @@ void PlayScene::UIBtnClicked(int id)
         return;
     }
 
-
     if (!next_preview)
         return; // not enough money or invalid turret.
 
@@ -576,7 +607,7 @@ void PlayScene::UIBtnClicked(int id)
 
 bool PlayScene::CheckSpaceValid(int x, int y)
 {
-    if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight)
+    if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight || mapState[y][x] == TILE_DIRT)
         return false;
     auto map00 = mapState[y][x];
     mapState[y][x] = TILE_OCCUPIED;
@@ -639,4 +670,11 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
         }
     }
     return map;
+}
+
+void PlayScene::BackOnClick(int stage)
+{
+    if (stage == 0) {
+        Engine::GameEngine::GetInstance().ChangeScene("start");
+    }
 }
