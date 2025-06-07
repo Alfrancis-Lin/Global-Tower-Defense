@@ -33,6 +33,8 @@ add_executable(2025_I2P2_TowerDefense
     Enemy/PlaneEnemy.hpp
     Enemy/NewEnemy.cpp
     Enemy/NewEnemy.hpp
+    Enemy/BinaryEnemy.cpp
+    Enemy/BinaryEnemy.hpp
 
     Engine/Allegro5Exception.cpp
     Engine/Allegro5Exception.hpp
@@ -103,6 +105,9 @@ add_executable(2025_I2P2_TowerDefense
     UI/Component/Label.hpp
     UI/Component/Slider.cpp
     UI/Component/Slider.hpp
+
+    Generator/ProceduralMapGenerator.cpp
+    Generator/ProceduralMapGenerator.hpp
     
     main.cpp
         Enemy/PlaneEnemy.cpp
