@@ -261,10 +261,6 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
                     break;
                 }
             }
-            // remove the dirt
-            TileMapGroup->AddNewObject(
-                new Engine::Image("play/floor.png", x * BlockSize,
-                                  y * BlockSize, BlockSize, BlockSize));
         }
     }
 
