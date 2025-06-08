@@ -473,6 +473,8 @@ void PlayScene::ReadMap()
                     mask |= 4; // S
                 if (j > 0 && mapState[i][j - 1] == TILE_DIRT)
                     mask |= 8; // W
+                if (i == 0 && j == 0) mask |= 8;
+                if (i == MapHeight - 1 && j == MapWidth - 1) mask |= 2;
 
                 std::string filename =
                     "play/dirt" + std::to_string(mask + 1) + ".png";
