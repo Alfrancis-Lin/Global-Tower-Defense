@@ -397,77 +397,93 @@ void PlayScene::EarnMoney(int money)
     this->money += money;
     UIMoney->Text = std::string("$") + std::to_string(this->money);
 }
+
 void PlayScene::ReadMap()
 {
+    // procedural map generation code
     if (MapId == 3) {
         auto seed = std::random_device{}();
         ProceduralMapGenerator generator(seed);
         auto proceduralMap = generator.generateMap(3);
 
-        // convert to mapState format
+        // Prepare mapState
         mapState = std::vector<std::vector<TileType>>(
             MapHeight, std::vector<TileType>(MapWidth));
         for (int i = 0; i < MapHeight; i++) {
             for (int j = 0; j < MapWidth; j++) {
                 mapState[i][j] = proceduralMap[i][j] ? TILE_FLOOR : TILE_DIRT;
-                if (proceduralMap[i][j])
-                    TileMapGroup->AddNewObject(
-                        new Engine::Image("play/floor.png", j * BlockSize,
-                                          i * BlockSize, BlockSize, BlockSize));
-                else
-                    TileMapGroup->AddNewObject(
-                        new Engine::Image("play/dirt.png", j * BlockSize,
-                                          i * BlockSize, BlockSize, BlockSize));
             }
         }
-        return;
     }
+    else {
 
-    std::string filename =
-        std::string("Resource/map") + std::to_string(MapId) + ".txt";
-    // Read map file.
-    char c;
-    std::vector<bool> mapData;
-    std::ifstream fin(filename);
-    while (fin >> c) {
-        switch (c) {
-        case '0':
-            mapData.push_back(false);
-            break;
-        case '1':
-            mapData.push_back(true);
-            break;
-        case '\n':
-        case '\r':
-            if (static_cast<int>(mapData.size()) / MapWidth != 0)
+        // Load map from file
+        std::string filename = "Resource/map" + std::to_string(MapId) + ".txt";
+        char c;
+        std::vector<bool> mapData;
+        std::ifstream fin(filename);
+        while (fin >> c) {
+            switch (c) {
+            case '0':
+                mapData.push_back(false);
+                break;
+            case '1':
+                mapData.push_back(true);
+                break;
+            case '\n':
+            case '\r':
+                if (static_cast<int>(mapData.size()) / MapWidth != 0)
+                    throw std::ios_base::failure("Map data is corrupted.");
+                break;
+            default:
                 throw std::ios_base::failure("Map data is corrupted.");
-            break;
-        default:
+            }
+        }
+        fin.close();
+
+        if (static_cast<int>(mapData.size()) != MapWidth * MapHeight)
             throw std::ios_base::failure("Map data is corrupted.");
+
+        // Convert to mapState
+        mapState = std::vector<std::vector<TileType>>(
+            MapHeight, std::vector<TileType>(MapWidth));
+        for (int i = 0; i < MapHeight; i++) {
+            for (int j = 0; j < MapWidth; j++) {
+                const int num = mapData[i * MapWidth + j];
+                mapState[i][j] = num ? TILE_FLOOR : TILE_DIRT;
+            }
         }
     }
-    fin.close();
-    // Validate map data.
-    if (static_cast<int>(mapData.size()) != MapWidth * MapHeight)
-        throw std::ios_base::failure("Map data is corrupted.");
-    // Store map in 2d array.
-    mapState = std::vector<std::vector<TileType>>(
-        MapHeight, std::vector<TileType>(MapWidth));
+
+    // Second pass: Apply autotiling
     for (int i = 0; i < MapHeight; i++) {
         for (int j = 0; j < MapWidth; j++) {
-            const int num = mapData[i * MapWidth + j];
-            mapState[i][j] = num ? TILE_FLOOR : TILE_DIRT;
-            if (num)
+            if (mapState[i][j] == TILE_FLOOR) {
                 TileMapGroup->AddNewObject(
-                    new Engine::Image("play/floor.png", j * BlockSize,
+                    new Engine::Image("play/grass_floor.png", j * BlockSize,
                                       i * BlockSize, BlockSize, BlockSize));
-            else
+            }
+            else {
+                int mask = 0;
+                if (i > 0 && mapState[i - 1][j] == TILE_DIRT)
+                    mask |= 1; // N
+                if (j < MapWidth - 1 && mapState[i][j + 1] == TILE_DIRT)
+                    mask |= 2; // E
+                if (i < MapHeight - 1 && mapState[i + 1][j] == TILE_DIRT)
+                    mask |= 4; // S
+                if (j > 0 && mapState[i][j - 1] == TILE_DIRT)
+                    mask |= 8; // W
+
+                std::string filename =
+                    "play/dirt" + std::to_string(mask + 1) + ".png";
                 TileMapGroup->AddNewObject(
-                    new Engine::Image("play/dirt.png", j * BlockSize,
-                                      i * BlockSize, BlockSize, BlockSize));
+                    new Engine::Image(filename, j * BlockSize, i * BlockSize,
+                                      BlockSize, BlockSize));
+            }
         }
     }
 }
+
 void PlayScene::ReadEnemyWave()
 {
     std::string filename =
@@ -607,7 +623,8 @@ void PlayScene::UIBtnClicked(int id)
 
 bool PlayScene::CheckSpaceValid(int x, int y)
 {
-    if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight || mapState[y][x] == TILE_DIRT)
+    if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight ||
+        mapState[y][x] == TILE_DIRT)
         return false;
     auto map00 = mapState[y][x];
     mapState[y][x] = TILE_OCCUPIED;
