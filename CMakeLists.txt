@@ -22,7 +22,6 @@ add_executable(2025_I2P2_TowerDefense
     Bullet/SnowBullet.cpp
     Bullet/SnowBullet.hpp
 
-    # TODO HACKATHON-3 (3/3): Add the new enemy source files here
     Enemy/Enemy.cpp
     Enemy/Enemy.hpp
     Enemy/SoldierEnemy.cpp
@@ -60,8 +59,11 @@ add_executable(2025_I2P2_TowerDefense
     Engine/Resources.hpp
     Engine/Sprite.cpp
     Engine/Sprite.hpp
-    
-    # TODO HACKATHON-2 (3/3): Add the new scene source files here
+    Enemy/PlaneEnemy.cpp
+    Enemy/PlaneEnemy.hpp
+    Enemy/NewEnemy.cpp
+    Enemy/NewEnemy.hpp
+
     Scene/LoseScene.cpp
     Scene/LoseScene.hpp
     Scene/PlayScene.cpp
@@ -74,6 +76,8 @@ add_executable(2025_I2P2_TowerDefense
     Scene/WinScene.hpp
     Scene/SettingsScene.cpp
     Scene/SettingsScene.hpp
+    Scene/LeaderScene.cpp
+    Scene/LeaderScene.hpp
     Scene/LeaderScene.cpp
     Scene/LeaderScene.hpp
 
@@ -89,6 +93,8 @@ add_executable(2025_I2P2_TowerDefense
     Turret/AntiAirTurret.hpp
     Turret/FreezeTurret.cpp
     Turret/FreezeTurret.hpp
+    Turret/AntiAirTurret.cpp
+    Turret/AntiAirTurret.hpp
 
     UI/Animation/DirtyEffect.cpp
     UI/Animation/DirtyEffect.hpp
@@ -110,14 +116,6 @@ add_executable(2025_I2P2_TowerDefense
     Generator/ProceduralMapGenerator.hpp
     
     main.cpp
-        Enemy/PlaneEnemy.cpp
-        Enemy/PlaneEnemy.hpp
-        Scene/LeaderScene.cpp
-        Scene/LeaderScene.hpp
-        Enemy/NewEnemy.cpp
-        Enemy/NewEnemy.hpp
-        Turret/AntiAirTurret.cpp
-        Turret/AntiAirTurret.hpp
 )
 
 IF (WIN32)
