@@ -80,6 +80,10 @@ add_executable(2025_I2P2_TowerDefense
     Scene/LeaderScene.hpp
     Scene/LeaderScene.cpp
     Scene/LeaderScene.hpp
+    Scene/AccountScene.cpp
+    Scene/AccountScene.hpp
+    Scene/InfoScene.cpp
+    Scene/InfoScene.hpp
 
     Turret/LaserTurret.cpp
     Turret/LaserTurret.hpp
@@ -111,6 +115,8 @@ add_executable(2025_I2P2_TowerDefense
     UI/Component/Label.hpp
     UI/Component/Slider.cpp
     UI/Component/Slider.hpp
+    UI/Component/TextBox.cpp
+    UI/Component/TextBox.hpp
 
     Generator/ProceduralMapGenerator.cpp
     Generator/ProceduralMapGenerator.hpp

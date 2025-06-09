@@ -14,6 +14,8 @@ public:
     void SettingsOnClick(int stage);
     void LeaderOnClick(int stage);
     void QuitOnClick(void);
+    void AccountOnClick(void);
+    void InfoOnClick(void);
 };
 #endif
 

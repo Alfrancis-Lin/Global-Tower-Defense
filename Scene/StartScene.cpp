@@ -1,7 +1,3 @@
-//
-// Created by Hsuan on 2024/4/10.
-//
-
 #include "StartScene.hpp"
 #include <allegro5/allegro_audio.h>
 #include <functional>
@@ -53,6 +49,17 @@ void StartScene::Initialize()
     btn->SetOnClickCallback(std::bind(&StartScene::QuitOnClick, this));
     AddNewControlObject(btn);
 
+    btn = new Engine::ImageButton("clickable/account_normal.png",
+                                  "clickable/account_hover.png", w - 150,
+                                  h - 250, 100, 100);
+    btn->SetOnClickCallback(std::bind(&StartScene::AccountOnClick, this));
+    AddNewControlObject(btn);
+
+    btn = new Engine::ImageButton("clickable/info_normal.png",
+                                  "clickable/info_hover.png", w - 150,
+                                  h - 125, 100, 100);
+    btn->SetOnClickCallback(std::bind(&StartScene::InfoOnClick, this));
+    AddNewControlObject(btn);
 }
 
 void StartScene::Terminate() { IScene::Terminate(); }
@@ -75,4 +82,14 @@ void StartScene::LeaderOnClick(int stage)
 void StartScene::QuitOnClick(void)
 {
     exit(0);
+}
+
+void StartScene::AccountOnClick(void)
+{
+    Engine::GameEngine::GetInstance().ChangeScene("account");
+}
+
+void StartScene::InfoOnClick(void)
+{
+    Engine::GameEngine::GetInstance().ChangeScene("info");
 }
