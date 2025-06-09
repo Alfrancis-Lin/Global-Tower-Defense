@@ -28,7 +28,7 @@ void BinaryEnemy::OnExplode()
         enemy->UpdatePath(scene->mapDistance);
         enemy->Update(scene->ticks);
         scene->EnemyGroup->AddNewObject(
-            enemy = new TankEnemy(Position.x - 25, Position.y));
+            enemy = new TankEnemy(Position.x, Position.y));
         // update it to make it appear on the map
         enemy->UpdatePath(scene->mapDistance);
         enemy->Update(scene->ticks);
