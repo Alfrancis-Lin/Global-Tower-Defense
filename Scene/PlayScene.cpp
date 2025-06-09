@@ -48,6 +48,8 @@ const std::vector<int> PlayScene::code = {
     /*ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT,
     ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER*/
 };
+
+
 Engine::Point PlayScene::GetClientSize()
 {
     return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
@@ -213,6 +215,8 @@ void PlayScene::Update(float deltaTime)
         preview->Update(deltaTime);
     }
 }
+
+
 
 void PlayScene::Draw() const
 {
@@ -695,4 +699,10 @@ void PlayScene::BackOnClick(int stage)
     if (stage == 0) {
         Engine::GameEngine::GetInstance().ChangeScene("start");
     }
+}
+
+void PlayScene::TriggerCheatCode() {
+    EffectGroup->AddNewObject(new Plane());
+    EarnMoney(10000);
+    keyStrokes.clear();
 }
