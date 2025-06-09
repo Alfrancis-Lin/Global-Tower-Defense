@@ -222,7 +222,7 @@ void PlayScene::Draw() const
                     // Not elegant nor efficient, but it's quite enough for
                     // debugging.
                     Engine::Label label(
-                        std::to_string(mapDistance[i][j]), "pirulen.ttf", 32,
+                        std::to_string(mapDistance[i][j]), "romulus.ttf", 32,
                         (j + 0.5) * BlockSize, (i + 0.5) * BlockSize);
                     label.Anchor = Engine::Point(0.5, 0.5);
                     label.Draw();
@@ -504,13 +504,13 @@ void PlayScene::ConstructUI()
     // Text
     UIGroup->AddNewObject(
         new Engine::Label(std::string("Stage ") + std::to_string(MapId),
-                          "pirulen.ttf", 32, 1294, 0));
+                          "romulus.ttf", 32, 1294, 0));
     UIGroup->AddNewObject(
         UIMoney = new Engine::Label(std::string("$") + std::to_string(money),
-                                    "pirulen.ttf", 24, 1294, 48));
+                                    "romulus.ttf", 24, 1294, 48));
     UIGroup->AddNewObject(UILives = new Engine::Label(
                               std::string("Life ") + std::to_string(lives),
-                              "pirulen.ttf", 24, 1294, 88));
+                              "romulus.ttf", 24, 1294, 88));
     TurretButton *btn;
     // Button 1
     btn = new TurretButton(
@@ -566,12 +566,12 @@ void PlayScene::ConstructUI()
     double halfW = (double)w / 2;
     double halfH = (double)h / 2;
     Engine::ImageButton *btn1;
-    btn1 = new Engine::ImageButton("stage-select/dirt.png",
-                                   "stage-select/floor.png", halfW * 1.8,
+    btn1 = new Engine::ImageButton("clickable/dirt.png",
+                                   "clickable/floor.png", halfW * 1.8,
                                    (double)halfH * 1.8 - 50, 100, 100);
     btn1->SetOnClickCallback(std::bind(&PlayScene::BackOnClick, this, 0));
     AddNewControlObject(btn1);
-    AddNewObject(new Engine::Label("HOME", "pirulen.ttf", 20, halfW * 1.8 + 50,
+    AddNewObject(new Engine::Label("HOME", "romulus.ttf", 20, halfW * 1.8 + 50,
                                    (double)halfH * 1.8, 0, 0, 0, 255, 0.5,
                                    0.5));
 }
@@ -621,8 +621,7 @@ void PlayScene::UIBtnClicked(int id)
 
 bool PlayScene::CheckSpaceValid(int x, int y)
 {
-    if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight ||
-        mapState[y][x] == TILE_DIRT)
+    if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight)
         return false;
     auto map00 = mapState[y][x];
     mapState[y][x] = TILE_OCCUPIED;

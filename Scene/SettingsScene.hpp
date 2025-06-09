@@ -16,6 +16,7 @@ public:
     void BackOnClick(int stage);
     void BGMSlideOnValueChanged(float value);
     void SFXSlideOnValueChanged(float value);
+    void MuteOnClick(int sound_mode);
 };
 
 #endif   // SettingsScene_HPP

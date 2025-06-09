@@ -41,43 +41,43 @@ void StageSelectScene::Initialize()
     int halfH = h / 2;
     Engine::ImageButton *btn;
 
-    btn = new Engine::ImageButton("stage-select/dirt.png",
-                                  "stage-select/floor.png", halfW - 200,
+    btn = new Engine::ImageButton("clickable/dirt.png",
+                                  "clickable/floor.png", halfW - 200,
                                   halfH / 2 - 50, 400, 100);
     btn->SetOnClickCallback(std::bind(&StageSelectScene::PlayOnClick, this, 1));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Stage 1", "pirulen.ttf", 48, halfW,
+    AddNewObject(new Engine::Label("Stage 1", "romulus.ttf", 48, halfW,
                                    halfH / 2, 0, 0, 0, 255, 0.5, 0.5));
-    btn = new Engine::ImageButton("stage-select/dirt.png",
-                                  "stage-select/floor.png", halfW - 200,
+    btn = new Engine::ImageButton("clickable/dirt.png",
+                                  "clickable/floor.png", halfW - 200,
                                   halfH / 2 + 100, 400, 100);
     btn->SetOnClickCallback(std::bind(&StageSelectScene::PlayOnClick, this, 2));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Stage 2", "pirulen.ttf", 48, halfW,
+    AddNewObject(new Engine::Label("Stage 2", "romulus.ttf", 48, halfW,
                                    halfH / 2 + 150, 0, 0, 0, 255, 0.5, 0.5));
 
-    btn = new Engine::ImageButton("stage-select/dirt.png",
-                                  "stage-select/floor.png", halfW - 200,
+    btn = new Engine::ImageButton("clickable/dirt.png",
+                                  "clickable/floor.png", halfW - 200,
                                   (double)halfH / 2 + 200, 400, 100);
     btn->SetOnClickCallback(std::bind(&StageSelectScene::PlayOnClick, this, 3));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Stage ?", "pirulen.ttf", 48, halfW,
+    AddNewObject(new Engine::Label("Stage ?", "romulus.ttf", 48, halfW,
                                    (double)halfH / 2 + 250, 0, 0, 0, 255, 0.5,
                                    0.5));
 
-    btn = new Engine::ImageButton("stage-select/dirt.png",
-                                  "stage-select/floor.png", halfW - 200,
+    btn = new Engine::ImageButton("clickable/dirt.png",
+                                  "clickable/floor.png", halfW - 200,
                                   (double)halfH * 3 / 2 - 50, 400, 100);
     btn->SetOnClickCallback(std::bind(&StageSelectScene::BackOnClick, this, 1));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Back", "pirulen.ttf", 48, halfW,
+    AddNewObject(new Engine::Label("Back", "romulus.ttf", 48, halfW,
                                    (double)halfH * 3 / 2, 0, 0, 0, 255, 0.5,
                                    0.5));
 
     // fetch random trivia api and truncate if text is too long
     std::string fact = fetchTrivia();
     if (fact.size() > 60) fact = fact.substr(0, 60) + "...";
-    AddNewObject(new Engine::Label("Random Fact: " + fact, "pirulen.ttf", 24, halfW,
+    AddNewObject(new Engine::Label("Random Fact: " + fact, "romulus.ttf", 24, halfW,
                                    (double)halfH * 1.8, 255, 255, 255, 255, 0.5,
                                    0.5));
 

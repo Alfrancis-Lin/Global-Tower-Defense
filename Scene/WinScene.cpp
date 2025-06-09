@@ -33,22 +33,22 @@ void WinScene::Initialize() {
     int halfW = w / 2;
     int halfH = h / 2;
 
-    AddNewObject(new Engine::Label("You Win!", "pirulen.ttf", 48, halfW, halfH / 4 - 10, 255, 255, 255, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("You Win!", "romulus.ttf", 48, halfW, halfH / 4 - 10, 255, 255, 255, 255, 0.5, 0.5));
     Engine::ImageButton *btn;
 
 
-    AddNewObject(new Engine::Label("Enter Your Name ", "pirulen.ttf", 24, halfW, halfH + 10, 255, 255, 255, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Enter Your Name ", "romulus.ttf", 24, halfW, halfH + 10, 255, 255, 255, 255, 0.5, 0.5));
 
     score = dynamic_cast<PlayScene *>(
                        Engine::GameEngine::GetInstance().GetScene("play"))
                        ->GetMoney();
-    nameLabel = new Engine::Label("_", "pirulen.ttf", 32, halfW, halfH + 50, 255, 255, 255, 255, 0.5, 0.5);
+    nameLabel = new Engine::Label("_", "romulus.ttf", 32, halfW, halfH + 50, 255, 255, 255, 255, 0.5, 0.5);
     AddNewObject(nameLabel);
 
     btn = new Engine::ImageButton("win/dirt.png", "win/floor.png", halfW - 200, halfH * 7 / 4 - 50, 400, 100);
     btn->SetOnClickCallback(std::bind(&WinScene::BackOnClick, this, 2));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Back", "pirulen.ttf", 48, halfW, halfH * 7 / 4, 0, 0, 0, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Back", "romulus.ttf", 48, halfW, halfH * 7 / 4, 0, 0, 0, 255, 0.5, 0.5));
     bgmId = AudioHelper::PlayAudio("win.wav");
 
 

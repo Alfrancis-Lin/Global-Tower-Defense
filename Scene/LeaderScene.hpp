@@ -22,7 +22,7 @@ private:
     std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
     std::vector<LeaderboardEntry> entries;
     int currentPage = 0;
-    int entriesPerPage = 10;
+    int entriesPerPage = 5;
     Engine::Label* pageLabel;
     void LoadLeaderboard();
     void DisplayCurrentPage();
