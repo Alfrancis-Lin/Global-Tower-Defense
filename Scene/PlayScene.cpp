@@ -566,8 +566,8 @@ void PlayScene::ConstructUI()
     double halfW = (double)w / 2;
     double halfH = (double)h / 2;
     Engine::ImageButton *btn1;
-    btn1 = new Engine::ImageButton("stage-select/dirt.png",
-                                   "stage-select/floor.png", halfW * 1.8,
+    btn1 = new Engine::ImageButton("clickable/dirt.png",
+                                   "clickable/floor.png", halfW * 1.8,
                                    (double)halfH * 1.8 - 50, 100, 100);
     btn1->SetOnClickCallback(std::bind(&PlayScene::BackOnClick, this, 0));
     AddNewControlObject(btn1);
