@@ -7,7 +7,7 @@
 #include "Scene/PlayScene.hpp"
 #include "Scene/StageSelectScene.hpp"
 #include "Scene/WinScene.hpp"
-#include "Scene/StartScene.h"
+#include "Scene/StartScene.hpp"
 #include "Scene/SettingsScene.hpp"
 #include "Scene/LeaderScene.hpp"
 

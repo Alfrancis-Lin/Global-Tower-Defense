@@ -87,6 +87,7 @@ void PlayScene::Initialize()
     bgmId = AudioHelper::PlayBGM("play.ogg");
     shovelActive = false;
 }
+
 void PlayScene::Terminate()
 {
     AudioHelper::StopBGM(bgmId);
@@ -94,6 +95,7 @@ void PlayScene::Terminate()
     deathBGMInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();
 }
+
 void PlayScene::Update(float deltaTime)
 {
     // If we use deltaTime directly, then we might have Bullet-through-paper
@@ -211,6 +213,7 @@ void PlayScene::Update(float deltaTime)
         preview->Update(deltaTime);
     }
 }
+
 void PlayScene::Draw() const
 {
     IScene::Draw();
@@ -231,6 +234,7 @@ void PlayScene::Draw() const
         }
     }
 }
+
 void PlayScene::OnMouseDown(int button, int mx, int my)
 {
     if ((button & 1) && !imgTarget->Visible && preview) {
