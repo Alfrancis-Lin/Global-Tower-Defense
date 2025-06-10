@@ -21,6 +21,19 @@ private:
         int type; // 0: 仙人掌, 1: 鳥
     };
 
+    enum class GameState {
+        PLAYING,
+        GAME_OVER_WAITING,
+        GAME_OVER,
+        GAME_START_WAITING,
+        GAME_START
+    };
+    GameState state;
+    float gameOverWaitTime;
+    float gameOverWaitDuration;
+    float gameStartWaitTime;
+    float gameStartWaitDuration;
+
     int dinoX, dinoY;
     float dinoVelocity;
     bool isJumping;
@@ -28,6 +41,7 @@ private:
     float gameSpeed;
     float score;
     bool gameOver;
+    bool gameStart;
     std::vector<Obstacle> obstacles;
     float nextObstacleTime;
     int groundY;
@@ -38,6 +52,7 @@ private:
     Engine::Image* dinoImg;
     Engine::Label* scoreLabel;
     Engine::Label* gameOverLabel;
+    Engine::Label* gameStartLabel;
     Engine::ImageButton* restartBtn;
 
     // 遊戲方法

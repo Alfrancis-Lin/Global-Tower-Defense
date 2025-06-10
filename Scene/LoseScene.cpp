@@ -22,7 +22,7 @@ const int DINO_HEIGHT = 86;
 const int CACTUS_WIDTH = 25;
 const int CACTUS_HEIGHT = 35;
 const int BIRD_WIDTH = 50;
-const int BIRD_HEIGHT = 15;
+const int BIRD_HEIGHT = 30;
 const int GAME_WIDTH = 800;
 const int GAME_HEIGHT = 450;
 int currentDinoHeight = 450;
@@ -46,8 +46,12 @@ void LoseScene::Initialize() {
     obstacles.clear();
 
     // 修正：將初始時間設置得更小，讓障礙物更快生成
-    nextObstacleTime = 2.0f;
-
+    nextObstacleTime = 1.8f;
+    state = GameState::PLAYING;
+    gameOverWaitTime = 0;
+    gameOverWaitDuration = 4.0f;
+    gameStartWaitTime = 0;
+    gameStartWaitDuration = 4.0f;
     // 背景
     AddNewObject(new Engine::Image("play/sand.png", 0, 0, w, h));
 
@@ -65,32 +69,128 @@ void LoseScene::Initialize() {
     AddNewObject(scoreLabel);
 
     // 遊戲結束文字
-    gameOverLabel = new Engine::Label("GAME OVER", "romulus.ttf", 72, halfW, halfH, 0, 0, 0, 255, 0.5, 0.5);
+    gameOverLabel = new Engine::Label("GAME OVER", "romulus.ttf", 80, halfW, halfH, 255, 255, 255, 255, 0.5, 0.5);
     gameOverLabel->Visible = false;
     AddNewObject(gameOverLabel);
+
+
+    gameStartLabel = new Engine::Label("GAME RESTART", "romulus.ttf", 80, halfW, halfH, 255, 255, 255, 255, 0.5, 0.5);
+    gameStartLabel->Visible = false;
+    AddNewObject(gameStartLabel);
 
     // 重新開始按鈕
     restartBtn = new Engine::ImageButton("win/dirt.png", "win/floor.png", halfW - 100, halfH + 100, 200, 80);
     restartBtn->SetOnClickCallback(std::bind(&LoseScene::RestartGame, this));
     restartBtn->Visible = false;
     AddNewControlObject(restartBtn);
-    AddNewObject(new Engine::Label("Restart", "romulus.ttf", 36, halfW, halfH + 140, 0, 0, 0, 255, 0.5, 0.5));
+
+    AddNewObject(new Engine::Label("Get 100pt to restart", "romulus.ttf", 60, halfW, halfH + 140, 0, 0, 0, 255, 0.5, 0.5));
 
     // 背景音樂
     bgmInstance = AudioHelper::PlaySample("astronomia.ogg", false, AudioHelper::BGMVolume, PlayScene::DangerTime);
 }
 
 void LoseScene::Draw() const {
-    // 先绘制背景
+    // 在遊戲結束等待狀態下，繪製特殊畫面
+
+    if (state == GameState::GAME_OVER_WAITING) {
+        // 先繪製正常場景作為背景
+        IScene::Draw();
+
+        // 獲取屏幕尺寸
+        int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
+        int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
+
+        // 繪製地面線
+        al_draw_line(0, groundY, w, groundY, al_map_rgb(0, 0, 0), 3);
+
+        // 繪製障礙物
+        for (const auto& obstacle : obstacles) {
+            if (obstacle.type == 0) { // 仙人掌
+                al_draw_filled_rectangle(
+                    obstacle.x, obstacle.y,
+                    obstacle.x + obstacle.width, obstacle.y + obstacle.height,
+                    al_map_rgb(0, 150, 0));
+                al_draw_rectangle(
+                    obstacle.x, obstacle.y,
+                    obstacle.x + obstacle.width, obstacle.y + obstacle.height,
+                    al_map_rgb(0, 0, 0), 2);
+            } else { // 鸟
+                al_draw_filled_rectangle(
+                    obstacle.x, obstacle.y,
+                    obstacle.x + obstacle.width, obstacle.y + obstacle.height,
+                    al_map_rgb(200, 0, 0));
+                al_draw_rectangle(
+                    obstacle.x, obstacle.y,
+                    obstacle.x + obstacle.width, obstacle.y + obstacle.height,
+                    al_map_rgb(0, 0, 0), 2);
+            }
+        }
+
+        // 繪製半透明黑色覆蓋層
+        al_draw_filled_rectangle(0, 0, w, h, al_map_rgba(0, 0, 0, 180));
+
+        // 確保遊戲結束標籤可見並繪製
+        if (gameOverLabel && gameOverLabel->Visible) {
+            gameOverLabel->Draw();
+        }
+        return;
+    }
+
+    if (state == GameState::GAME_START_WAITING) {
+        // 先繪製正常場景作為背景
+        IScene::Draw();
+
+        // 獲取屏幕尺寸
+        int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
+        int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
+
+        // 繪製地面線
+        al_draw_line(0, groundY, w, groundY, al_map_rgb(0, 0, 0), 3);
+
+        // 繪製障礙物
+        for (const auto& obstacle : obstacles) {
+            if (obstacle.type == 0) { // 仙人掌
+                al_draw_filled_rectangle(
+                    obstacle.x, obstacle.y,
+                    obstacle.x + obstacle.width, obstacle.y + obstacle.height,
+                    al_map_rgb(0, 150, 0));
+                al_draw_rectangle(
+                    obstacle.x, obstacle.y,
+                    obstacle.x + obstacle.width, obstacle.y + obstacle.height,
+                    al_map_rgb(0, 0, 0), 2);
+            } else { // 鸟
+                al_draw_filled_rectangle(
+                    obstacle.x, obstacle.y,
+                    obstacle.x + obstacle.width, obstacle.y + obstacle.height,
+                    al_map_rgb(200, 0, 0));
+                al_draw_rectangle(
+                    obstacle.x, obstacle.y,
+                    obstacle.x + obstacle.width, obstacle.y + obstacle.height,
+                    al_map_rgb(0, 0, 0), 2);
+            }
+        }
+
+        // 繪製半透明黑色覆蓋層
+        al_draw_filled_rectangle(0, 0, w, h, al_map_rgba(0, 0, 0, 180));
+
+        // 確保遊戲結束標籤可見並繪製
+        if (gameStartLabel && gameStartLabel->Visible) {
+            gameStartLabel->Draw();
+        }
+        return;
+    }
+
+    // 正常遊戲狀態下的繪製
     IScene::Draw();
 
-    // 获取屏幕尺寸
+    // 獲取屏幕尺寸
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
 
-    // 绘制地面线
+    // 繪製地面線
     al_draw_line(0, groundY, w, groundY, al_map_rgb(0, 0, 0), 3);
 
-    // 绘制障碍物 - 確保在所有UI元素之前繪製
+    // 繪製障礙物 - 確保在所有UI元素之前繪製
     for (const auto& obstacle : obstacles) {
         if (obstacle.type == 0) { // 仙人掌
             // 使用更醒目的顏色和邊框
@@ -118,7 +218,7 @@ void LoseScene::Draw() const {
         }
     }
 
-    // 調試：顯示障礙物數量
+    // 調試：顯示障礙物數量（可選，建議在發布版本中移除）
     if (!obstacles.empty()) {
         std::cout << "當前障礙物數量: " << obstacles.size() << std::endl;
         for (size_t i = 0; i < obstacles.size(); ++i) {
@@ -127,6 +227,7 @@ void LoseScene::Draw() const {
         }
     }
 }
+
 
 void LoseScene::GenerateObstacle() {
     std::cout << "GenerateObstacle() 被調用" << std::endl;
@@ -162,6 +263,27 @@ void LoseScene::GenerateObstacle() {
 void LoseScene::Update(float deltaTime) {
     IScene::Update(deltaTime);
 
+    if (state == GameState::GAME_OVER_WAITING) {
+        gameOverWaitTime += deltaTime;
+        if (gameOverWaitTime >= gameOverWaitDuration) {
+            if (!Engine::GameEngine::GetInstance().GetScene("start")) {
+                Engine::GameEngine::GetInstance().AddNewScene("start", new StartScene());
+            }
+            Engine::GameEngine::GetInstance().ChangeScene("start");
+        }
+        return;
+    }
+    if (state == GameState::GAME_START_WAITING) {
+        gameOverWaitTime += deltaTime;
+        if (gameOverWaitTime >= gameOverWaitDuration) {
+            if (!Engine::GameEngine::GetInstance().GetScene("play")) {
+                Engine::GameEngine::GetInstance().AddNewScene("play", new PlayScene());
+            }
+            Engine::GameEngine::GetInstance().ChangeScene("play");
+        }
+        return;
+    }
+
     if (gameOver) return;
 
     // 添加調試輸出
@@ -177,21 +299,19 @@ void LoseScene::Update(float deltaTime) {
 
     // 更新分数
     score += deltaTime * gameSpeed;
-    scoreLabel->Text = std::to_string((int)score);
+    if (scoreLabel) {
+        scoreLabel->Text = std::to_string((int)score);
+    }
 
     // 检查是否达到100分
     if (score >= 100) {
-        if (!Engine::GameEngine::GetInstance().GetScene("play")) {
-            Engine::GameEngine::GetInstance().AddNewScene("play", new PlayScene());
-        }
-        Engine::GameEngine::GetInstance().ChangeScene("play");
-        return;
+        state = GameState::GAME_START_WAITING;
     }
 
     // 更新恐龙位置
     if (isJumping) {
         dinoY += dinoVelocity;
-        dinoVelocity += 1.3;
+        dinoVelocity += 0.9;
 
         if (dinoY >= GROUND_HEIGHT - DINO_HEIGHT) {
             dinoY = GROUND_HEIGHT - DINO_HEIGHT;
@@ -203,14 +323,18 @@ void LoseScene::Update(float deltaTime) {
     if (isDucking) {
         currentDinoHeight = DINO_HEIGHT * 0.5f;
         ss = 1;
-        dinoImg->Size.y = currentDinoHeight;
-        dinoImg->Position.y = GROUND_HEIGHT - currentDinoHeight;
+        if (dinoImg) {
+            dinoImg->Size.y = currentDinoHeight;
+            dinoImg->Position.y = GROUND_HEIGHT - currentDinoHeight;
+        }
         dinoY = GROUND_HEIGHT - currentDinoHeight;
     } else {
         if (ss == 1) {
             currentDinoHeight = DINO_HEIGHT;
-            dinoImg->Size.y = currentDinoHeight;
-            dinoImg->Position.y = GROUND_HEIGHT - currentDinoHeight;
+            if (dinoImg) {
+                dinoImg->Size.y = currentDinoHeight;
+                dinoImg->Position.y = GROUND_HEIGHT - currentDinoHeight;
+            }
             dinoY = GROUND_HEIGHT - currentDinoHeight;
             ss = 0;
         }
@@ -245,7 +369,7 @@ void LoseScene::Update(float deltaTime) {
     // 碰撞检测
     for (const auto& obstacle : obstacles) {
         if (CheckCollision(dinoX, dinoY, DINO_WIDTH, currentDinoHeight,
-                          obstacle.x, obstacle.y, obstacle.width, obstacle.height)) {
+                          obstacle.x+10, obstacle.y, obstacle.width-10, obstacle.height-10)) {
             std::cout << "碰撞檢測到！遊戲結束" << std::endl;
             GameOver();
             break;
@@ -253,8 +377,10 @@ void LoseScene::Update(float deltaTime) {
     }
 
     // 更新恐龙图片位置
-    dinoImg->Position.x = dinoX;
-    dinoImg->Position.y = dinoY;
+    if (dinoImg) {
+        dinoImg->Position.x = dinoX;
+        dinoImg->Position.y = dinoY;
+    }
 
     // 逐渐增加游戏速度
     gameSpeed += deltaTime * 0.01;
@@ -268,7 +394,7 @@ void LoseScene::OnKeyDown(int keyCode) {
     // 空格鍵或上箭頭跳躍
     if ((keyCode == ALLEGRO_KEY_SPACE || keyCode == ALLEGRO_KEY_UP) && !isJumping) {
         isJumping = true;
-        dinoVelocity = -18;
+        dinoVelocity = -20;
     }
     // 下箭頭蹲下
     else if (keyCode == ALLEGRO_KEY_DOWN) {
@@ -286,8 +412,6 @@ void LoseScene::OnKeyUp(int keyCode) {
     }
 }
 
-
-
 bool LoseScene::CheckCollision(int x1, int y1, int w1, int h1,
                               int x2, int y2, int w2, int h2) {
     return x1 < x2 + w2 &&
@@ -297,35 +421,50 @@ bool LoseScene::CheckCollision(int x1, int y1, int w1, int h1,
 }
 
 void LoseScene::GameOver() {
-    if (!Engine::GameEngine::GetInstance().GetScene("start")) {
-        Engine::GameEngine::GetInstance().AddNewScene("start", new StartScene());
+    state = GameState::GAME_OVER_WAITING;
+    gameOver = true;
+    gameOverWaitTime = 0;
+
+    // 安全地設置UI元素的可見性
+    if (gameOverLabel) {
+        gameOverLabel->Visible = true;
     }
-
-    // 返回PlayScene
-    Engine::GameEngine::GetInstance().ChangeScene("start");
-
+    if (dinoImg) {
+        dinoImg->Visible = false; // 隱藏恐龍
+    }
+    if (scoreLabel) {
+        scoreLabel->Visible = false; // 隱藏分數
+    }
+    if (restartBtn) {
+        restartBtn->Visible = false; // 隱藏重新開始按鈕
+    }
 }
 
 void LoseScene::RestartGame() {
     // 重置遊戲狀態
-    dinoY = GROUND_HEIGHT - DINO_HEIGHT;
-    dinoVelocity = 0;
-    isJumping = false;
-    isDucking = false;
-    gameSpeed = 5;
-    score = 0;
-    gameOver = false;
-    obstacles.clear();
-    nextObstacleTime = 100;
+    state = GameState::GAME_START_WAITING;
+    gameStart = true;
+    gameStartWaitTime = 0;
 
-    gameOverLabel->Visible = false;
-    restartBtn->Visible = false;
-    scoreLabel->Text = "0";
+    // 安全地設置UI元素的可見性
+    if (gameStartLabel) {
+        gameStartLabel->Visible = true;
+    }
+    if (dinoImg) {
+        dinoImg->Visible = false; // 隱藏恐龍
+    }
+    if (scoreLabel) {
+        scoreLabel->Visible = false; // 隱藏分數
+    }
+    if (restartBtn) {
+        restartBtn->Visible = false; // 隱藏重新開始按鈕
+    }
 }
 
 void LoseScene::Terminate() {
-    AudioHelper::StopSample(bgmInstance);
-    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    if (bgmInstance) {
+        AudioHelper::StopSample(bgmInstance);
+        bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    }
     IScene::Terminate();
-    //RemoveObject(obj->GetObjectIterator());
 }
