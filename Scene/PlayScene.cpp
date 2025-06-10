@@ -216,8 +216,6 @@ void PlayScene::Update(float deltaTime)
     }
 }
 
-
-
 void PlayScene::Draw() const
 {
     IScene::Draw();
@@ -309,8 +307,8 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 Engine::Sprite *sprite;
                 GroundEffectGroup->AddNewObject(
                     sprite = new DirtyEffect("play/target-invalid.png", 1,
-                                             x * BlockSize + BlockSize / 2,
-                                             y * BlockSize + BlockSize / 2));
+                                             x * BlockSize + (double)BlockSize / 2,
+                                             y * BlockSize + (double)BlockSize / 2));
                 sprite->Rotation = 0;
                 return;
             }
@@ -320,8 +318,8 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
             preview->GetObjectIterator()->first = false;
             UIGroup->RemoveObject(preview->GetObjectIterator());
             // Construct real turret.
-            preview->Position.x = x * BlockSize + BlockSize / 2;
-            preview->Position.y = y * BlockSize + BlockSize / 2;
+            preview->Position.x = x * BlockSize + (double)BlockSize / 2;
+            preview->Position.y = y * BlockSize + (double)BlockSize / 2;
             preview->Enabled = true;
             preview->Preview = false;
             preview->Tint = al_map_rgba(255, 255, 255, 255);

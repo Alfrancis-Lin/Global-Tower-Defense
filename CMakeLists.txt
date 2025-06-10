@@ -21,6 +21,8 @@ add_executable(2025_I2P2_TowerDefense
     Bullet/LaserBullet.hpp
     Bullet/SnowBullet.cpp
     Bullet/SnowBullet.hpp
+    Bullet/MissileBullet.cpp
+    Bullet/MissileBullet.hpp
 
     Enemy/Enemy.cpp
     Enemy/Enemy.hpp
@@ -34,6 +36,10 @@ add_executable(2025_I2P2_TowerDefense
     Enemy/NewEnemy.hpp
     Enemy/BinaryEnemy.cpp
     Enemy/BinaryEnemy.hpp
+
+    AccountSystem/AccountSystem.hpp
+    AccountSystem/GlobalAccountSystem.hpp
+    AccountSystem/GlobalAccountSystem.cpp
 
     Engine/Allegro5Exception.cpp
     Engine/Allegro5Exception.hpp
@@ -80,6 +86,10 @@ add_executable(2025_I2P2_TowerDefense
     Scene/LeaderScene.hpp
     Scene/LeaderScene.cpp
     Scene/LeaderScene.hpp
+    Scene/AccountScene.cpp
+    Scene/AccountScene.hpp
+    Scene/InfoScene.cpp
+    Scene/InfoScene.hpp
 
     Turret/LaserTurret.cpp
     Turret/LaserTurret.hpp
@@ -95,6 +105,8 @@ add_executable(2025_I2P2_TowerDefense
     Turret/FreezeTurret.hpp
     Turret/AntiAirTurret.cpp
     Turret/AntiAirTurret.hpp
+    Turret/HomingMissileTurret.cpp
+    Turret/HomingMissileTurret.hpp
 
     UI/Animation/DirtyEffect.cpp
     UI/Animation/DirtyEffect.hpp
@@ -111,6 +123,8 @@ add_executable(2025_I2P2_TowerDefense
     UI/Component/Label.hpp
     UI/Component/Slider.cpp
     UI/Component/Slider.hpp
+    UI/Component/TextBox.cpp
+    UI/Component/TextBox.hpp
 
     Generator/ProceduralMapGenerator.cpp
     Generator/ProceduralMapGenerator.hpp

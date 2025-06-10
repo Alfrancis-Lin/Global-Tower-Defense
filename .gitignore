@@ -7,6 +7,8 @@
 *.dll
 !allegro_monolith-5.2.dll
 build
+saves
+cmake-build-debug
 
 # MacOS
 .DS_Store

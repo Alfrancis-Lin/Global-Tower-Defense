@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "AccountSystem/GlobalAccountSystem.hpp"
 #include "Point.hpp"
 
 /// <summary>
@@ -77,84 +78,98 @@ namespace Engine {
         void changeScene(const std::string &name);
 
     public:
-        // Note: We'll ignore C++11's move constructor, move assignment operator in this project for simplicity.
-        /// <summary>
-        /// Copy constructor is deleted, no copying allowed.
-        /// </summary>
-        GameEngine(GameEngine const &) = delete;
-        /// <summary>
-        /// Copy assignment operator is deleted, no copy assignment allowed.
-        /// </summary>
-        GameEngine &operator=(GameEngine const &) = delete;
-        /// <summary>
-        /// Start the game loop until exit, scenes should be added before starting.
-        /// </summary>
-        /// <param name="firstSceneName">The scene name of the first scene of the game.</param>
-        /// <param name="fps">The target frame per seconds of the game.</param>
-        /// <param name="screenW">Window screen width.</param>
-        /// <param name="screenH">Window screen height.</param>
-        /// <param name="reserveSamples">Maximum simultaneous audio samples.</param>
-        /// <param name="title">Window's title text.</param>
-        /// <param name="icon">Window's icon image path.</param>
-        /// <param name="freeMemoryOnSceneChanged">Determines whether to free memory between scenes.</param>
-        void Start(const std::string &firstSceneName, int fps = 60, int screenW = 800, int screenH = 600, int reserveSamples = 1000,
-                   const char *title = "Tower Defense (I2P(II)_2025 Mini Project 2)",
-                   const char *icon = "icon.png", bool freeMemoryOnSceneChanged = false,
-                   float deltaTimeThreshold = 0.05);
-        /// <summary>
-        /// Add a new scene to the game. Should only be called once for each scene.
-        /// Use inline-new when adding scene in order to support polymorphism,
-        /// The added scenes will be deleted by GameEngine at game end.
-        /// </summary>
-        /// <param name="name">The unique name of your scene for later access.</param>
-        /// <param name="scene">The pointer to the scene you want to add.</param>
-        void AddNewScene(const std::string &name, IScene *scene);
-        /// <summary>
-        /// Change to another scene. The scene will be changed at next update.
-        /// </summary>
-        /// <param name="name">The name of the scene you want to change to.</param>
-        void ChangeScene(const std::string &name);
-        /// <summary>
-        /// Get the pointer of the active scene.
-        /// </summary>
-        /// <returns>Pointer to active scene.</returns>
-        IScene *GetActiveScene() const;
-        /// <summary>
-        /// Get scene by name.
-        /// </summary>
-        /// <param name="name">The scene's name.</param>
-        /// <returns>Pointer to scene.</returns>
-        IScene *GetScene(const std::string &name);
-        /// <summary>
-        /// Get screen size.
-        /// </summary>
-        /// <returns>Screen size.</returns>
-        Point GetScreenSize() const;
-        /// <summary>
-        /// Get screen width.
-        /// </summary>
-        /// <returns>Screen width.</returns>
-        int GetScreenWidth() const;
-        /// <summary>
-        /// Get screen height.
-        /// </summary>
-        /// <returns>Screen height.</returns>
-        int GetScreenHeight() const;
-        /// <summary>
-        /// Get mouse position.
-        /// </summary>
-        /// <returns>Get mouse position.</returns>
-        Point GetMousePosition() const;
-        /// <summary>
-        /// Get key state.
-        /// </summary>
-        /// <returns>Returns whether key is down or not.</returns>
-        bool IsKeyDown(int keyCode) const;
-        /// <summary>
-        /// Typical function to retrieve Singleton instance and supports lazy initialization.
-        /// </summary>
-        /// <returns>The Singleton instance of GameEngine.</returns>
-        static GameEngine &GetInstance();
+      explicit GameEngine(std::unordered_map<std::string, IScene *> scenes)
+          : scenes(std::move(scenes)) {}
+      // Note: We'll ignore C++11's move constructor, move assignment operator
+      // in this project for simplicity.
+      /// <summary>
+      /// Copy constructor is deleted, no copying allowed.
+      /// </summary>
+      GameEngine(GameEngine const &) = delete;
+      /// <summary>
+      /// Copy assignment operator is deleted, no copy assignment allowed.
+      /// </summary>
+      GameEngine &operator=(GameEngine const &) = delete;
+      /// <summary>
+      /// Start the game loop until exit, scenes should be added before
+      /// starting.
+      /// </summary>
+      /// <param name="firstSceneName">The scene name of the first scene of the
+      /// game.</param> <param name="fps">The target frame per seconds of the
+      /// game.</param> <param name="screenW">Window screen width.</param>
+      /// <param name="screenH">Window screen height.</param>
+      /// <param name="reserveSamples">Maximum simultaneous audio
+      /// samples.</param> <param name="title">Window's title text.</param>
+      /// <param name="icon">Window's icon image path.</param>
+      /// <param name="freeMemoryOnSceneChanged">Determines whether to free
+      /// memory between scenes.</param>
+      void
+      Start(const std::string &firstSceneName, int fps = 60, int screenW = 800,
+            int screenH = 600, int reserveSamples = 1000,
+            const char *title = "Tower Defense (I2P(II)_2025 Mini Project 2)",
+            const char *icon = "icon.png",
+            bool freeMemoryOnSceneChanged = false,
+            float deltaTimeThreshold = 0.05);
+      /// <summary>
+      /// Add a new scene to the game. Should only be called once for each
+      /// scene. Use inline-new when adding scene in order to support
+      /// polymorphism, The added scenes will be deleted by GameEngine at game
+      /// end.
+      /// </summary>
+      /// <param name="name">The unique name of your scene for later
+      /// access.</param> <param name="scene">The pointer to the scene you want
+      /// to add.</param>
+      void AddNewScene(const std::string &name, IScene *scene);
+      /// <summary>
+      /// Change to another scene. The scene will be changed at next update.
+      /// </summary>
+      /// <param name="name">The name of the scene you want to change
+      /// to.</param>
+      void ChangeScene(const std::string &name);
+      /// <summary>
+      /// Get the pointer of the active scene.
+      /// </summary>
+      /// <returns>Pointer to active scene.</returns>
+      IScene *GetActiveScene() const;
+      /// <summary>
+      /// Get scene by name.
+      /// </summary>
+      /// <param name="name">The scene's name.</param>
+      /// <returns>Pointer to scene.</returns>
+      IScene *GetScene(const std::string &name);
+      /// <summary>
+      /// Get screen size.
+      /// </summary>
+      /// <returns>Screen size.</returns>
+      Point GetScreenSize() const;
+      /// <summary>
+      /// Get screen width.
+      /// </summary>
+      /// <returns>Screen width.</returns>
+      int GetScreenWidth() const;
+      /// <summary>
+      /// Get screen height.
+      /// </summary>
+      /// <returns>Screen height.</returns>
+      int GetScreenHeight() const;
+      /// <summary>
+      /// Get mouse position.
+      /// </summary>
+      /// <returns>Get mouse position.</returns>
+      Point GetMousePosition() const;
+      /// <summary>
+      /// Get key state.
+      /// </summary>
+      /// <returns>Returns whether key is down or not.</returns>
+      bool IsKeyDown(int keyCode) const;
+      /// <summary>
+      /// Typical function to retrieve Singleton instance and supports lazy
+      /// initialization.
+      /// </summary>
+      /// <returns>The Singleton instance of GameEngine.</returns>
+      static GameEngine &GetInstance();
+      static void TerminateAccountManager();
+      static GlobalAccountManager& GetAccountManager();
     };
 }
 #endif   // GAMEENGINE_HPP
