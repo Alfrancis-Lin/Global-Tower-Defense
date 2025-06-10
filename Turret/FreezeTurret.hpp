@@ -2,6 +2,8 @@
 #define FREEZETURRET_HPP
 #include "Turret.hpp"
 
+
+
 class FreezeTurret : public Turret {
 public:
     static const int Price;

@@ -26,6 +26,7 @@
 #include "Turret/FreezeTurret.hpp"
 #include "Turret/LaserTurret.hpp"
 #include "Turret/MachineGunTurret.hpp"
+#include "Turret/FireTurret.hpp"
 #include "Turret/TurretButton.hpp"
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
@@ -254,8 +255,8 @@ void PlayScene::Draw() const
         }
     }
     for (auto& ft : floatingTexts) {
-        al_draw_text(Engine::Resources::GetInstance().GetFont("pirulen.ttf", 16).get(),
-                      al_map_rgb(255, 255, 0),
+        al_draw_text(Engine::Resources::GetInstance().GetFont("romulus.ttf", 52).get(),
+                      al_map_rgb(0, 0, 0),
                       ft.position.x,
                       ft.position.y - (1.0f - ft.timer / 1.0f) * 30, // 上浮動畫
                       ALLEGRO_ALIGN_CENTER, ft.text.c_str());
@@ -586,7 +587,7 @@ void PlayScene::ConstructUI()
     if (superEvolutionEnabled) {
         UIGroup->AddNewObject(new Engine::Label(
             "Next turret: SUPER EVOLUTION!",
-            "pirulen.ttf", 24, 1300, 300, 255, 0, 0, 255
+            "romulus.ttf", 52, 1300, 300, 255, 0, 0, 255
         ));
     }
 
@@ -639,6 +640,7 @@ void PlayScene::ConstructUI()
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
     UIGroup->AddNewControlObject(btn);
 
+    //freezeTurret
     btn = new TurretButton(
         "play/floor.png", "play/dirt.png",
         Engine::Sprite("play/tower-base.png", 1294, 212, 0, 0, 0, 0), //x+76 y+76
@@ -647,7 +649,16 @@ void PlayScene::ConstructUI()
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
     UIGroup->AddNewControlObject(btn);
 
+    //fireTurret
+        btn = new TurretButton(
+            "play/floor.png", "play/dirt.png",
+            Engine::Sprite("play/tower-base.png", 1380, 212, 0, 0, 0, 0), //x+76 y+76
+            Engine::Sprite("play/turret-6.png", 1380, 212 - 8, 0, 0, 0, 0), 1380,
+            212, FreezeTurret::Price);
+        btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 6));
+        UIGroup->AddNewControlObject(btn);
 
+    // 進化按鈕
     btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1446, 592, 0, 0, 0, 0),
@@ -698,7 +709,9 @@ void PlayScene::UIBtnClicked(int id)
                      1.0f
                  });
                  return;
-             }
+    }
+    else if (id == 6 && money >= FreezeTurret::Price)
+            next_preview = new FireTurret(0, 0);
     else if (id == 0) {
         ALLEGRO_MOUSE_STATE mouse_state;
         al_get_mouse_state(&mouse_state);

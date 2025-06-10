@@ -115,8 +115,8 @@ add_executable(2025_I2P2_TowerDefense
     Turret/AntiAirTurret.hpp
     Turret/FreezeTurret.cpp
     Turret/FreezeTurret.hpp
-    Turret/AntiAirTurret.cpp
-    Turret/AntiAirTurret.hpp
+    Turret/FireTurret.cpp
+    Turret/FireTurret.hpp
 
     UI/Animation/DirtyEffect.cpp
     UI/Animation/DirtyEffect.hpp

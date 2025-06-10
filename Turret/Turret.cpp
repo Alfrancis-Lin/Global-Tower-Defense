@@ -82,7 +82,10 @@ void Turret::Update(float deltaTime) {
         Rotation = atan2(rotation.y, rotation.x) + ALLEGRO_PI / 2;
         // Shoot reload.
         reload -= deltaTime;
-        if (reload <= 0) {
+
+
+
+        if (reload <= 0.07*level) {
             // shoot.
             reload = coolDown;
             CreateBullet();
@@ -100,10 +103,10 @@ void Turret::Draw() const {
         al_draw_circle(Position.x, Position.y, CollisionRadius, al_map_rgb(0, 0, 255), 2);
     }
     // 顯示砲台等級
-    al_draw_textf(Engine::Resources::GetInstance().GetFont("pirulen.ttf", 14).get(),
+    al_draw_textf(Engine::Resources::GetInstance().GetFont("romulus.ttf", 30).get(),
                    al_map_rgb(255, 255, 255), // 白色
                    Position.x,
-                   Position.y + 20, // 砲台底下顯示
+                   Position.y + 7, // 砲台底下顯示
                    ALLEGRO_ALIGN_CENTER,
                    "Lv%d", level);
 
