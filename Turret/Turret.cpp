@@ -2,6 +2,7 @@
 #include <allegro5/color.h>
 #include <cmath>
 #include <utility>
+#include <iostream>
 
 #include "Enemy/Enemy.hpp"
 #include "Engine/GameEngine.hpp"
@@ -11,6 +12,8 @@
 #include "Engine/Point.hpp"
 #include "Scene/PlayScene.hpp"
 #include "Turret.hpp"
+#include "Engine/Resources.hpp"
+#include "Bullet/LaserBullet.hpp"
 
 PlayScene *Turret::getPlayScene() {
     return dynamic_cast<PlayScene *>(Engine::GameEngine::GetInstance().GetActiveScene());
@@ -23,6 +26,20 @@ void Turret::Update(float deltaTime) {
     PlayScene *scene = getPlayScene();
     imgBase.Position = Position;
     imgBase.Tint = Tint;
+
+    if (special_effect && justPlaced) {
+            std::cout << "Special Effect Activated\n";
+            const int bulletCount = 36;
+            for (int i = 0; i < bulletCount; i++) {
+                float angle = ALLEGRO_PI * 2 / bulletCount * i;
+                CreateSpecialBullet(angle);
+            }
+            special_effect = false;
+            justPlaced = false;
+        }
+
+
+
     if (!Enabled)
         return;
     if (Target) {
@@ -82,7 +99,47 @@ void Turret::Draw() const {
         // Draw target radius.
         al_draw_circle(Position.x, Position.y, CollisionRadius, al_map_rgb(0, 0, 255), 2);
     }
+    // 顯示砲台等級
+    al_draw_textf(Engine::Resources::GetInstance().GetFont("pirulen.ttf", 14).get(),
+                   al_map_rgb(255, 255, 255), // 白色
+                   Position.x,
+                   Position.y + 20, // 砲台底下顯示
+                   ALLEGRO_ALIGN_CENTER,
+                   "Lv%d", level);
+
 }
 int Turret::GetPrice() const {
     return price;
 }
+
+
+//升級你的砲台
+void Turret::Upgrade(int newLevel) {
+    if (newLevel < 1 || newLevel > 6) return; // 限制升級範圍
+    level = newLevel;
+    // 根據等級改變屬性，以下是舉例：
+    if(level >= 1 && level <= 5){
+        coolDown = std::max(0.1f, 1.0f - 0.1f * (level - 1)); // 更高等級射速更快
+            CollisionRadius += 5 * (level - 1); // 範例：更高等級範圍增加
+            // 你也可以根據等級切換不同圖片或其他效果
+    }
+    else if(level == 6){
+        special_effect = true;
+        //BurstEffect();
+    }
+
+}
+
+void Turret::CreateSpecialBullet(float angle) {
+    Engine::Point dir = Engine::Point(cos(angle), sin(angle));
+    float rotation = angle;
+    // 子彈起始點可以往外偏移一點（例如 36 像素）：
+    getPlayScene()->BulletGroup->AddNewObject(new LaserBullet(Position + dir * 36, dir, rotation, this));
+    //AudioHelper::PlayAudio("gun.wav");
+}
+
+void Turret::SetJustPlaced() {
+    justPlaced = true;
+    special_effect = true;
+}
+

@@ -30,6 +30,10 @@
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
 #include "UI/Component/Label.hpp"
+#include "Turret/Upgrade_system.hpp"
+
+
+UpgradeSystem* upgradeSystem;
 
 bool PlayScene::shovelActive = false;
 
@@ -88,6 +92,10 @@ void PlayScene::Initialize()
     // Start BGM.
     bgmId = AudioHelper::PlayBGM("play.ogg");
     shovelActive = false;
+
+    //upgradeSystem = new UpgradeSystem();
+    //AddNewObject(upgradeSystem);
+
 }
 
 void PlayScene::Terminate()
@@ -214,6 +222,14 @@ void PlayScene::Update(float deltaTime)
         // To keep responding when paused.
         preview->Update(deltaTime);
     }
+    for (auto it = floatingTexts.begin(); it != floatingTexts.end(); ) {
+        it->timer -= deltaTime;
+        if (it->timer <= 0)
+            it = floatingTexts.erase(it);
+        else
+            ++it;
+    }
+
 }
 
 
@@ -237,10 +253,57 @@ void PlayScene::Draw() const
             }
         }
     }
+    for (auto& ft : floatingTexts) {
+        al_draw_text(Engine::Resources::GetInstance().GetFont("pirulen.ttf", 16).get(),
+                      al_map_rgb(255, 255, 0),
+                      ft.position.x,
+                      ft.position.y - (1.0f - ft.timer / 1.0f) * 30, // 上浮動畫
+                      ALLEGRO_ALIGN_CENTER, ft.text.c_str());
+    }
+
 }
 
 void PlayScene::OnMouseDown(int button, int mx, int my)
 {
+    if (button == 2) { // 右鍵
+        for (auto& obj : UIGroup->GetObjects()) {
+                    TurretButton* btn = dynamic_cast<TurretButton*>(obj);
+                    if (!btn) continue;
+                    Engine::Point diff = Engine::Point(mx, my) - Engine::Point(btn->Position.x, btn->Position.y);
+                    if (diff.Magnitude() <= 20) {
+                        // 記錄下一次要超級進化
+                        superEvolutionEnabled = true;
+
+                        // 可以記錄是哪個塔按下去，或全部都套用
+                        AudioHelper::PlayAudio("upgrade.wav"); // 可加音效
+                        return;
+                    }
+                }
+
+
+        for (auto& obj : TowerGroup->GetObjects()) {
+            Turret* turret = dynamic_cast<Turret*>(obj);
+            if (!turret) continue;
+            Engine::Point diff = turret->Position - Engine::Point(mx, my);
+            if (diff.Magnitude() <= 20) {
+                int nextLevel = turret->GetLevel() + 1;
+                if (nextLevel <= 5) {
+                    turret->Upgrade(nextLevel);
+
+                    // 🔥 加入升級提示
+                    floatingTexts.push_back({
+                        turret->Position,
+                        "Level Up!",
+                        1.0f // 1秒消失
+                    });
+
+                    //AudioHelper::PlayAudio("upgrade.wav");
+                }
+                return; // 點到就升級完，結束
+            }
+        }
+    }
+
     if ((button & 1) && !imgTarget->Visible && preview) {
         // Cancel turret construct.
         UIGroup->RemoveObject(preview->GetObjectIterator());
@@ -271,6 +334,8 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
             }
         }
     }
+
+
 
     IScene::OnMouseDown(button, mx, my);
 }
@@ -328,11 +393,18 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
             TowerGroup->AddNewObject(preview);
             // To keep responding when paused.
             preview->Update(0);
+
+            if(preview->level == 6){
+                preview->SetJustPlaced();
+            }
+
             // Remove Preview.
             preview = nullptr;
 
             mapState[y][x] = TILE_OCCUPIED;
             OnMouseMove(mx, my);
+
+
         }
     }
 }
@@ -382,8 +454,12 @@ void PlayScene::OnKeyDown(int keyCode)
         // Hotkey for FreezeTurret
         UIBtnClicked(4);
     }
-    else if (keyCode >= ALLEGRO_KEY_0 && keyCode <= ALLEGRO_KEY_9) {
+    else if (keyCode > ALLEGRO_KEY_0 && keyCode <= ALLEGRO_KEY_9) {
         // Hotkey for Speed up.
+        SpeedMult = keyCode - ALLEGRO_KEY_0;
+    }
+    else if(keyCode == ALLEGRO_KEY_0){
+        //upgradeSystem->Activate(selectedTurret);
         SpeedMult = keyCode - ALLEGRO_KEY_0;
     }
 }
@@ -506,6 +582,14 @@ void PlayScene::ReadEnemyWave()
 }
 void PlayScene::ConstructUI()
 {
+
+    if (superEvolutionEnabled) {
+        UIGroup->AddNewObject(new Engine::Label(
+            "Next turret: SUPER EVOLUTION!",
+            "pirulen.ttf", 24, 1300, 300, 255, 0, 0, 255
+        ));
+    }
+
     // Background
     UIGroup->AddNewObject(
         new Engine::Image("play/sand.png", 1280, 0, 320, 832));
@@ -557,11 +641,20 @@ void PlayScene::ConstructUI()
 
     btn = new TurretButton(
         "play/floor.png", "play/dirt.png",
-        Engine::Sprite("play/tower-base.png", 1294, 212, 0, 0, 0, 0),
+        Engine::Sprite("play/tower-base.png", 1294, 212, 0, 0, 0, 0), //x+76 y+76
         Engine::Sprite("play/turret-6.png", 1294, 212 - 8, 0, 0, 0, 0), 1294,
         212, FreezeTurret::Price);
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
     UIGroup->AddNewControlObject(btn);
+
+
+    btn = new TurretButton(
+            "play/floor.png", "play/dirt.png",
+            Engine::Sprite("play/tower-base.png", 1446, 592, 0, 0, 0, 0),
+            Engine::Sprite("play/turret-7.png", 1446, 592 - 8, 0, 0, 0, 0), 1446,
+            592, 0); // 進化按鈕不需要金錢檢查
+        btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
+        UIGroup->AddNewControlObject(btn);
 
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
@@ -595,6 +688,17 @@ void PlayScene::UIBtnClicked(int id)
         next_preview = new AntiAirTurret(0, 0);
     else if (id == 4 && money >= FreezeTurret::Price)
         next_preview = new FreezeTurret(0, 0);
+    else if (id == 5) {
+                 superEvolutionEnabled = true;
+                 //AudioHelper::PlayAudio("upgrade.wav"); // 提示音效
+                 // 也可以加入浮動提示
+                 floatingTexts.push_back({
+                     Engine::Point(1300, 200),
+                     "Super Evolution Ready!",
+                     1.0f
+                 });
+                 return;
+             }
     else if (id == 0) {
         ALLEGRO_MOUSE_STATE mouse_state;
         al_get_mouse_state(&mouse_state);
@@ -614,6 +718,16 @@ void PlayScene::UIBtnClicked(int id)
 
     if (!next_preview)
         return; // not enough money or invalid turret.
+
+    if (superEvolutionEnabled) {
+            next_preview->Upgrade(6);
+            superEvolutionEnabled = false; // 一次性
+            floatingTexts.push_back({
+                Engine::Point(1300, 250),
+                "Super Evolution Applied!",
+                1.0f
+            });
+        }
 
     if (preview)
         UIGroup->RemoveObject(preview->GetObjectIterator());

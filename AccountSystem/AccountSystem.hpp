@@ -5,7 +5,7 @@
 #include "allegro5/fshook.h"
 #include "lib/json.hpp"
 #include <allegro5/allegro.h>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include <fstream>
 #include <string>
 

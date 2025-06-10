@@ -74,7 +74,7 @@ void LeaderScene::BackOnClick(int stage)
 void LeaderScene::LoadLeaderboard()
 {
     entries.clear();
-    std::ifstream fin("Scene/leaderboard.txt");
+    std::ifstream fin("D:/Global-Tower-Defense/Scene/leaderboard.txt");
     if (!fin.is_open()) {
         std::cerr << "Failed to open leaderboard.txt" << std::endl;
         return;
