@@ -1,12 +1,10 @@
-//
-// Created by 林威佑 on 2025/5/21.
-//
-
 #ifndef LEADERSCENE_HPP
 #define LEADERSCENE_HPP
 #include <memory>
 
 #include "Engine/IScene.hpp"
+#include "UI/Component/Image.hpp"
+#include "UI/Component/Label.hpp"
 #include <allegro5/allegro_audio.h>
 
 struct LeaderboardEntry {
@@ -30,11 +28,20 @@ private:
 public:
     explicit LeaderScene() = default;
     void Initialize() override;
+    void Update(float deltaTime) override;
     void Terminate() override;
     void BackOnClick(int stage);
     void OnKeyDown(int keyCode) override;
     void NextPage();
     void PrevPage();
+    
+    Engine::Image* bg;
+    Engine::Image* cloud1;
+    Engine::Image* cloud2;
+
+    float x1, x2;
+    float cloud1_speed;
+    float cloud2_speed;
 };
 
 
