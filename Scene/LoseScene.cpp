@@ -19,7 +19,7 @@
 const int GROUND_HEIGHT = 400;
 const int DINO_WIDTH = 80;
 const int DINO_HEIGHT = 86;
-const int CACTUS_WIDTH = 25;
+const int CACTUS_WIDTH = 30;
 const int CACTUS_HEIGHT = 35;
 const int BIRD_WIDTH = 50;
 const int BIRD_HEIGHT = 30;
@@ -175,9 +175,9 @@ void LoseScene::Draw() const {
         al_draw_filled_rectangle(0, 0, w, h, al_map_rgba(0, 0, 0, 180));
 
         // 確保遊戲結束標籤可見並繪製
-        if (gameStartLabel && gameStartLabel->Visible) {
-            gameStartLabel->Draw();
-        }
+
+        gameStartLabel->Draw();
+
         return;
     }
 
@@ -284,7 +284,7 @@ void LoseScene::Update(float deltaTime) {
         return;
     }
 
-    if (gameOver) return;
+    //if (gameOver) return;
 
     // 添加調試輸出
     static float debugTimer = 0;
@@ -369,7 +369,7 @@ void LoseScene::Update(float deltaTime) {
     // 碰撞检测
     for (const auto& obstacle : obstacles) {
         if (CheckCollision(dinoX, dinoY, DINO_WIDTH, currentDinoHeight,
-                          obstacle.x+10, obstacle.y, obstacle.width-10, obstacle.height-10)) {
+                          obstacle.x, obstacle.y, obstacle.width, obstacle.height)) {
             std::cout << "碰撞檢測到！遊戲結束" << std::endl;
             GameOver();
             break;
@@ -394,7 +394,7 @@ void LoseScene::OnKeyDown(int keyCode) {
     // 空格鍵或上箭頭跳躍
     if ((keyCode == ALLEGRO_KEY_SPACE || keyCode == ALLEGRO_KEY_UP) && !isJumping) {
         isJumping = true;
-        dinoVelocity = -20;
+        dinoVelocity = -19;
     }
     // 下箭頭蹲下
     else if (keyCode == ALLEGRO_KEY_DOWN) {
