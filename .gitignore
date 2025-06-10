@@ -14,5 +14,6 @@ build
 # Others
 log.txt
 .saves
+.cmake-build-debug
 
 .cache
