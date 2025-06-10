@@ -12,11 +12,13 @@
 #include "Scene/LeaderScene.hpp"
 #include "Scene/AccountScene.hpp"
 #include "Scene/InfoScene.hpp"
+#include "Scene/IntroScene.hpp"
 
 int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true);
 	Engine::GameEngine& game = Engine::GameEngine::GetInstance();
 
+    game.AddNewScene("intro", new IntroScene());
     game.AddNewScene("stage-select", new StageSelectScene());
 	game.AddNewScene("start", new StartScene());
 	game.AddNewScene("settings", new SettingsScene());
@@ -27,6 +29,6 @@ int main(int argc, char **argv) {
     game.AddNewScene("account", new AccountScene());
 	game.AddNewScene("info", new InfoScene());
 
-	game.Start("start", 60, 1600, 832);
+	game.Start("intro", 60, 1600, 832);
 	return 0;
 }
