@@ -14,7 +14,7 @@ TextBox::TextBox(float x, float y, float width, float height,
                  const std::string &placeholder)
     : x(x), y(y), width(width), height(height), fontSize(fontSize),
       fontName(fontName), placeholder(placeholder), isFocused(false),
-      isActive(true), maxLength(12), cursorPosition(0), cursorBlinkTime(0.0),
+      isActive(true), maxLength(16), cursorPosition(0), cursorBlinkTime(0.0),
       showCursor(true), borderWidth(2.0f), isPassword(false)
 {
 
@@ -152,10 +152,10 @@ bool TextBox::HandleCharInput(int unicodeChar)
     if (!isFocused || !isActive)
         return false;
 
-    if (unicodeChar >= ALLEGRO_KEY_A && unicodeChar <= 126)
+    if (unicodeChar >= ALLEGRO_KEY_A && unicodeChar <= ALLEGRO_KEY_Z)
     {
         if (text.length() < maxLength) {
-            InsertCharAtCursor(static_cast<char>(unicodeChar));
+            InsertCharAtCursor(unicodeChar + 'a' - 1);
             return true;
         }
     }

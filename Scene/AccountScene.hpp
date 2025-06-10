@@ -1,6 +1,9 @@
 #ifndef ACCOUNTSCENE_HPP
 #define ACCOUNTSCENE_HPP
 
+#include "AccountSystem/GlobalAccountSystem.hpp"
+#include "Engine/GameEngine.hpp"
+#include "UI/Component/ImageButton.hpp"
 #include "UI/Component/TextBox.hpp"
 #include <allegro5/allegro_audio.h>
 
@@ -8,15 +11,19 @@
 class AccountScene final : public Engine::IScene {
   private:
     Engine::TextBox *nameTextBox;
-    Engine::TextBox *emailTextBox;
     Engine::TextBox *passwordTextBox;
-    Engine::TextBox *activeTextBox; // Currently focused textbox
+    Engine::TextBox *activeTextBox;
 
     std::string userName;
-    std::string userEmail;
-    std::string userPassword;
+    std::string userPass;
 
+    GlobalAccountManager& accountManager = Engine::GameEngine::GetAccountManager();
+
+    std::string statusMsg;
+    float statusMsgTimer;
+    Engine::ImageButton* popup;
   public:
+    bool passHide;
     explicit AccountScene() = default;
     void Initialize() override;
     void Terminate() override;
@@ -28,5 +35,10 @@ class AccountScene final : public Engine::IScene {
 
     void BackOnClick(void);
     void SubmitOnClick(void);
+    void ToggleVisibility(void);
+    void ClosePopUp(void);
+    void LogoutOnClick(void);
+
+    void ShowStatusMsg(const std::string& msg, float duration=5.0f);
 };
 #endif

@@ -28,7 +28,7 @@ namespace Engine {
         ALLEGRO_COLOR placeholderColor;
         float borderWidth;
         bool isPassword;
-        std::string displayText; // For password masking
+        std::string displayText;
         
         std::function<void(const std::string&)> onTextChanged;
         std::function<void()> onEnterPressed;

@@ -35,6 +35,10 @@ add_executable(2025_I2P2_TowerDefense
     Enemy/BinaryEnemy.cpp
     Enemy/BinaryEnemy.hpp
 
+    AccountSystem/AccountSystem.hpp
+    AccountSystem/GlobalAccountSystem.hpp
+    AccountSystem/GlobalAccountSystem.cpp
+
     Engine/Allegro5Exception.cpp
     Engine/Allegro5Exception.hpp
     Engine/AudioHelper.cpp
