@@ -40,5 +40,13 @@ class AccountScene final : public Engine::IScene {
     void LogoutOnClick(void);
 
     void ShowStatusMsg(const std::string& msg, float duration=5.0f);
+
+    Engine::Image* bg;
+    Engine::Image* cloud1;
+    Engine::Image* cloud2;
+
+    float x1, x2;
+    float cloud1_speed;
+    float cloud2_speed;
 };
 #endif

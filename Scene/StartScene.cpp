@@ -33,11 +33,22 @@ void StartScene::Initialize()
     int hr = local_time->tm_hour;
 
     std::string time_period;
+    int color = 0;
     if (hr >= 5 && h <= 15)
+    {
         time_period = "morning";
-    else if (hr > 15 && hr <= 19)
+        color = 0;
+    }
+    else if (hr > 15 && hr <= 18)
+    {
         time_period = "evening";
-    else time_period = "night";
+        color = 255;
+    }
+    else 
+    {
+        time_period = "night";
+        color = 255;
+    }
 
     bg = new Engine::Image("background/" + time_period + "/1.png", 0, 0, 1600, 832, 0, 0);
     AddNewObject(bg);
@@ -49,7 +60,7 @@ void StartScene::Initialize()
     AddNewObject(cloud2);
 
     AddNewObject(new Engine::Label("Global Tower Defense", "romulus.ttf", 160, halfW,
-                                   (double)halfH / 2.5, 255, 255, 255, 255, 0.5,
+                                   (double)halfH / 1.8, color, color, color, 255, 0.5,
                                    0.5));
     
     Engine::ImageButton *btn;
@@ -105,6 +116,7 @@ void StartScene::Update(float deltaTime)
     cloud1->Position.x = x1;
     cloud2->Position.x = x2;
 }
+
 void StartScene::Terminate() { IScene::Terminate(); }
 
 void StartScene::PlayOnClick(int stage)
