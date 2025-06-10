@@ -1,15 +1,16 @@
 #include "StartScene.hpp"
 #include <allegro5/allegro_audio.h>
 #include <functional>
-#include <memory>
 #include <string>
+#include <ctime>
+#include <chrono>
 
-#include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"
+#include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
-#include "Engine/Resources.hpp"
 #include "PlayScene.hpp"
 #include "Scene/StartScene.hpp"
+#include "UI/Component/Image.hpp"
 #include "UI/Component/ImageButton.hpp"
 #include "UI/Component/Label.hpp"
 
@@ -19,12 +20,39 @@ void StartScene::Initialize()
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
     int halfW = w / 2;
     int halfH = h / 2;
-    Engine::ImageButton *btn;
+
+    x1 = x2 = 0;
+    cloud1_speed = 40.0f;
+    cloud2_speed = 60.0f;
+
+    // background
+    auto now = std::chrono::system_clock::now();
+    std::time_t curr_time = std::chrono::system_clock::to_time_t(now);
+    std::tm* local_time = std::localtime(&curr_time);
+
+    int hr = local_time->tm_hour;
+
+    std::string time_period;
+    if (hr >= 5 && h <= 15)
+        time_period = "morning";
+    else if (hr > 15 && hr <= 19)
+        time_period = "evening";
+    else time_period = "night";
+
+    bg = new Engine::Image("background/" + time_period + "/1.png", 0, 0, 1600, 832, 0, 0);
+    AddNewObject(bg);
+
+    cloud1 = new Engine::Image("background/" + time_period + "/2.png", 0, 0, 1600, 832, 0, 0);
+    AddNewObject(cloud1);
+    
+    cloud2 = new Engine::Image("background/" + time_period + "/3.png", 0, 0, 1600, 832, 0, 0);
+    AddNewObject(cloud2);
 
     AddNewObject(new Engine::Label("Global Tower Defense", "romulus.ttf", 160, halfW,
                                    (double)halfH / 2.5, 255, 255, 255, 255, 0.5,
                                    0.5));
-
+    
+    Engine::ImageButton *btn;
     btn = new Engine::ImageButton("clickable/play_normal.png",
                                   "clickable/play_hover.png", halfW - 100,
                                   (double)halfH * 1.2, 200, 200);
@@ -62,6 +90,21 @@ void StartScene::Initialize()
     AddNewControlObject(btn);
 }
 
+void StartScene::Update(float deltaTime)
+{
+    Engine::IScene::Update(deltaTime);
+
+    int w = Engine::GameEngine::GetInstance().GetScreenWidth();
+
+    x1 -= cloud1_speed * deltaTime;
+    x2 -= cloud2_speed * deltaTime;
+
+    if (x1 <= -(1.5 * w)) x1 += 2.1 * w;
+    if (x2 <= -(1.2 * w)) x2 += 2.4 * w;
+
+    cloud1->Position.x = x1;
+    cloud2->Position.x = x2;
+}
 void StartScene::Terminate() { IScene::Terminate(); }
 
 void StartScene::PlayOnClick(int stage)
