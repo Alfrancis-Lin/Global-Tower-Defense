@@ -216,8 +216,6 @@ void PlayScene::Update(float deltaTime)
     }
 }
 
-
-
 void PlayScene::Draw() const
 {
     IScene::Draw();
