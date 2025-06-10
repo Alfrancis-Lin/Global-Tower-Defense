@@ -54,8 +54,18 @@ void LeaderScene::Initialize()
     AddNewObject(new Engine::Label("Back", "romulus.ttf", 48, halfW,
                                    (double)halfH * 3 / 2, 0, 0, 0, 255, 0.5,
                                    0.5));
+
+    bgmInstance =
+        AudioHelper::PlaySample("happy.ogg", true, AudioHelper::BGMVolume);
+
 }
-void LeaderScene::Terminate() { IScene::Terminate(); }
+
+void LeaderScene::Terminate() { 
+    AudioHelper::StopSample(bgmInstance);
+    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    IScene::Terminate();
+}
+
 void LeaderScene::BackOnClick(int stage)
 {
     Engine::GameEngine::GetInstance().ChangeScene("start");

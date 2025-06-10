@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 
+#include "AccountSystem/GlobalAccountSystem.hpp"
 #include "Allegro5Exception.hpp"
 #include "GameEngine.hpp"
 #include "IScene.hpp"
@@ -178,6 +179,7 @@ namespace Engine {
         // Free all scenes.
         for (const auto &pair : scenes)
             delete pair.second;
+        TerminateAccountManager();
     }
     void GameEngine::changeScene(const std::string &name) {
         if (scenes.count(name) == 0)
@@ -207,6 +209,8 @@ namespace Engine {
         if (scenes.count(firstSceneName) == 0)
             throw std::invalid_argument("The scene is not added yet.");
         activeScene = scenes[firstSceneName];
+
+        GlobalAccountManager::Initialize();
 
         initAllegro5();
         LOG(INFO) << "Allegro5 initialized";
@@ -264,5 +268,11 @@ namespace Engine {
         // The classic way to lazy initialize a Singleton.
         static GameEngine instance;
         return instance;
+    }
+    GlobalAccountManager& GameEngine::GetAccountManager() {
+        return GlobalAccountManager::GetInstance();
+    }
+    void GameEngine::TerminateAccountManager() {
+        GlobalAccountManager::Terminate();
     }
 }
