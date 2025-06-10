@@ -21,6 +21,8 @@ add_executable(2025_I2P2_TowerDefense
     Bullet/LaserBullet.hpp
     Bullet/SnowBullet.cpp
     Bullet/SnowBullet.hpp
+    Bullet/MissileBullet.cpp
+    Bullet/MissileBullet.hpp
         Bullet/Bullet3.cpp
         Bullet/Bullet3.hpp
         Bullet/Bullet4.cpp
@@ -115,8 +117,8 @@ add_executable(2025_I2P2_TowerDefense
     Turret/AntiAirTurret.hpp
     Turret/FreezeTurret.cpp
     Turret/FreezeTurret.hpp
-    Turret/FireTurret.cpp
-    Turret/FireTurret.hpp
+    Turret/AntiAirTurret.cpp
+    Turret/AntiAirTurret.hpp
 
     UI/Animation/DirtyEffect.cpp
     UI/Animation/DirtyEffect.hpp
