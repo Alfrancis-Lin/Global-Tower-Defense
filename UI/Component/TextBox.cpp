@@ -1,10 +1,8 @@
-#include "Engine/LOG.hpp"
 #include "Engine/Resources.hpp"
 #include "TextBox.hpp"
 #include <algorithm>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
-#include <iostream>
 #include <memory>
 
 namespace Engine {
@@ -44,27 +42,22 @@ void TextBox::Draw() const
     if (!isActive)
         return;
 
-    // Draw background
     al_draw_filled_rectangle(x, y, x + width, y + height, backgroundColor);
 
-    // Draw border
     ALLEGRO_COLOR currentBorderColor =
         isFocused ? focusedBorderColor : borderColor;
     al_draw_rectangle(x, y, x + width, y + height, currentBorderColor,
                       borderWidth);
 
-    // Get font
     ALLEGRO_FONT *font =
         (Resources::GetInstance().GetFont(fontName, fontSize)).get();
 
     if (!font)
         return;
 
-    // Calculate text position
-    float textX = x + 10; // Left padding
+    float textX = x + 10;
     float textY = y + (height - al_get_font_line_height(font)) / 2;
 
-    // Draw text or placeholder
     if (text.empty() && !isFocused) {
         al_draw_text(font, placeholderColor, textX, textY, 0,
                      placeholder.c_str());
@@ -73,9 +66,7 @@ void TextBox::Draw() const
         const std::string &drawText = isPassword ? displayText : text;
         al_draw_text(font, textColor, textX, textY, 0, drawText.c_str());
 
-        // Draw cursor if focused
         if (isFocused && showCursor) {
-            // Calculate cursor position
             std::string beforeCursor = drawText.substr(0, cursorPosition);
             float cursorX =
                 textX + al_get_text_width(font, beforeCursor.c_str());
@@ -141,21 +132,19 @@ bool TextBox::HandleKeyPress(int keycode)
             onEnterPressed();
         }
         return true;
-
     default:
         return false;
     }
 }
 
-bool TextBox::HandleCharInput(int unicodeChar)
+bool TextBox::HandleCharInput(int ch)
 {
     if (!isFocused || !isActive)
         return false;
 
-    if (unicodeChar >= ALLEGRO_KEY_A && unicodeChar <= ALLEGRO_KEY_Z)
-    {
+    if (ch >= ALLEGRO_KEY_A && ch <= ALLEGRO_KEY_Z) {
         if (text.length() < maxLength) {
-            InsertCharAtCursor(unicodeChar + 'a' - 1);
+            InsertCharAtCursor(ch + 'a' - 1);
             return true;
         }
     }
@@ -173,7 +162,7 @@ void TextBox::SetFocus(bool focused)
     showCursor = true;
 
     if (focused) {
-        cursorPosition = text.length(); // Move cursor to end
+        cursorPosition = text.length();
         if (onFocusGained) {
             onFocusGained();
         }
@@ -259,4 +248,4 @@ void TextBox::DeleteCharBeforeCursor()
     }
 }
 
-} 
+} // namespace Engine

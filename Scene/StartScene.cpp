@@ -101,9 +101,9 @@ void StartScene::Initialize()
     btn->SetOnClickCallback(std::bind(&StartScene::InfoOnClick, this));
     AddNewControlObject(btn);
 
-    bgmInstance =
-        AudioHelper::PlaySample("happy.ogg", true, AudioHelper::BGMVolume);
-
+    if (!bgmInstance)
+        bgmInstance =
+            AudioHelper::PlaySample("happy.ogg", true, AudioHelper::BGMVolume);
 }
 
 void StartScene::Update(float deltaTime)
@@ -126,18 +126,22 @@ void StartScene::Update(float deltaTime)
 
 void StartScene::Terminate()
 {
-    AudioHelper::StopSample(bgmInstance);
-    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
+    // AudioHelper::StopSample(bgmInstance);
+    // bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();
 }
 
 void StartScene::PlayOnClick(int stage)
 {
+    AudioHelper::StopSample(bgmInstance);
+    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("stage-select");
 }
 
 void StartScene::SettingsOnClick(int stage)
 {
+    AudioHelper::StopSample(bgmInstance);
+    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     Engine::GameEngine::GetInstance().ChangeScene("settings");
 }
 

@@ -6,14 +6,10 @@
 #include <memory>
 
 class InfoScene final : public Engine::IScene {
-private:
-    std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
-
 public:
     explicit InfoScene() = default;
     void Initialize() override;
     void Update(float deltaTime) override;
-    void Terminate() override;
     void BackOnClick(void);
         
     Engine::Image* bg;
