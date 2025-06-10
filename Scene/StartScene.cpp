@@ -23,7 +23,7 @@ void StartScene::Initialize()
     int halfH = h / 2;
 
     x1 = x2 = 0;
-    cloud1_speed = 40.0f;
+    cloud1_speed = 20.0f;
     cloud2_speed = 60.0f;
 
     // background
