@@ -301,7 +301,8 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
             UIGroup->RemoveObject(preview->GetObjectIterator());
             preview = nullptr;
         }
-        if (shovelActive) {
+        if (shovelActive)
+        {
             // remove the sprite
             UIGroup->RemoveObject(shovel->GetObjectIterator());
             shovelActive = false;
@@ -941,8 +942,7 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
     std::queue<Engine::Point> que;
     // Push end point.
     // BFS from end point.
-    if (mapState[MapHeight - 1][MapWidth - 1] != TILE_DIRT)
-        return map;
+
     que.push(Engine::Point(MapWidth - 1, MapHeight - 1));
     map[MapHeight - 1][MapWidth - 1] = 0;
     while (!que.empty()) {
