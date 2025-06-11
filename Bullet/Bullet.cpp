@@ -8,6 +8,7 @@
 #include "Engine/Point.hpp"
 #include "Engine/Sprite.hpp"
 #include "Scene/PlayScene.hpp"
+#include "Enemy/Obstacle.hpp"
 
 PlayScene *Bullet::getPlayScene() {
     return dynamic_cast<PlayScene *>(Engine::GameEngine::GetInstance().GetActiveScene());
@@ -37,4 +38,18 @@ void Bullet::Update(float deltaTime) {
 
     if (!Engine::Collider::IsRectOverlap(Position - Size / 2, Position + Size / 2, Engine::Point(0, 0), PlayScene::GetClientSize()))
         getPlayScene()->BulletGroup->RemoveObject(objectIterator);
+
+    //PlayScene* scene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
+    for (auto& it : scene->ObstacleGroup->GetObjects()) {
+        Obstacle* obs = dynamic_cast<Obstacle*>(it);
+        if (!obs->Visible) continue;
+
+        // 碰撞判斷（簡單半徑檢測）
+        float dist = (obs->Position - Position).Magnitude();
+        if (dist < 16) { // 16 根據子彈/障礙物尺寸微調
+            obs->Hit(10); // 障礙物扣血
+            this->Visible = false; // 子彈消失
+            return;
+        }
+    }
 }

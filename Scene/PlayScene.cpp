@@ -18,6 +18,7 @@
 #include "Enemy/PlaneEnemy.hpp"
 #include "Enemy/SoldierEnemy.hpp"
 #include "Enemy/TankEnemy.hpp"
+#include "Enemy/Obstacle.hpp"
 #include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"
 #include "Engine/Group.hpp"
@@ -84,6 +85,10 @@ void PlayScene::Initialize()
     AddNewObject(EnemyGroup = new Group());
     AddNewObject(BulletGroup = new Group());
     AddNewObject(EffectGroup = new Group());
+    AddNewObject(ObstacleGroup = new Group());
+
+
+
     // Should support buttons.
     AddNewControlObject(UIGroup = new Group());
     AddNewControlObject(ButtonsGroup = new Group());
@@ -687,6 +692,11 @@ void PlayScene::ReadMap()
             }
         }
     }
+
+    int x = rand() % MapWidth;
+    int y = rand() % MapHeight;
+    Obstacle* obs = new Obstacle("play/rock.png", x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2, 30);
+    ObstacleGroup->AddNewObject(obs);
 }
 
 void PlayScene::ReadEnemyWave()

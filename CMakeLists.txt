@@ -85,8 +85,11 @@ add_executable(2025_I2P2_TowerDefense
     Enemy/PlaneEnemy.hpp
     Enemy/NewEnemy.cpp
     Enemy/NewEnemy.hpp
-
-    Scene/LoseScene.cpp
+    Enemy/Obstacle.cpp
+    Enemy/Obstacle.hpp
+        
+        
+        Scene/LoseScene.cpp
     Scene/LoseScene.hpp
     Scene/PlayScene.cpp
     Scene/PlayScene.hpp
