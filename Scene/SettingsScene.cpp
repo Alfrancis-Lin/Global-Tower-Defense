@@ -42,7 +42,7 @@ void SettingsScene::Initialize()
         time_period = "evening";
         color = 255;
     }
-    else 
+    else
     {
         time_period = "night";
         color = 255;
