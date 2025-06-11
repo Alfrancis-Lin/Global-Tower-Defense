@@ -22,7 +22,7 @@ void SnowBullet::OnExplode(Enemy *enemy)
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist(2, 5);
-    enemy->slowTime = 2.0f;
+    enemy->slowTime = parent->level;
     enemy->slowing = true;
     enemy->Tint = al_map_rgba(0, 0, 255, 255);
     getPlayScene()->GroundEffectGroup->AddNewObject(new DirtyEffect(

@@ -1,6 +1,6 @@
 #include <allegro5/allegro_audio.h>
 #include <ctime>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -23,20 +23,20 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
     return size * nmemb;
 }
 
-std::string fetchTrivia()
-{
-    std::string response;
-    CURL *curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL,
-                         "http://numbersapi.com/random/math");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-        curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-    }
-    return response;
-}
+// std::string fetchTrivia()
+// {
+//     std::string response;
+//     CURL *curl = curl_easy_init();
+//     if (curl) {
+//         curl_easy_setopt(curl, CURLOPT_URL,
+//                          "http://numbersapi.com/random/math");
+//         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+//         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+//         curl_easy_perform(curl);
+//         curl_easy_cleanup(curl);
+//     }
+//     return response;
+// }
 
 void StageSelectScene::Initialize()
 {

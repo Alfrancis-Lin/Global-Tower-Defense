@@ -21,13 +21,25 @@ protected:
     // Reference: Design Patterns - Factory Method.
     virtual void CreateBullet() = 0;
 
+
+
+
 public:
+    int level = 1; // 新增：初始等級
+    bool special_effect = false;
     bool Enabled = true;
     bool Preview = false;
+    bool justPlaced = false; // 剛放置完成用
+
     Enemy *Target = nullptr;
     Turret(std::string imgBase, std::string imgTurret, float x, float y, float radius, int price, float coolDown);
     void Update(float deltaTime) override;
     void Draw() const override;
     int GetPrice() const;
+
+    int GetLevel() const { return level; }
+    virtual void Upgrade(int newLevel);
+    virtual void CreateSpecialBullet(float angle);
+    void SetJustPlaced();  // 設置 justPlaced
 };
 #endif   // TURRET_HPP

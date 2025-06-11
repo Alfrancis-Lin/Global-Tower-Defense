@@ -8,6 +8,10 @@
 #include "Engine/Point.hpp"
 #include "MachineGunTurret.hpp"
 #include "Scene/PlayScene.hpp"
+#include "Bullet/Bullet3.hpp"
+#include "Bullet/Bullet4.hpp"
+#include "Bullet/Bullet7.hpp"
+
 
 const int MachineGunTurret::Price = 50;
 MachineGunTurret::MachineGunTurret(float x, float y)
@@ -20,6 +24,10 @@ void MachineGunTurret::CreateBullet() {
     float rotation = atan2(diff.y, diff.x);
     Engine::Point normalized = diff.Normalize();
     // Change bullet position to the front of the gun barrel.
-    getPlayScene()->BulletGroup->AddNewObject(new LaserBullet(Position + normalized * 36, diff, rotation, this));
+    if(level <= 3)
+    getPlayScene()->BulletGroup->AddNewObject(new Bullet7(Position + normalized * 36, diff, rotation, this));
+
+    else
+    getPlayScene()->BulletGroup->AddNewObject(new Bullet3(Position + normalized * 36, diff, rotation, this));
     AudioHelper::PlayAudio("gun.wav");
 }

@@ -23,6 +23,20 @@ add_executable(2025_I2P2_TowerDefense
     Bullet/SnowBullet.hpp
     Bullet/MissileBullet.cpp
     Bullet/MissileBullet.hpp
+        Bullet/Bullet3.cpp
+        Bullet/Bullet3.hpp
+        Bullet/Bullet4.cpp
+        Bullet/Bullet4.hpp
+        Bullet/Bullet5.cpp
+        Bullet/Bullet5.hpp
+        Bullet/Bullet6.cpp
+        Bullet/Bullet6.hpp
+        Bullet/Bullet7.cpp
+        Bullet/Bullet7.hpp
+        Bullet/Bullet8.cpp
+        Bullet/Bullet8.hpp
+        Bullet/Bullet9.cpp
+        Bullet/Bullet9.hpp
 
     Enemy/Enemy.cpp
     Enemy/Enemy.hpp
@@ -109,8 +123,6 @@ add_executable(2025_I2P2_TowerDefense
     Turret/FreezeTurret.hpp
     Turret/AntiAirTurret.cpp
     Turret/AntiAirTurret.hpp
-    Turret/HomingMissileTurret.cpp
-    Turret/HomingMissileTurret.hpp
 
     UI/Animation/DirtyEffect.cpp
     UI/Animation/DirtyEffect.hpp

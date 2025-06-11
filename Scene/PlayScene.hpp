@@ -8,6 +8,14 @@
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
+#include "Turret/upgrade_system.hpp"
+
+struct FloatingText {
+    Engine::Point position;
+    std::string text;
+    float timer; // 倒數秒數
+};
+
 #include "UI/Component/ImageButton.hpp"
 
 class Turret;
@@ -28,6 +36,12 @@ protected:
     int lives;
     int money;
     int SpeedMult;
+    UpgradeSystem* upgradeSystem = nullptr;
+    Turret* selectedTurret = nullptr;
+    std::vector<FloatingText> floatingTexts;
+    bool superEvolutionEnabled = false;
+
+
 
 public:
     enum TileType {
