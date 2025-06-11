@@ -31,5 +31,6 @@ public:
     void UpdatePath(const std::vector<std::vector<int>> &mapDistance);
     void Update(float deltaTime) override;
     void Draw() const override;
+    virtual bool IsCrossing() const { return false; }
 };
 #endif   // ENEMY_HPP
