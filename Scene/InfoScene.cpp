@@ -27,7 +27,7 @@ void InfoScene::Initialize()
 
     std::string time_period;
     int color = 0;
-    if (hr >= 5 && h <= 15) {
+    if (hr >= 5 && hr <= 15) {
         time_period = "morning";
         color = 0;
     }

@@ -32,7 +32,7 @@ void SettingsScene::Initialize()
 
     std::string time_period;
     int color = 0;
-    if (hr >= 5 && h <= 15)
+    if (hr >= 5 && hr <= 15)
     {
         time_period = "morning";
         color = 0;
@@ -64,18 +64,18 @@ void SettingsScene::Initialize()
     AddNewControlObject(btn);
 
     Slider *sliderBGM, *sliderSFX;
-    sliderBGM = new Slider(halfW * 0.8, halfH - 50 - 2, 300, 4);
+    sliderBGM = new Slider(halfW * 0.8, halfH - 75 - 2, 300, 4);
     sliderBGM->SetOnValueChangedCallback(std::bind(
         &SettingsScene::BGMSlideOnValueChanged, this, std::placeholders::_1));
     AddNewControlObject(sliderBGM);
     AddNewObject(new Engine::Label("BGM: ", "romulus.ttf", 64, halfW * 0.7,
-                                   halfH - 50, 255, 255, 255, 255, 0.5, 0.5));
+                                   halfH - 75, color, color, color, 255, 0.5, 0.5));
     sliderSFX = new Slider(halfW * 0.8, halfH + 50 - 2, 300, 4);
     sliderSFX->SetOnValueChangedCallback(std::bind(
         &SettingsScene::SFXSlideOnValueChanged, this, std::placeholders::_1));
     AddNewControlObject(sliderSFX);
     AddNewObject(new Engine::Label("SFX: ", "romulus.ttf", 64, halfW * 0.7,
-                                   halfH + 50, 255, 255, 255, 255, 0.5, 0.5));
+                                   halfH + 50, color, color, color, 255, 0.5, 0.5));
     // Not safe if release resource while playing, however we only free while
     // change scene, so it's fine.
     bgmInstance =
@@ -84,7 +84,7 @@ void SettingsScene::Initialize()
     sliderSFX->SetValue(AudioHelper::SFXVolume);
 
     btn = new Engine::ImageButton("clickable/bgmmute_normal.png",
-                                  "clickable/bgmmute_hover.png", halfW * 1.2, halfH - 100, 100, 100);
+                                  "clickable/bgmmute_hover.png", halfW * 1.2, halfH - 125, 100, 100);
     btn->SetOnClickCallback(std::bind(&SettingsScene::MuteOnClick, this, 1));
     AddNewControlObject(btn);
 

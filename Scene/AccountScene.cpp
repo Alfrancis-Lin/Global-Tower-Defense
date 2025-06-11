@@ -35,7 +35,7 @@ void AccountScene::Initialize()
 
     std::string time_period;
     int color = 0;
-    if (hr >= 5 && h <= 15) {
+    if (hr >= 5 && hr <= 15) {
         time_period = "morning";
         color = 0;
     }
@@ -68,14 +68,14 @@ void AccountScene::Initialize()
 
     if (!logged_in) {
         AddNewObject(new Engine::Label("Log In / Register", "romulus.ttf", 128,
-                                       halfW, (double)halfH / 2.5, 255, 255,
-                                       255, 255, 0.5, 0.5));
+                                       halfW, (double)halfH / 2.5, color, color,
+                                       color, 255, 0.5, 0.5));
         AddNewObject(new Engine::Label("     Name:", "romulus.ttf", 96,
-                                       halfW * 0.35, (double)halfH * 0.8, 255,
-                                       255, 255, 255, 0.0, 0.5));
+                                       halfW * 0.35, (double)halfH * 0.8, color,
+                                       color, color, 255, 0.0, 0.5));
         AddNewObject(new Engine::Label("Password:", "romulus.ttf", 96,
-                                       halfW * 0.35, (double)halfH * 1.1, 255,
-                                       255, 255, 255, 0.0, 0.5));
+                                       halfW * 0.35, (double)halfH * 1.1, color,
+                                       color, color, 255, 0.0, 0.5));
 
         nameTextBox =
             new Engine::TextBox(halfW * 0.9f, halfH * 0.8f - 40, 500, 80,
@@ -132,12 +132,12 @@ void AccountScene::Initialize()
         const PlayerData &player = accountManager.getPlayer();
 
         AddNewObject(new Engine::Label("Welcome back!", "romulus.ttf", 128,
-                                       halfW, (double)halfH / 2.5, 255, 255,
-                                       255, 255, 0.5, 0.5));
+                                       halfW, (double)halfH / 2.5, color, color,
+                                       color, 255, 0.5, 0.5));
 
         AddNewObject(new Engine::Label("Player: " + player.name, "romulus.ttf",
-                                       96, halfW, (double)halfH * 0.7, 255, 255,
-                                       255, 255, 0.5, 0.5));
+                                       96, halfW, (double)halfH * 0.7, color, color,
+                                       color, 255, 0.5, 0.5));
 
         btn = new Engine::ImageButton("clickable/back_normal.png",
                                       "clickable/back_hover.png", 50, 50, 100,
@@ -153,7 +153,7 @@ void AccountScene::Initialize()
 
         // Add logout label near the button
         AddNewObject(new Engine::Label("Logout", "romulus.ttf", 64, halfW,
-                                       h - 250, 255, 255, 255, 255, 0.5, 0.5));
+                                       h - 250, color, color, color, 255, 0.5, 0.5));
     }
 }
 
