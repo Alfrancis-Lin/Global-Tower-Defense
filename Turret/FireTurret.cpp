@@ -8,7 +8,7 @@
 #include <cmath>
 #include <string>
 
-#include "Bullet/LaserBullet.hpp"
+#include "Bullet/Bullet9.hpp"
 #include "Enemy/Enemy.hpp"
 #include "Engine/AudioHelper.hpp"
 #include "Engine/Group.hpp"
@@ -18,7 +18,7 @@
 const int FireTurret::Price = 200;
 
 FireTurret::FireTurret(float x, float y)
-    : Turret("play/tower-base.png", "play/turret-3.png", x, y, 300, Price, 0.5)
+    : Turret("play/tower-base.png", "play/fire_turret.png", x, y, 300, Price, 0.1)
 {
     // Move center downward, since we the turret head is slightly biased upward.
     Anchor.y += 8.0f / GetBitmapHeight();
@@ -32,7 +32,7 @@ void FireTurret::CreateBullet()
     Engine::Point normal = Engine::Point(-normalized.y, normalized.x);
     // Change bullet position to the front of the gun barrel.
     getPlayScene()->BulletGroup->AddNewObject(
-        new LaserBullet(Position + normalized * 36, diff, rotation, this));
+        new Bullet9(Position + normalized * 36, diff, rotation, this));
     // getPlayScene()->BulletGroup->AddNewObject(new LaserBullet(Position +
     // normalized * 36 + normal * 6, diff, rotation, this));
     // AudioHelper::PlayAudio("laser.wav");
@@ -47,7 +47,7 @@ void FireTurret::CreateBullet(Enemy *target)
     Engine::Point normal = Engine::Point(-normalized.y, normalized.x);
     // Change bullet position to the front of the gun barrel.
     getPlayScene()->BulletGroup->AddNewObject(
-        new LaserBullet(Position + normalized * 36, diff, rotation, this));
+        new Bullet9(Position + normalized * 36, diff, rotation, this));
     // getPlayScene()->BulletGroup->AddNewObject(new LaserBullet(Position +
     // normalized * 36 + normal * 6, diff, rotation, this));
     // AudioHelper::PlayAudio("laser.wav");

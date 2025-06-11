@@ -12,7 +12,7 @@
 const int FreezeTurret::Price = 50;
 
 FreezeTurret::FreezeTurret(float x, float y)
-    : Turret("play/tower-base.png", "play/turret-6.png", x, y, 200, Price, 0.5) {
+    : Turret("play/tower-base.png", "play/ice_turret.png", x, y, 200, Price, 0.5) {
     // Move center downward, since we the turret head is slightly biased upward.
     Anchor.y += 8.0f / GetBitmapHeight();
 }

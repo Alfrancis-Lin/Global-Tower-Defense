@@ -664,14 +664,14 @@ void PlayScene::ReadMap()
     }
 
     //generate rocks
-    for(int r=0; r<6; r++){
+    for(int r=0; r<60; r++){
         int x = rand() % MapWidth;
         int y = rand() % MapHeight;
         if(mapState[y][x] == TILE_FLOOR){
             Obstacle* obs = new Obstacle("play/rock.png",
                                          x * BlockSize + BlockSize / 2,
                                          y * BlockSize + BlockSize / 2,
-                                         100, x, y); // 把格子座標帶進去
+                                         5000, x, y); // 把格子座標帶進去
 
             ObstacleGroup->AddNewObject(obs);
             mapState[y][x] = TILE_OCCUPIED;
@@ -760,7 +760,7 @@ void PlayScene::ConstructUI()
     btn = new TurretButton(
         "play/floor.png", "play/dirt.png",
         Engine::Sprite("play/tower-base.png", 1294, 226, 0, 0, 0, 0), //x+76 y+76
-        Engine::Sprite("play/turret-6.png", 1294, 226 - 8, 0, 0, 0, 0), 1294,
+        Engine::Sprite("play/ice_turret.png", 1294, 226 - 8, 0, 0, 0, 0), 1294,
         226, FreezeTurret::Price);
 
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
@@ -770,8 +770,8 @@ void PlayScene::ConstructUI()
     btn = new TurretButton(
         "play/floor.png", "play/dirt.png",
         Engine::Sprite("play/tower-base.png", 1370, 226, 0, 0, 0, 0), //x+76 y+76
-        Engine::Sprite("play/turret-6.png", 1370, 226 - 8, 0, 0, 0, 0), 1370,
-        226, FreezeTurret::Price);
+        Engine::Sprite("play/fire_turret.png", 1370, 226 - 8, 0, 0, 0, 0), 1370,
+        226, FireTurret::Price);
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 6));
     UIGroup->AddNewControlObject(btn);
 
@@ -780,7 +780,7 @@ void PlayScene::ConstructUI()
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1446, 226, 0, 0, 0, 0), //x+76 y+76
             Engine::Sprite("play/turret-6.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
-            226, FreezeTurret::Price);
+            226, CoinGen::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 7));
         UIGroup->AddNewControlObject(btn);
 
