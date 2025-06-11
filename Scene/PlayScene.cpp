@@ -501,11 +501,8 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
             // Remove Preview.
             preview = nullptr;
 
-                mapState[y][x] = TILE_OCCUPIED;
-                OnMouseMove(mx, my);
-
-
-
+            mapState[y][x] = TILE_OCCUPIED;
+            OnMouseMove(mx, my);
         }
     }
 }
@@ -563,56 +560,25 @@ void PlayScene::OnKeyDown(int keyCode)
             SpeedMult = keyCode - ALLEGRO_KEY_0;
         }
     }
-    if (keyCode == ALLEGRO_KEY_TAB) {
-        DebugMode = !DebugMode;
-    }
-    else {
-        keyStrokes.push_back(keyCode);
-        if (keyStrokes.size() > code.size())
-            keyStrokes.pop_front();
-        if (keyStrokes.size() == code.size()) {
-            bool match = true;
-            auto stroke = keyStrokes.begin();
-            for (auto i : code) {
-                if (stroke == keyStrokes.end() || *stroke != i) {
-                    match = false;
-                    break;
-                }
-                ++stroke;
+    
+    keyStrokes.push_back(keyCode);
+    if (keyStrokes.size() > code.size())
+        keyStrokes.pop_front();
+    if (keyStrokes.size() == code.size()) {
+        bool match = true;
+        auto stroke = keyStrokes.begin();
+        for (auto i : code) {
+            if (stroke == keyStrokes.end() || *stroke != i) {
+                match = false;
+                break;
             }
-            if (match) {
-                EffectGroup->AddNewObject(new Plane());
-                EarnMoney(10000);
-                keyStrokes.clear();
-            }
+            ++stroke;
         }
-    }
-    if (keyCode == ALLEGRO_KEY_S) {
-        UIBtnClicked(0);
-    }
-    if (keyCode == ALLEGRO_KEY_Q) {
-        // Hotkey for MachineGunTurret.
-        UIBtnClicked(1);
-    }
-    else if (keyCode == ALLEGRO_KEY_W) {
-        // Hotkey for LaserTurret.
-        UIBtnClicked(2);
-    }
-    else if (keyCode == ALLEGRO_KEY_E) {
-        // Hotkey for FreezeTurret
-        UIBtnClicked(3);
-    }
-    else if (keyCode == ALLEGRO_KEY_R) {
-        // Hotkey for FreezeTurret
-        UIBtnClicked(4);
-    }
-    else if (keyCode > ALLEGRO_KEY_0 && keyCode <= ALLEGRO_KEY_9) {
-        // Hotkey for Speed up.
-        SpeedMult = keyCode - ALLEGRO_KEY_0;
-    }
-    else if(keyCode == ALLEGRO_KEY_0){
-        //upgradeSystem->Activate(selectedTurret);
-        SpeedMult = keyCode - ALLEGRO_KEY_0;
+        if (match) {
+            EffectGroup->AddNewObject(new Plane());
+            EarnMoney(10000);
+            keyStrokes.clear();
+        }
     }
 }
 
@@ -636,7 +602,7 @@ void PlayScene::EarnMoney(int money)
 void PlayScene::ReadMap()
 {
     // procedural map generation code
-    if (MapId == 3) {
+    if (MapId == 4) {
         auto seed = std::random_device{}();
         ProceduralMapGenerator generator(seed);
         auto proceduralMap = generator.generateMap(3);
@@ -651,7 +617,6 @@ void PlayScene::ReadMap()
         }
     }
     else {
-
         // Load map from file
         std::string filename = "Resource/map" + std::to_string(MapId) + ".txt";
         char c;

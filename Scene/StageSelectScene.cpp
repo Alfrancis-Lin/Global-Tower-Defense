@@ -42,24 +42,25 @@ void StageSelectScene::Initialize()
 {
     // init page to 0
     page = 0;
-    maxPage = 2;
+    maxPage = 3;
 
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
     int halfW = w / 2;
     int halfH = h / 2;
 
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < maxPage + 1; ++i)
         previews.emplace_back(new Engine::Sprite("stage_preview/preview" +
                                                      std::to_string(i) + ".png",
                                                  halfW, halfH - 50));
     difficulty[0] = 2;
     difficulty[1] = 4;
-    difficulty[2] = 5;
+    difficulty[2] = -1;
+    difficulty[3] = 5;
 
     info = new Engine::Label(
         "Level " + std::to_string(page + 1) + "\'s" +
-            " Interesting Level: " + std::to_string(difficulty[page]),
+            " Interesting Level: " + ((difficulty[page] == -1) ? "?" : std::to_string(difficulty[page])),
         "romulus.ttf", 56,
         Engine::GameEngine::GetInstance().GetScreenSize().x / 2, 100, 255, 255,
         255, 255, 0.5, 0.5);
