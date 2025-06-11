@@ -693,10 +693,23 @@ void PlayScene::ReadMap()
         }
     }
 
-    int x = rand() % MapWidth;
-    int y = rand() % MapHeight;
-    Obstacle* obs = new Obstacle("play/rock.png", x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2, 30);
-    ObstacleGroup->AddNewObject(obs);
+    //generate rocks
+    for(int r=0; r<6; r++){
+        int x = rand() % MapWidth;
+        int y = rand() % MapHeight;
+        if(mapState[y][x] == TILE_FLOOR){
+            Obstacle* obs = new Obstacle("play/rock.png",
+                                         x * BlockSize + BlockSize / 2,
+                                         y * BlockSize + BlockSize / 2,
+                                         100, x, y); // 把格子座標帶進去
+
+            ObstacleGroup->AddNewObject(obs);
+            mapState[y][x] = TILE_OCCUPIED;
+        }
+
+
+    }
+
 }
 
 void PlayScene::ReadEnemyWave()
@@ -863,9 +876,9 @@ void PlayScene::UIBtnClicked(int id)
                  });
                  return;
     }
-    else if (id == 6 && money >= FreezeTurret::Price)
+    else if (id == 6 && money >= FireTurret::Price)
             next_preview = new FireTurret(0, 0);
-    else if (id == 7 && money >= FreezeTurret::Price)
+    else if (id == 7 && money >= CoinGen::Price)
             next_preview = new CoinGen(0, 0);
     else if (id == 0) {
         ALLEGRO_MOUSE_STATE mouse_state;
