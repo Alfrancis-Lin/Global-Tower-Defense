@@ -17,7 +17,7 @@ namespace Engine {
         // Pixel in seconds.
         Point Velocity;
         // Color tint.
-        ALLEGRO_COLOR Tint;
+        mutable ALLEGRO_COLOR Tint;
         // Assume a circle is a good approximation of the sprite's boundary.
         float CollisionRadius = 0;
         /// <summary>

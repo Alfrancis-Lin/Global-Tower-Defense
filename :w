@@ -1,4 +1,5 @@
 #include <allegro5/base.h>
+#include <allegro5/color.h>
 #include <random>
 #include <string>
 
@@ -6,7 +7,7 @@
 #include "TankEnemy.hpp"
 
 TankEnemy::TankEnemy(int x, int y)
-    : Enemy("play/enemy-3.png", x, y, 20, 20, 10, 50),
+    : Enemy("play/enemy-3.png", x, y, 20, 20, 100, 50),
       head("play/enemy-3-head.png", x, y), targetRotation(0) {
 }
 void TankEnemy::Draw() const {
@@ -16,6 +17,7 @@ void TankEnemy::Draw() const {
         head.Tint = al_map_rgba(0, 0, 255, 255);
     }
     else head.Tint = al_map_rgba(255, 255, 255, 255);
+
     head.Draw();
 }
 void TankEnemy::Update(float deltaTime) {
