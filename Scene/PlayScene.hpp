@@ -5,6 +5,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <set>
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
@@ -26,7 +27,7 @@ namespace Engine {
     class Sprite;
 }   // namespace Engine
 
-class PlayScene final : public Engine::IScene {
+class PlayScene : public Engine::IScene {
 private:
 
     ALLEGRO_SAMPLE_ID bgmId;
@@ -49,6 +50,8 @@ public:
         TILE_FLOOR,
         TILE_OCCUPIED,
     };
+    static bool multiendd;
+    static bool multiplay;
     static bool DebugMode;
     static const std::vector<Engine::Point> directions;
     static const int MapWidth, MapHeight;
@@ -61,6 +64,12 @@ public:
     int MapId;
     float ticks;
     float deathCountDown;
+
+
+
+    std::set <std::vector<float>> enemyy;
+
+
     // Map tiles.
     Group *TileMapGroup;
     Group *GroundEffectGroup;
@@ -96,7 +105,7 @@ public:
     int GetMoney() const;
     void EarnMoney(int money);
     void ReadMap();
-    void ReadEnemyWave();
+    virtual void ReadEnemyWave();
     void ConstructUI();
     void UIBtnClicked(int id);
     bool CheckSpaceValid(int x, int y);

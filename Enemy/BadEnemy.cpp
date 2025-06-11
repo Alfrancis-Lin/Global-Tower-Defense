@@ -23,6 +23,7 @@ BadEnemy::BadEnemy(int x, int y)
     double max = 0.93;
 
     /* 產生 [min , max) 的浮點數亂數 */
+
     double xx = (max - min) * rand() / (RAND_MAX + 1.0) + min;
     Position.x = Engine::GameEngine::GetInstance().GetScreenSize().x * 0.8 * xx;
     Position.y = -50;

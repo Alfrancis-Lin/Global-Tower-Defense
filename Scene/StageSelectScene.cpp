@@ -130,12 +130,19 @@ void StageSelectScene::BackOnClick(void)
     Engine::GameEngine::GetInstance().ChangeScene("start");
 }
 
-void StageSelectScene::PlayOnClick(int stage)
-{
+void StageSelectScene::PlayOnClick(int stage) {
     PlayScene *scene = dynamic_cast<PlayScene *>(
         Engine::GameEngine::GetInstance().GetScene("play"));
     // the stage stored using page is 0-indexed
     scene->MapId = stage + 1;
+    if (scene->MapId==3) {
+        PlayScene::multiendd=false;
+        PlayScene::multiplay=true;
+    }
+    else {
+        PlayScene::multiendd=true;
+        PlayScene::multiplay=false;
+    }
     Engine::GameEngine::GetInstance().ChangeScene("play");
 }
 
