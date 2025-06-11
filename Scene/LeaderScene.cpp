@@ -41,7 +41,7 @@ void LeaderScene::Initialize()
 
     std::string time_period;
     int color = 0;
-    if (hr >= 5 && h <= 15)
+    if (hr >= 5 && hr <= 15)
     {
         time_period = "morning";
         color = 0;
@@ -153,6 +153,17 @@ void LeaderScene::LoadLeaderboard()
 
 void LeaderScene::DisplayCurrentPage()
 {
+    // background
+    auto now = std::chrono::system_clock::now();
+    std::time_t curr_time = std::chrono::system_clock::to_time_t(now);
+    std::tm* local_time = std::localtime(&curr_time);
+
+    int hr = local_time->tm_hour;
+
+    int color = 0;
+    if (hr >= 5 && hr <= 15)
+        color = 0;
+    else color = 255;
 
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
@@ -183,17 +194,17 @@ void LeaderScene::DisplayCurrentPage()
     for (int i = startIdx; i < endIdx; i++) {
         const auto &entry = entries[i];
         AddNewObject(new Engine::Label(std::to_string(i + 1), "romulus.ttf", 64,
-                                       halfW * 0.35, yPos, 255, 255, 255, 255,
+                                       halfW * 0.35, yPos, color, color, color, 255,
                                        0.5, 0.5));
         AddNewObject(new Engine::Label(entry.name, "romulus.ttf", 64,
-                                       halfW * 0.70, yPos, 255, 255, 255, 255,
+                                       halfW * 0.70, yPos, color, color, color, 255,
                                        0.5, 0.5));
         AddNewObject(new Engine::Label(entry.time, "romulus.ttf", 64,
-                                       halfW * 1.20, yPos, 255, 255, 255, 255,
+                                       halfW * 1.20, yPos, color, color, color, 255,
                                        0.5, 0.5));
         AddNewObject(new Engine::Label(std::to_string(entry.score),
                                        "romulus.ttf", 64, halfW * 1.65, yPos,
-                                       255, 255, 255, 255, 0.5, 0.5));
+                                       color, color, color, 255, 0.5, 0.5));
         yPos += 50;
     }
 }

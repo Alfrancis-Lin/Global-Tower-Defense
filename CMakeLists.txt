@@ -50,6 +50,8 @@ add_executable(2025_I2P2_TowerDefense
     Enemy/NewEnemy.hpp
     Enemy/BinaryEnemy.cpp
     Enemy/BinaryEnemy.hpp
+    Enemy/BadEnemy.cpp
+    Enemy/BadEnemy.hpp
 
     AccountSystem/AccountSystem.hpp
     AccountSystem/GlobalAccountSystem.hpp
@@ -144,6 +146,8 @@ add_executable(2025_I2P2_TowerDefense
     Generator/ProceduralMapGenerator.hpp
     
     main.cpp
+        Enemy/BadEnemy.cpp
+        Enemy/BadEnemy.hpp
 )
 
 IF (WIN32)

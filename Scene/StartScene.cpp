@@ -8,6 +8,7 @@
 #include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"
 #include "Engine/IScene.hpp"
+#include "Engine/LOG.hpp"
 #include "Engine/Point.hpp"
 #include "PlayScene.hpp"
 #include "Scene/StartScene.hpp"
@@ -35,7 +36,8 @@ void StartScene::Initialize()
 
     std::string time_period;
     int color = 0;
-    if (hr >= 5 && h <= 15) {
+
+    if (hr >= 5 && hr <= 15) {
         time_period = "morning";
         color = 0;
     }
@@ -43,7 +45,7 @@ void StartScene::Initialize()
         time_period = "evening";
         color = 255;
     }
-    else {
+    else if (hr > 18 && hr < 5){
         time_period = "night";
         color = 255;
     }
