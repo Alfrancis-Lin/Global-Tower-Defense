@@ -912,14 +912,14 @@ void PlayScene::UIBtnClicked(int id)
 
     if (preview)
         UIGroup->RemoveObject(preview->GetObjectIterator());
-        preview = next_preview;
-        preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
-        preview->Tint = al_map_rgba(255, 255, 255, 200);
-        preview->Enabled = false;
-        preview->Preview = true;
-        UIGroup->AddNewObject(preview);
-        OnMouseMove(Engine::GameEngine::GetInstance().GetMousePosition().x,
-                    Engine::GameEngine::GetInstance().GetMousePosition().y);
+    preview = next_preview;
+    preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
+    preview->Tint = al_map_rgba(255, 255, 255, 200);
+    preview->Enabled = false;
+    preview->Preview = true;
+    UIGroup->AddNewObject(preview);
+    OnMouseMove(Engine::GameEngine::GetInstance().GetMousePosition().x,
+                Engine::GameEngine::GetInstance().GetMousePosition().y);
 }
 
 bool PlayScene::CheckSpaceValid(int x, int y)
@@ -933,6 +933,7 @@ bool PlayScene::CheckSpaceValid(int x, int y)
     if (map[0][0] == -1)
         return false;
     for (auto &it : EnemyGroup->GetObjects()) {
+        if (dynamic_cast<Enemy*>(it)->IsCrossing()) continue;
         Engine::Point pnt;
         pnt.x = floor(it->Position.x / BlockSize);
         pnt.y = floor(it->Position.y / BlockSize);

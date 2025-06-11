@@ -16,5 +16,6 @@ public:
     BadEnemy(int x, int y);
     void Update(float deltaTime) override;
     void DropSoldiers();
+    bool IsCrossing() const override;
 };
 #endif //BADENEMY_HPP
