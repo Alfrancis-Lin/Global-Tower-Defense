@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Leaderboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 800px;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+<h1>Leaderboard</h1>
+<table id="leaderboard">
+  <thead>
+  <tr>
+    <th>Rank</th>
+    <th>Name</th>
+    <th>Score</th>
+    <th>Date</th>
+    <th>Time</th>
+  </tr>
+  </thead>
+  <tbody id="leaderboard-body"></tbody>
+</table>
+
+<script>
+  // Path to your text file (same directory as HTML)
+  const txtUrl = 'leaderboard.txt';
+
+  fetch(txtUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Could not load leaderboard data');
+            }
+            return response.text();
+          })
+          .then(data => {
+            // Parse text file: assume each line is "name score date time"
+            const lines = data.trim().split('\n');
+            const leaderboard = lines.map(line => {
+              const parts = line.trim().split(/\s+/); // Split by one or more spaces
+              if (parts.length === 4) {
+                return {
+                  name: parts[0],
+                  score: parseInt(parts[1]),
+                  date: parts[2],
+                  time: parts[3]
+                };
+              }
+              return null; // Skip malformed lines
+            }).filter(entry => entry !== null); // Remove invalid entries
+            // Sort by score in descending order
+            leaderboard.sort((a, b) => b.score - a.score);
+            // Populate table
+            const tbody = document.getElementById('leaderboard-body');
+            leaderboard.forEach((entry, index) => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${entry.name}</td>
+                        <td>${entry.score}</td>
+                        <td>${entry.date}</td>
+                        <td>${entry.time}</td>
+                    `;
+              tbody.appendChild(row);
+            });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('leaderboard-body').innerHTML =
+                    '<tr><td colspan="5">Error loading leaderboard data</td></tr>';
+          });
+</script>
+</body>
+</html>
