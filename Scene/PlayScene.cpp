@@ -9,7 +9,9 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
+#include "Enemy/BadEnemy.hpp"
 #include "Enemy/BinaryEnemy.hpp"
 #include "Enemy/Enemy.hpp"
 #include "Enemy/NewEnemy.hpp"
@@ -53,13 +55,14 @@ const std::vector<int> PlayScene::code = {
     /*ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT,
     ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER*/
 };
-
+std::map<std::pair<int, int>, Turret*> mapTurret;
 Engine::Point PlayScene::GetClientSize()
 {
     return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
 }
 void PlayScene::Initialize()
 {
+    mapTurret.clear();
     mapState.clear();
     keyStrokes.clear();
     ticks = 0;
@@ -226,6 +229,10 @@ void PlayScene::Update(float deltaTime)
         case 5:
             EnemyGroup->AddNewObject(
                 enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+            break;
+        case 6:
+            EnemyGroup->AddNewObject(
+                enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
             break;
         default:
             continue;
