@@ -15,8 +15,7 @@
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
 #include "UI/Component/Label.hpp"
-int sss = 0;
-int tttime = 0;
+
 BadEnemy::BadEnemy(int x, int y)
     : Enemy("play/enemy-7.png", x, y, 10, 20, 200, 10)
 {
@@ -41,7 +40,9 @@ void BadEnemy::Update(float deltaTime)
     PlayScene *scene = getPlayScene();
 
     // 更新位置
-
+    if (sss==1) {
+        tttime++;
+    }
     Position.x += Velocity.x * deltaTime;
     Position.y += Velocity.y * deltaTime;
 
@@ -59,19 +60,21 @@ void BadEnemy::Update(float deltaTime)
     if (gridX >= 0 && gridX < PlayScene::MapWidth && gridY >= 0 &&
         gridY < PlayScene::MapHeight) {
         // 取得該格子的砲塔
+
         if (scene->mapState[gridY][gridX] == PlayScene::TILE_OCCUPIED) {
+            scene->mapState[gridY][gridX] = PlayScene::TILE_FLOOR;
             for (auto &it : scene->TowerGroup->GetObjects()) {
                 if (it->Position.x == gridX * PlayScene::BlockSize +
                                           (double)PlayScene::BlockSize / 2 &&
                     it->Position.y == gridY * PlayScene::BlockSize +
-                                          (double)PlayScene::BlockSize / 2) {
-                    if (sss == 0)
-                        AudioHelper::PlayAudio("bomb.ogg");
+                                          (double)PlayScene::BlockSize / 2 && sss==0) {
+
+                    AudioHelper::PlayAudio("bomb.ogg");
                     sss = 1;
                     Velocity.x = 0;
                     Velocity.y = 0;
 
-                    tttime++;
+                    //tttime++;
                     // std::cout<<tttime;
                     if (tttime >= 300) {
                         scene->TowerGroup->RemoveObject(
@@ -86,7 +89,26 @@ void BadEnemy::Update(float deltaTime)
             }
         }
     }
+    for (auto &it : scene->TowerGroup->GetObjects())
+    {
+        if (it->Position.x == gridX * PlayScene::BlockSize +
+                                  (double)PlayScene::BlockSize / 2 &&
+            it->Position.y == gridY * PlayScene::BlockSize +
+                                  (double)PlayScene::BlockSize / 2 &&sss==1)
+            {
 
+            if (tttime >= 300) {
+                scene->TowerGroup->RemoveObject(
+                    it->GetObjectIterator());
+                scene->mapState[gridY][gridX] = PlayScene::TILE_FLOOR;
+                Enemy::OnExplode();
+                Enemy::Hit(10000.0);
+                // AudioHelper::PlayAudio("bomb.ogg");
+                break;
+            }
+            }
+
+    }
     // 更新旋轉角度
     Rotation = atan2(Velocity.y, Velocity.x);
 
