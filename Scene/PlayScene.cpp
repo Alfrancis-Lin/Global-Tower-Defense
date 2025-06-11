@@ -28,9 +28,11 @@
 #include "Turret/AntiAirTurret.hpp"
 #include "Turret/FreezeTurret.hpp"
 #include "Turret/LaserTurret.hpp"
+#include "Turret/Turret.hpp"
 #include "Turret/MachineGunTurret.hpp"
 #include "Turret/FireTurret.hpp"
 #include "Turret/TurretButton.hpp"
+#include "Turret/CoinGen.hpp"
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
 #include "UI/Component/ImageButton.hpp"
@@ -330,14 +332,6 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
                     TurretButton* btn = dynamic_cast<TurretButton*>(obj);
                     if (!btn) continue;
                     Engine::Point diff = Engine::Point(mx, my) - Engine::Point(btn->Position.x, btn->Position.y);
-                    if (diff.Magnitude() <= 20) {
-                        // 記錄下一次要超級進化
-                        superEvolutionEnabled = true;
-
-                        // 可以記錄是哪個塔按下去，或全部都套用
-                        AudioHelper::PlayAudio("upgrade.wav"); // 可加音效
-                        return;
-                    }
 
         }
 
@@ -460,6 +454,8 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 TowerGroup->AddNewObject(preview);
                 // To keep responding when paused.
                 preview->Update(0);
+
+                preview->SetJustPlaced();//給進化砲塔用的，放置瞬間有效果，不要刪掉
                 // Remove Preview.
                 preview = nullptr;
             }
@@ -497,6 +493,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
             TowerGroup->AddNewObject(preview);
             // To keep responding when paused.
             preview->Update(0);
+
 
             if(preview->level == 6){
                 preview->SetJustPlaced();
@@ -777,12 +774,21 @@ void PlayScene::ConstructUI()
     UIGroup->AddNewControlObject(btn);
 
     //fireTurret
-        btn = new TurretButton(
+    btn = new TurretButton(
+        "play/floor.png", "play/dirt.png",
+        Engine::Sprite("play/tower-base.png", 1370, 226, 0, 0, 0, 0), //x+76 y+76
+        Engine::Sprite("play/turret-6.png", 1370, 226 - 8, 0, 0, 0, 0), 1370,
+        226, FreezeTurret::Price);
+    btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 6));
+    UIGroup->AddNewControlObject(btn);
+
+    //CoinGen
+    btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1370, 226, 0, 0, 0, 0), //x+76 y+76
-            Engine::Sprite("play/turret-6.png", 1370, 226 - 8, 0, 0, 0, 0), 1370,
+            Engine::Sprite("play/tower-base.png", 1446, 226, 0, 0, 0, 0), //x+76 y+76
+            Engine::Sprite("play/turret-6.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
             226, FreezeTurret::Price);
-        btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 6));
+        btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 7));
         UIGroup->AddNewControlObject(btn);
 
     // 進化按鈕
@@ -849,6 +855,8 @@ void PlayScene::UIBtnClicked(int id)
     }
     else if (id == 6 && money >= FreezeTurret::Price)
             next_preview = new FireTurret(0, 0);
+    else if (id == 7 && money >= FreezeTurret::Price)
+            next_preview = new CoinGen(0, 0);
     else if (id == 0) {
         ALLEGRO_MOUSE_STATE mouse_state;
         al_get_mouse_state(&mouse_state);
@@ -881,14 +889,14 @@ void PlayScene::UIBtnClicked(int id)
 
     if (preview)
         UIGroup->RemoveObject(preview->GetObjectIterator());
-    preview = next_preview;
-    preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
-    preview->Tint = al_map_rgba(255, 255, 255, 200);
-    preview->Enabled = false;
-    preview->Preview = true;
-    UIGroup->AddNewObject(preview);
-    OnMouseMove(Engine::GameEngine::GetInstance().GetMousePosition().x,
-                Engine::GameEngine::GetInstance().GetMousePosition().y);
+        preview = next_preview;
+        preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
+        preview->Tint = al_map_rgba(255, 255, 255, 200);
+        preview->Enabled = false;
+        preview->Preview = true;
+        UIGroup->AddNewObject(preview);
+        OnMouseMove(Engine::GameEngine::GetInstance().GetMousePosition().x,
+                    Engine::GameEngine::GetInstance().GetMousePosition().y);
 }
 
 bool PlayScene::CheckSpaceValid(int x, int y)

@@ -38,7 +38,7 @@ protected:
     int SpeedMult;
     UpgradeSystem* upgradeSystem = nullptr;
     Turret* selectedTurret = nullptr;
-    std::vector<FloatingText> floatingTexts;
+
     bool superEvolutionEnabled = false;
 
 
@@ -81,6 +81,7 @@ public:
     std::vector<std::vector<int>> mapDistance;
     std::list<std::pair<int, float>> enemyWaveData;
     std::list<int> keyStrokes;
+    std::vector<FloatingText> floatingTexts; //文字生成
     static Engine::Point GetClientSize();
     explicit PlayScene() = default;
     void Initialize() override;
