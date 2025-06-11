@@ -16,6 +16,7 @@ struct FloatingText {
     float timer; // 倒數秒數
 };
 
+#include "UI/Component/ImageButton.hpp"
 
 class Turret;
 namespace Engine {
@@ -69,6 +70,7 @@ public:
     Group *EnemyGroup;
     Group *EffectGroup;
     Group *UIGroup;
+    Group *ButtonsGroup;
     Engine::Label *UIMoney;
     Engine::Label *UILives;
     Engine::Image *imgTarget;
@@ -100,6 +102,11 @@ public:
     std::vector<std::vector<int>> CalculateBFSDistance();
     // void ModifyReadMapTiles();
     void TriggerCheatCode();
-    void BackOnClick(int stage);
+    void ActionOnClick(int action);
+    void PauseOrResume(void);
+    bool paused;
+    int PrevSpeedMult;
+    void QuitOnClick(void);
+    void RestartOnClick(void);
 };
 #endif   // PLAYSCENE_HPP

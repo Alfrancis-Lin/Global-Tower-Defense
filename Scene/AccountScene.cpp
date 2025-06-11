@@ -3,6 +3,7 @@
 #include "Engine/GameEngine.hpp"
 #include "Engine/LOG.hpp"
 #include "Engine/Point.hpp"
+#include "Engine/AudioHelper.hpp"
 #include "PlayScene.hpp"
 #include "UI/Component/ImageButton.hpp"
 #include "UI/Component/Label.hpp"
@@ -28,35 +29,35 @@ void AccountScene::Initialize()
     // background
     auto now = std::chrono::system_clock::now();
     std::time_t curr_time = std::chrono::system_clock::to_time_t(now);
-    std::tm* local_time = std::localtime(&curr_time);
+    std::tm *local_time = std::localtime(&curr_time);
 
     int hr = local_time->tm_hour;
 
     std::string time_period;
     int color = 0;
-    if (hr >= 5 && h <= 15)
-    {
+    if (hr >= 5 && h <= 15) {
         time_period = "morning";
         color = 0;
     }
-    else if (hr > 15 && hr <= 18)
-    {
+    else if (hr > 15 && hr <= 18) {
         time_period = "evening";
         color = 255;
     }
-    else 
-    {
+    else {
         time_period = "night";
         color = 255;
     }
 
-    bg = new Engine::Image("background/" + time_period + "/1.png", 0, 0, 1600, 832, 0, 0);
+    bg = new Engine::Image("background/" + time_period + "/1.png", 0, 0, 1600,
+                           832, 0, 0);
     AddNewObject(bg);
 
-    cloud1 = new Engine::Image("background/" + time_period + "/2.png", 0, 0, 1600, 832, 0, 0);
+    cloud1 = new Engine::Image("background/" + time_period + "/2.png", 0, 0,
+                               1600, 832, 0, 0);
     AddNewObject(cloud1);
-    
-    cloud2 = new Engine::Image("background/" + time_period + "/3.png", 0, 0, 1600, 832, 0, 0);
+
+    cloud2 = new Engine::Image("background/" + time_period + "/3.png", 0, 0,
+                               1600, 832, 0, 0);
     AddNewObject(cloud2);
 
     Engine::ImageButton *btn;
@@ -127,33 +128,32 @@ void AccountScene::Initialize()
         btn->SetOnClickCallback(std::bind(&AccountScene::SubmitOnClick, this));
         AddNewControlObject(btn);
     }
-    else 
-    {
-        const PlayerData& player = accountManager.getPlayer();
-        
-        AddNewObject(new Engine::Label("Welcome back!", "romulus.ttf", 128, halfW,
-                                       (double)halfH / 2.5, 255, 255, 255, 255, 0.5,
-                                       0.5));
-        
-        AddNewObject(new Engine::Label("Player: " + player.name, "romulus.ttf", 96, halfW,
-                                       (double)halfH * 0.7, 255, 255, 255, 255, 0.5,
-                                       0.5));
-        
+    else {
+        const PlayerData &player = accountManager.getPlayer();
+
+        AddNewObject(new Engine::Label("Welcome back!", "romulus.ttf", 128,
+                                       halfW, (double)halfH / 2.5, 255, 255,
+                                       255, 255, 0.5, 0.5));
+
+        AddNewObject(new Engine::Label("Player: " + player.name, "romulus.ttf",
+                                       96, halfW, (double)halfH * 0.7, 255, 255,
+                                       255, 255, 0.5, 0.5));
+
         btn = new Engine::ImageButton("clickable/back_normal.png",
-                                      "clickable/back_hover.png", 50, 50, 100, 100);
+                                      "clickable/back_hover.png", 50, 50, 100,
+                                      100);
         btn->SetOnClickCallback(std::bind(&AccountScene::BackOnClick, this));
         AddNewControlObject(btn);
-        
+
         btn = new Engine::ImageButton("clickable/quit_normal.png",
                                       "clickable/quit_hover.png", halfW - 100,
                                       h - 200, 150, 150);
         btn->SetOnClickCallback(std::bind(&AccountScene::LogoutOnClick, this));
         AddNewControlObject(btn);
-        
+
         // Add logout label near the button
         AddNewObject(new Engine::Label("Logout", "romulus.ttf", 64, halfW,
-                                       h - 250, 255, 255, 255, 255, 0.5,
-                                       0.5));
+                                       h - 250, 255, 255, 255, 255, 0.5, 0.5));
     }
 }
 
@@ -175,8 +175,10 @@ void AccountScene::Update(float deltaTime)
     x1 -= cloud1_speed * deltaTime;
     x2 -= cloud2_speed * deltaTime;
 
-    if (x1 <= -(1.5 * w)) x1 += 2.1 * w;
-    if (x2 <= -(1.2 * w)) x2 += 2.4 * w;
+    if (x1 <= -(1.5 * w))
+        x1 += 2.1 * w;
+    if (x2 <= -(1.2 * w))
+        x2 += 2.4 * w;
 
     cloud1->Position.x = x1;
     cloud2->Position.x = x2;
@@ -211,15 +213,29 @@ void AccountScene::OnKeyDown(int keyCode)
         if (keyCode >= ALLEGRO_KEY_A && keyCode <= ALLEGRO_KEY_9) {
             OnCharInput(keyCode);
         }
+        else if (keyCode == ALLEGRO_KEY_TAB)
+        {
+            if (nameTextBox->IsFocused())
+            {
+                activeTextBox->LoseFocus();
+                passwordTextBox->SetFocus(true);
+            }
+            else 
+            {
+                activeTextBox->LoseFocus();
+                nameTextBox->SetFocus(true);
+            }
+        }
         else
             activeTextBox->HandleKeyPress(keyCode);
+
     }
 }
 
-void AccountScene::OnCharInput(int unicodeChar)
+void AccountScene::OnCharInput(int ch)
 {
     if (activeTextBox)
-        activeTextBox->HandleCharInput(unicodeChar);
+        activeTextBox->HandleCharInput(ch);
 }
 
 void AccountScene::Terminate()
