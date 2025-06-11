@@ -146,12 +146,11 @@ void AccountScene::Initialize()
         AddNewControlObject(btn);
 
         btn = new Engine::ImageButton("clickable/quit_normal.png",
-                                      "clickable/quit_hover.png", halfW - 100,
+                                      "clickable/quit_hover.png", halfW - 75,
                                       h - 200, 150, 150);
         btn->SetOnClickCallback(std::bind(&AccountScene::LogoutOnClick, this));
         AddNewControlObject(btn);
 
-        // Add logout label near the button
         AddNewObject(new Engine::Label("Logout", "romulus.ttf", 64, halfW,
                                        h - 250, color, color, color, 255, 0.5, 0.5));
     }
