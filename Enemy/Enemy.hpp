@@ -28,8 +28,9 @@ public:
     std::list<Bullet *> lockedBullets;
     Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money);
     void Hit(float damage);
-    void UpdatePath(const std::vector<std::vector<int>> &mapDistance);
+    virtual void UpdatePath(const std::vector<std::vector<int>> &mapDistance);
     void Update(float deltaTime) override;
+
     void Draw() const override;
     virtual bool IsCrossing() const { return false; }
 };

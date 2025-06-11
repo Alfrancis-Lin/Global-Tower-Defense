@@ -45,7 +45,7 @@ void StartScene::Initialize()
         time_period = "evening";
         color = 255;
     }
-    else if (hr > 18 && hr < 5){
+    else {
         time_period = "night";
         color = 255;
     }
