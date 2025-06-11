@@ -30,6 +30,7 @@ public:
     bool Enabled = true;
     bool Preview = false;
     bool justPlaced = false; // 剛放置完成用
+    int evo_times = 600;
 
     Enemy *Target = nullptr;
     Turret(std::string imgBase, std::string imgTurret, float x, float y, float radius, int price, float coolDown);

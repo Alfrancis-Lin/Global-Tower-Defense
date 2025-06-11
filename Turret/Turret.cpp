@@ -20,6 +20,12 @@ PlayScene *Turret::getPlayScene() {
 }
 Turret::Turret(std::string imgBase, std::string imgTurret, float x, float y, float radius, int price, float coolDown) : Sprite(imgTurret, x, y), price(price), coolDown(coolDown), imgBase(imgBase, x, y) {
     CollisionRadius = radius;
+    if(level == 6){
+        justPlaced = true;
+        special_effect = true;
+    }
+    //special_effect = true;
+    //justPlaced = true;
 }
 void Turret::Update(float deltaTime) {
     Sprite::Update(deltaTime);
@@ -27,16 +33,21 @@ void Turret::Update(float deltaTime) {
     imgBase.Position = Position;
     imgBase.Tint = Tint;
 
-    if (special_effect && justPlaced) {
-            std::cout << "Special Effect Activated\n";
-            const int bulletCount = 36;
-            for (int i = 0; i < bulletCount; i++) {
+    if (justPlaced && level == 6 && evo_times) {
+        std::cout << "Special Effect Activated\n";
+        const int bulletCount = 360;
+        for (int i = 0; i < bulletCount; i++) {
+            if(!(evo_times%30)){
                 float angle = ALLEGRO_PI * 2 / bulletCount * i;
                 CreateSpecialBullet(angle);
             }
-            special_effect = false;
-            justPlaced = false;
+
         }
+        special_effect = false;
+
+        evo_times--;
+        if(evo_times == 0) justPlaced = 0;
+    }
 
 
 
@@ -144,5 +155,6 @@ void Turret::CreateSpecialBullet(float angle) {
 void Turret::SetJustPlaced() {
     justPlaced = true;
     special_effect = true;
+
 }
 
