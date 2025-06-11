@@ -14,7 +14,6 @@
 #include "Turret/TurretButton.hpp"
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
-#include "UI/Component/Label.hpp"
 
 BadEnemy::BadEnemy(int x, int y)
     : Enemy("play/enemy-7.png", x, y, 10, 20, 200, 10)
@@ -114,4 +113,8 @@ void BadEnemy::Update(float deltaTime)
 
     // 更新動畫
     Sprite::Update(deltaTime);
+}
+
+bool BadEnemy::IsCrossing() const {
+    return true;
 }

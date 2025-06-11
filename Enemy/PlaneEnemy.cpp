@@ -1,13 +1,7 @@
-//
-// Created by 林威佑 on 2025/5/9.
-//
-
 #include <string>
 #include <cmath>
 
 #include "PlaneEnemy.hpp"
-
-
 #include "Enemy/SoldierEnemy.hpp"
 #include "Engine/GameEngine.hpp"
 #include "Scene/PlayScene.hpp"
@@ -66,4 +60,8 @@ void PlaneEnemy::DropSoldiers() {
         scene->EnemyGroup->AddNewObject(soldier);
         soldier->UpdatePath(scene->mapDistance);
     }
+}
+
+bool PlaneEnemy::IsCrossing() const {
+    return true;
 }
