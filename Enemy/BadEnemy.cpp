@@ -36,7 +36,8 @@
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
 #include "UI/Component/Label.hpp"
-
+int sss=0;
+int tttime=0;
 BadEnemy::BadEnemy(int x, int y) : Enemy("play/enemy-7.png", x, y, 10, 20, 200, 10) {
     double min = 0.07;
     double max = 0.93;
@@ -49,14 +50,18 @@ BadEnemy::BadEnemy(int x, int y) : Enemy("play/enemy-7.png", x, y, 10, 20, 200, 
     Velocity = Engine::Point(0, speed);
 
     CollisionRadius = 20;
+    sss=0;
+    tttime=0;
 }
 
 void BadEnemy::Update(float deltaTime) {
     PlayScene* scene = getPlayScene();
 
     // 更新位置
+
     Position.x += Velocity.x * deltaTime;
     Position.y += Velocity.y * deltaTime;
+
 
     // 檢查是否還在畫面內
     if (Position.y > Engine::GameEngine::GetInstance().GetScreenSize().y) {
@@ -72,13 +77,27 @@ void BadEnemy::Update(float deltaTime) {
     if (gridX >= 0 && gridX < PlayScene::MapWidth && gridY >= 0 && gridY < PlayScene::MapHeight) {
         // 取得該格子的砲塔
         if (scene->mapState[gridY][gridX] == PlayScene::TILE_OCCUPIED) {
-            scene->mapState[gridY][gridX] = PlayScene::TILE_FLOOR;
+            //scene->mapState[gridY][gridX] = PlayScene::TILE_FLOOR;
             for (auto &it : scene->TowerGroup->GetObjects()) {
                 if (it->Position.x == gridX * PlayScene::BlockSize + PlayScene::BlockSize / 2 &&
                     it->Position.y == gridY * PlayScene::BlockSize + PlayScene::BlockSize / 2) {
-                    scene->TowerGroup->RemoveObject(it->GetObjectIterator());
-                    AudioHelper::PlayAudio("bomb.ogg");
-                    break;
+                        if (sss==0)
+                            AudioHelper::PlayAudio("bomb.ogg");
+                        sss=1;
+                        Velocity.x=0;
+                        Velocity.y=0;
+
+                        tttime++;
+                        //std::cout<<tttime;
+                        if (tttime>=300)
+                        {
+                            scene->TowerGroup->RemoveObject(it->GetObjectIterator());
+                            scene->mapState[gridY][gridX] = PlayScene::TILE_FLOOR;
+                            Enemy::OnExplode();
+                            Enemy::Hit(10000.0);
+                            //AudioHelper::PlayAudio("bomb.ogg");
+                            break;
+                        }
                     }
             }
         }
