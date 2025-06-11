@@ -47,6 +47,8 @@ UpgradeSystem* upgradeSystem;
 #include "allegro5/color.h"
 
 bool PlayScene::shovelActive = false;
+bool PlayScene::multiendd = true;
+bool PlayScene::multiplay = false;
 
 bool PlayScene::DebugMode = false;
 const std::vector<Engine::Point> PlayScene::directions = {
@@ -63,7 +65,8 @@ const std::vector<int> PlayScene::code = {
     /*ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT,
     ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER*/
 };
-
+//std::vector <std::string> ene(4);
+//std::vector <std::string> numm(4);
 Engine::Point PlayScene::GetClientSize()
 {
     return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
@@ -78,6 +81,7 @@ void PlayScene::Initialize()
     lives = 10;
     money = 150;
     SpeedMult = 1;
+
     // Add groups from bottom to top.
     AddNewObject(TileMapGroup = new Group());
     AddNewObject(GroundEffectGroup = new Group());
@@ -133,7 +137,7 @@ void PlayScene::Update(float deltaTime)
             SpeedMult = 1;
     }
     // Calculate danger zone.
-
+    //ene[0]=std::to_string(money);
     std::vector<float> reachEndTimes;
     for (auto &it : EnemyGroup->GetObjects()) {
         if (dynamic_cast<Enemy*>(it)->IsCrossing()) continue;
@@ -181,7 +185,7 @@ void PlayScene::Update(float deltaTime)
         IScene::Update(deltaTime);
         // Check if we should create new enemy.
         ticks += deltaTime;
-        if (enemyWaveData.empty()) {
+        if (enemyWaveData.empty()&&multiendd==true) {
             if (EnemyGroup->GetObjects().empty()) {
                 // Free resources.
                 /*delete TileMapGroup;
@@ -308,7 +312,22 @@ void PlayScene::Draw() const
                       ft.position.y - (1.0f - ft.timer / 1.0f) * 30, // 上浮動畫
                       ALLEGRO_ALIGN_CENTER, ft.text.c_str());
     }
+    if (multiplay)
+    {
 
+        UIGroup->AddNewObject(new Engine::Label("Y: ", "romulus.ttf", 70, 1320,320, 0,0,0, 255, 0.5, 0.5));
+        UIGroup->AddNewObject(new Engine::Label("U: ", "romulus.ttf", 70, 1320,370, 0,0,0, 255, 0.5, 0.5));
+
+
+        UIGroup->AddNewObject(new Engine::Label("I: ", "romulus.ttf", 70, 1320,420, 0,0,0, 255, 0.5, 0.5));
+        UIGroup->AddNewObject(new Engine::Label("O: ", "romulus.ttf", 70, 1320,470, 0,0,0, 255, 0.5, 0.5));
+        //UIGroup->AddNewObject(new Engine::Label(ene[0], "romulus.ttf", 70, 1320,320, 0,0,0, 255, 0.5, 0.5));
+        //UIGroup->AddNewObject(new Engine::Label( ene[1], "romulus.ttf", 70, 1320,370, 0,0,0, 255, 0.5, 0.5));
+
+
+        //UIGroup->AddNewObject(new Engine::Label(ene[2], "romulus.ttf", 70, 1320,420, 0,0,0, 255, 0.5, 0.5));
+        //UIGroup->AddNewObject(new Engine::Label(ene[3], "romulus.ttf", 70, 1320,470, 0,0,0, 255, 0.5, 0.5));
+    }
 }
 
 void PlayScene::OnMouseDown(int button, int mx, int my)
@@ -711,17 +730,37 @@ void PlayScene::ReadMap()
 
 void PlayScene::ReadEnemyWave()
 {
-    std::string filename =
-        std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
-    // Read enemy file.
-    float type, wait, repeat;
-    enemyWaveData.clear();
-    std::ifstream fin(filename);
-    while (fin >> type && fin >> wait && fin >> repeat) {
-        for (int i = 0; i < repeat; i++)
-            enemyWaveData.emplace_back(type, wait);
+    if (!multiplay) {
+        std::string filename =
+            std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
+        // Read enemy file.
+        float type, wait, repeat;
+        enemyWaveData.clear();
+        std::ifstream fin(filename);
+        while (fin >> type && fin >> wait && fin >> repeat) {
+            for (int i = 0; i < repeat; i++)
+                enemyWaveData.emplace_back(type, wait);
+        }
+        fin.close();
     }
-    fin.close();
+    else {
+        std::string filename =
+            std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
+        // Read enemy file.
+        float type, wait, repeat;
+        enemyWaveData.clear();
+        std::ifstream fin(filename);
+        while (fin >> type && fin >> wait && fin >> repeat) {
+            std::vector <float> puttt;
+            puttt.push_back(type);
+            puttt.push_back(wait);
+            puttt.push_back(repeat);
+            enemyy.insert(puttt);
+
+
+        }
+        fin.close();
+    }
 }
 void PlayScene::ConstructUI()
 {
