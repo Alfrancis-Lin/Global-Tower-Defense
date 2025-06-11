@@ -301,7 +301,8 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
             UIGroup->RemoveObject(preview->GetObjectIterator());
             preview = nullptr;
         }
-        if (shovelActive) {
+        if (shovelActive)
+        {
             // remove the sprite
             UIGroup->RemoveObject(shovel->GetObjectIterator());
             shovelActive = false;
@@ -354,37 +355,6 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
                     //AudioHelper::PlayAudio("upgrade.wav");
                 }
                 return; // 點到就升級完，結束
-            }
-        }
-    }
-
-    if ((button & 1) && !imgTarget->Visible && preview) {
-        // Cancel turret construct.
-        UIGroup->RemoveObject(preview->GetObjectIterator());
-        preview = nullptr;
-    }
-    if (shovelActive) {
-        // remove the sprite
-        UIGroup->RemoveObject(shovel->GetObjectIterator());
-        shovelActive = false;
-        const int x = mx / BlockSize;
-        const int y = my / BlockSize;
-        if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight)
-            return;
-        // check if occupied
-        if (mapState[y][x] == TILE_OCCUPIED) {
-            mapState[y][x] = TILE_FLOOR;
-            // remove the turret
-            for (auto &it : TowerGroup->GetObjects()) {
-                if (it->Position.x == x * BlockSize + (double)BlockSize / 2 &&
-                    it->Position.y == y * BlockSize + (double)BlockSize / 2) {
-                    EarnMoney(dynamic_cast<Turret *>(it)->GetPrice() / 2);
-                    TowerGroup->RemoveObject(it->GetObjectIterator());
-                    // create sfx of shovel
-                    // TODO: add to credits.md
-                    AudioHelper::PlayAudio("shovel.ogg");
-                    break;
-                }
             }
         }
     }
@@ -794,9 +764,9 @@ void PlayScene::ConstructUI()
     // 進化按鈕
     btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1446, 440, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-7.png", 1446, 440 - 8, 0, 0, 0, 0), 1446,
-            440, 0); // 進化按鈕不需要金錢檢查
+            Engine::Sprite("play/tower-base.png", 1516, 188, 0, 0, 0, 0),
+            Engine::Sprite("play/turret-7.png", 1516, 188 - 8, 0, 0, 0, 0), 1516,
+            188, 0); // 進化按鈕不需要金錢檢查
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
         UIGroup->AddNewControlObject(btn);
 
@@ -853,10 +823,13 @@ void PlayScene::UIBtnClicked(int id)
                  });
                  return;
     }
-    else if (id == 6 && money >= FreezeTurret::Price)
-            next_preview = new FireTurret(0, 0);
-    else if (id == 7 && money >= FreezeTurret::Price)
-            next_preview = new CoinGen(0, 0);
+    else if (id == 6 && money >= FireTurret::Price)
+        next_preview = new FireTurret(0, 0);
+    else if (id == 7 && money >= CoinGen::Price)
+    {
+        AudioHelper::PlayAudio("farm.ogg");
+        next_preview = new CoinGen(0, 0);
+    }
     else if (id == 0) {
         ALLEGRO_MOUSE_STATE mouse_state;
         al_get_mouse_state(&mouse_state);
@@ -941,8 +914,7 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
     std::queue<Engine::Point> que;
     // Push end point.
     // BFS from end point.
-    if (mapState[MapHeight - 1][MapWidth - 1] != TILE_DIRT)
-        return map;
+
     que.push(Engine::Point(MapWidth - 1, MapHeight - 1));
     map[MapHeight - 1][MapWidth - 1] = 0;
     while (!que.empty()) {

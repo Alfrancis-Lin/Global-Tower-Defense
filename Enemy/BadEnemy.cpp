@@ -29,9 +29,13 @@ BadEnemy::BadEnemy(int x, int y)
 
     Velocity = Engine::Point(0, speed);
 
-    CollisionRadius = 20;
+    CollisionRadius = 25;
     sss = 0;
     tttime = 0;
+}
+void BadEnemy::UpdatePath(const std::vector<std::vector<int>> &mapDistance)
+{
+
 }
 
 void BadEnemy::Update(float deltaTime)
