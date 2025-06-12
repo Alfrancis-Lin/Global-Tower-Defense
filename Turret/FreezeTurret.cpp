@@ -149,6 +149,6 @@ void FreezeTurret::Draw() const {
 
     if (level == 6) {
         al_draw_filled_circle(Position.x, Position.y, CollisionRadius,
-                              al_map_rgba(0, 0, 255, 64)); // 半透明藍色
+                              al_map_rgba(0, 0, 255, 32)); // 半透明藍色
     }
 }

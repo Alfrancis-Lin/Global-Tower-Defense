@@ -7,7 +7,7 @@
 #include "TankEnemy.hpp"
 
 BinaryEnemy::BinaryEnemy(int x, int y)
-    : Enemy("play/enemy-6.png", x, y, 20, 20, 20, 50)
+    : Enemy("play/enemy-6.png", x, y, 20, 60, 20, 50)
 {
 }
 

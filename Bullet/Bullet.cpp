@@ -46,8 +46,8 @@ void Bullet::Update(float deltaTime) {
 
         // 碰撞判斷（簡單半徑檢測）
         float dist = (obs->Position - Position).Magnitude();
-        if (dist < 16) { // 16 根據子彈/障礙物尺寸微調
-            obs->Hit(10); // 障礙物扣血
+        if (dist < 30) { // 16 根據子彈/障礙物尺寸微調
+            obs->Hit(damage); // 障礙物扣血
             this->Visible = false; // 子彈消失
             return;
         }

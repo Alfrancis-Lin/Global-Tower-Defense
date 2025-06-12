@@ -16,7 +16,7 @@
 
 const int MachineGunTurret::Price = 50;
 MachineGunTurret::MachineGunTurret(float x, float y)
-    : Turret("play/tower-base.png", "play/turret-1.png", x, y, 200, Price, 1.2) {
+    : Turret("play/tower-base.png", "play/turret-1.png", x, y, 200, Price, 0.7) {
     // Move center downward, since we the turret head is slightly biased upward.
     Anchor.y += 8.0f / GetBitmapHeight();
 }
@@ -39,7 +39,7 @@ void MachineGunTurret::Update(float deltaTime) {
     imgBase.Position = Position;
     imgBase.Tint = Tint;
 
-    CollisionRadius = 150 + 10 * (level - 1);//turret radius upgrade
+    CollisionRadius = 200 + 10 * (level - 1);//turret radius upgrade
 
     if (justPlaced && level == 6 && evo_times) {
         //std::cout << "Special Effect Activated\n";
@@ -104,7 +104,7 @@ void MachineGunTurret::Update(float deltaTime) {
 
 
 
-        if (reload <= 0.02*level) {
+        if (reload <= 0.05*level) {
             // shoot.
             reload = coolDown;
             CreateBullet();
