@@ -81,7 +81,13 @@ void PlayScene::Initialize()
     lives = 10;
     money = 150;
     SpeedMult = 1;
-
+    enemyOut.resize(4);
+    inputkey.resize(4);
+    enemyOut[0]={-1,0.0};
+    enemyOut[1]={-1,0.0};
+    enemyOut[2]={-1,0.0};
+    enemyOut[3]={-1,0.0};
+    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
     // Add groups from bottom to top.
     AddNewObject(TileMapGroup = new Group());
     AddNewObject(GroundEffectGroup = new Group());
@@ -257,49 +263,97 @@ void PlayScene::Update(float deltaTime)
             }
         }
         else {
-            auto current = enemyWaveData.front();
-            if (ticks < current.second)
-                continue;
+            if (enemyOut[0].first==-1 ||enemyOut[1].first==-1 ||enemyOut[2].first==-1 ||enemyOut[3].first==-1 ) {
+                if (enemyOut[0].first==-1) {
+                    auto current = enemyWaveData.front();
+                    if (ticks < current.second)
+                        continue;
 
-            ticks -= current.second;
-            enemyWaveData.pop_front();
-            const Engine::Point SpawnCoordinate =
-                Engine::Point(SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
-                              SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
-            Enemy *enemy;
+                    ticks -= current.second;
+                    enemyOut[0]=current;
+                    enemyWaveData.pop_front();
+                }
+                if (enemyOut[1].first==-1) {
+                    auto current = enemyWaveData.front();
+                    if (ticks < current.second)
+                        continue;
 
-            switch (current.first) {
-                case 1:
-                    EnemyGroup->AddNewObject(
-                        enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                case 2:
-                    EnemyGroup->AddNewObject(
-                        enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
+                    ticks -= current.second;
+                    enemyOut[1]=current;
+                    enemyWaveData.pop_front();
+                }
+                if (enemyOut[2].first==-1) {
+                    auto current = enemyWaveData.front();
+                    if (ticks < current.second)
+                        continue;
 
-                case 3:
-                    EnemyGroup->AddNewObject(
-                        enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                case 4:
-                    EnemyGroup->AddNewObject(
-                        enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                case 5:
-                    EnemyGroup->AddNewObject(
-                        enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                case 6:
-                    EnemyGroup->AddNewObject(
-                        enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                default:
-                    continue;
+                    ticks -= current.second;
+                    enemyOut[2]=current;
+                    enemyWaveData.pop_front();
+                }
+                if (enemyOut[3].first==-1) {
+                    auto current = enemyWaveData.front();
+                    if (ticks < current.second)
+                        continue;
+
+                    ticks -= current.second;
+                    enemyOut[3]=current;
+                    enemyWaveData.pop_front();
+                }
             }
-            enemy->UpdatePath(mapDistance);
-            // Compensate the time lost.
-            enemy->Update(ticks);
+
+            if (inputkey[0]==1 ||inputkey[1]==1 ||inputkey[2]==1 ||inputkey[3]==1 ) {
+                auto current = enemyOut[0];
+                if (inputkey[0]==1 && enemyOut[0].first!=-1) {
+                    current = enemyOut[0];
+                }
+                else if (inputkey[1]==1 && enemyOut[1].first!=-1) {
+                    current = enemyOut[1];
+                }
+                else if (inputkey[2]==1 && enemyOut[2].first!=-1) {
+                    current = enemyOut[2];
+                }
+                else if (inputkey[3]==1 && enemyOut[3].first!=-1) {
+                    current = enemyOut[3];
+                }
+                const Engine::Point SpawnCoordinate =
+                    Engine::Point(SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
+                                  SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
+                Enemy *enemy;
+
+                switch (current.first) {
+                    case 1:
+                        EnemyGroup->AddNewObject(
+                            enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        break;
+                    case 2:
+                        EnemyGroup->AddNewObject(
+                            enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        break;
+
+                    case 3:
+                        EnemyGroup->AddNewObject(
+                            enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        break;
+                    case 4:
+                        EnemyGroup->AddNewObject(
+                            enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        break;
+                    case 5:
+                        EnemyGroup->AddNewObject(
+                            enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        break;
+                    case 6:
+                        EnemyGroup->AddNewObject(
+                            enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        break;
+                    default:
+                        continue;
+                }
+                enemy->UpdatePath(mapDistance);
+                // Compensate the time lost.
+                enemy->Update(ticks);
+            }
         }
     }
     if (preview && !paused) {
@@ -366,7 +420,8 @@ void PlayScene::Draw() const
 
         UIGroup->AddNewObject(new Engine::Label("I: ", "romulus.ttf", 70, 1320,420, 0,0,0, 255, 0.5, 0.5));
         UIGroup->AddNewObject(new Engine::Label("O: ", "romulus.ttf", 70, 1320,470, 0,0,0, 255, 0.5, 0.5));
-        //UIGroup->AddNewObject(new Engine::Label(ene[0], "romulus.ttf", 70, 1320,320, 0,0,0, 255, 0.5, 0.5));
+
+        //UIGroup->AddNewObject(new Engine::Label(, "romulus.ttf", 70, 1320,320, 0,0,0, 255, 0.5, 0.5));
         //UIGroup->AddNewObject(new Engine::Label( ene[1], "romulus.ttf", 70, 1320,370, 0,0,0, 255, 0.5, 0.5));
 
 
@@ -596,6 +651,18 @@ void PlayScene::OnKeyDown(int keyCode)
         }
         if (keyCode == ALLEGRO_KEY_S) {
             UIBtnClicked(0);
+        }
+        if (keyCode == ALLEGRO_KEY_Y) {
+            inputkey[0]=1;
+        }
+        if (keyCode == ALLEGRO_KEY_U) {
+            inputkey[1]=1;
+        }
+        if (keyCode == ALLEGRO_KEY_I) {
+            inputkey[2]=1;
+        }
+        if (keyCode == ALLEGRO_KEY_O) {
+            inputkey[3]=1;
         }
         if (keyCode == ALLEGRO_KEY_Q) {
             // Hotkey for MachineGunTurret.

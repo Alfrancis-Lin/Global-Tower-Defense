@@ -64,7 +64,7 @@ public:
     int MapId;
     float ticks;
     float deathCountDown;
-
+    std::vector <int> inputkey;
 
 
 
