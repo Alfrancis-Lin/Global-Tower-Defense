@@ -19,6 +19,7 @@
 #include "Enemy/PlaneEnemy.hpp"
 #include "Enemy/SoldierEnemy.hpp"
 #include "Enemy/TankEnemy.hpp"
+#include "Enemy/Obstacle.hpp"
 #include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"
 #include "Engine/Group.hpp"
@@ -85,6 +86,10 @@ void PlayScene::Initialize()
     AddNewObject(EnemyGroup = new Group());
     AddNewObject(BulletGroup = new Group());
     AddNewObject(EffectGroup = new Group());
+    AddNewObject(ObstacleGroup = new Group());
+
+
+
     // Should support buttons.
     AddNewControlObject(UIGroup = new Group());
     AddNewControlObject(ButtonsGroup = new Group());
@@ -354,7 +359,8 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
             Turret* turret = dynamic_cast<Turret*>(obj);
             if (!turret) continue;
             Engine::Point diff = turret->Position - Engine::Point(mx, my);
-            if (diff.Magnitude() <= 20) {
+            if (diff.Magnitude() <= 20 && money >= turret->up_cost) {
+                EarnMoney(-(turret->up_cost*turret->level));
                 int nextLevel = turret->GetLevel() + 1;
                 if (nextLevel <= 5) {
                     turret->Upgrade(nextLevel);
@@ -438,7 +444,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 TowerGroup->AddNewObject(preview);
                 // To keep responding when paused.
                 preview->Update(0);
-
+                //preview->Upgrade(6);
                 preview->SetJustPlaced();//給進化砲塔用的，放置瞬間有效果，不要刪掉
                 // Remove Preview.
                 preview = nullptr;
@@ -671,6 +677,33 @@ void PlayScene::ReadMap()
             }
         }
     }
+
+    //generate rocks
+    for(int r=0; r<60; r++){
+        int x = rand() % MapWidth;
+        int y = rand() % MapHeight;
+        if(mapState[y][x] == TILE_FLOOR && r%3){
+            Obstacle* obs = new Obstacle("play/rock.png",
+                                         x * BlockSize + BlockSize / 2,
+                                         y * BlockSize + BlockSize / 2,
+                                         200, x, y); // 把格子座標帶進去
+
+            ObstacleGroup->AddNewObject(obs);
+            mapState[y][x] = TILE_OCCUPIED;
+        }
+        else if(mapState[y][x] == TILE_FLOOR && r%5){
+            Obstacle* obs = new Obstacle("play/wood.png",
+                                              x * BlockSize + BlockSize / 2,
+                                              y * BlockSize + BlockSize / 2,
+                                              2, x, y); // 把格子座標帶進去
+
+            ObstacleGroup->AddNewObject(obs);
+            mapState[y][x] = TILE_OCCUPIED;
+        }
+
+
+    }
+
 }
 
 void PlayScene::ReadEnemyWave()
@@ -751,7 +784,7 @@ void PlayScene::ConstructUI()
     btn = new TurretButton(
         "play/floor.png", "play/dirt.png",
         Engine::Sprite("play/tower-base.png", 1294, 226, 0, 0, 0, 0), //x+76 y+76
-        Engine::Sprite("play/turret-6.png", 1294, 226 - 8, 0, 0, 0, 0), 1294,
+        Engine::Sprite("play/ice_turret.png", 1294, 226 - 8, 0, 0, 0, 0), 1294,
         226, FreezeTurret::Price);
 
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
@@ -761,25 +794,25 @@ void PlayScene::ConstructUI()
     btn = new TurretButton(
         "play/floor.png", "play/dirt.png",
         Engine::Sprite("play/tower-base.png", 1370, 226, 0, 0, 0, 0), //x+76 y+76
-        Engine::Sprite("play/turret-6.png", 1370, 226 - 8, 0, 0, 0, 0), 1370,
-        226, FreezeTurret::Price);
+        Engine::Sprite("play/fire_turret.png", 1370, 226 - 8, 0, 0, 0, 0), 1370,
+        226, FireTurret::Price);
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 6));
     UIGroup->AddNewControlObject(btn);
 
     //CoinGen
     btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1446, 226, 0, 0, 0, 0), //x+76 y+76
-            Engine::Sprite("play/turret-6.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
-            226, FreezeTurret::Price);
+            Engine::Sprite("play/farm.png", 1446, 226, 0, 0, 0, 0), //x+76 y+76
+            Engine::Sprite("play/farm.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
+            226, CoinGen::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 7));
         UIGroup->AddNewControlObject(btn);
 
     // 進化按鈕
     btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1516, 188, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-7.png", 1516, 188 - 8, 0, 0, 0, 0), 1516,
+            Engine::Sprite("play/dirt.png", 1516, 188, 0, 0, 0, 0),
+            Engine::Sprite("play/evo_pic.png", 1516, 188 , 0, 0, 0, 0), 1516,
             188, 0); // 進化按鈕不需要金錢檢查
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
         UIGroup->AddNewControlObject(btn);
@@ -828,12 +861,12 @@ void PlayScene::UIBtnClicked(int id)
         next_preview = new FreezeTurret(0, 0);
     else if (id == 5) {
                  superEvolutionEnabled = true;
-                 //AudioHelper::PlayAudio("upgrade.wav"); // 提示音效
+                 AudioHelper::PlayAudio("hypercharge.wav"); // 提示音效
                  // 也可以加入浮動提示
                  floatingTexts.push_back({
-                     Engine::Point(1300, 200),
+                     Engine::Point(1400, 200),
                      "Super Evolution Ready!",
-                     1.0f
+                     2.0f
                  });
                  return;
     }
@@ -930,7 +963,8 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
     std::queue<Engine::Point> que;
     // Push end point.
     // BFS from end point.
-
+    if (mapState[MapHeight - 1][MapWidth - 1] != TILE_DIRT)
+        return map;
     que.push(Engine::Point(MapWidth - 1, MapHeight - 1));
     map[MapHeight - 1][MapWidth - 1] = 0;
     while (!que.empty()) {

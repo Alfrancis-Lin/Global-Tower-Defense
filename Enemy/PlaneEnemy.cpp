@@ -6,7 +6,7 @@
 #include "Engine/GameEngine.hpp"
 #include "Scene/PlayScene.hpp"
 
-PlaneEnemy::PlaneEnemy(int x, int y) : Enemy("play/enemy-2.png", x, y, 10, 20, 2, 10) {
+PlaneEnemy::PlaneEnemy(int x, int y) : Enemy("play/enemy-2.png", x, y, 10, 20, 5, 10) {
     double min = 0.07;
     double max = 0.93;
 
