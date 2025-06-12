@@ -359,11 +359,13 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
             Turret* turret = dynamic_cast<Turret*>(obj);
             if (!turret) continue;
             Engine::Point diff = turret->Position - Engine::Point(mx, my);
-            if (diff.Magnitude() <= 20 && money >= turret->up_cost) {
+            if (diff.Magnitude() <= 20 && money >= turret->up_cost * turret->level) {
                 EarnMoney(-(turret->up_cost*turret->level));
                 int nextLevel = turret->GetLevel() + 1;
                 if (nextLevel <= 5) {
                     turret->Upgrade(nextLevel);
+
+                    AudioHelper::PlayAudio("upgrade.wav");
 
                     // 🔥 加入升級提示
                     floatingTexts.push_back({
@@ -432,6 +434,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 }
                 // Purchase.
                 EarnMoney(-preview->GetPrice());
+                if(preview->level == 6) EarnMoney(-500);
                 // Remove Preview.
                 preview->GetObjectIterator()->first = false;
                 UIGroup->RemoveObject(preview->GetObjectIterator());
@@ -813,7 +816,7 @@ void PlayScene::ConstructUI()
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/dirt.png", 1516, 188, 0, 0, 0, 0),
             Engine::Sprite("play/evo_pic.png", 1516, 188 , 0, 0, 0, 0), 1516,
-            188, 0); // 進化按鈕不需要金錢檢查
+            188, 500); // 進化按鈕不需要金錢檢查
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
         UIGroup->AddNewControlObject(btn);
 
