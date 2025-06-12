@@ -3,6 +3,7 @@
 #include <allegro5/allegro_audio.h>
 #include <list>
 #include <memory>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 #include <set>
@@ -10,6 +11,7 @@
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
 #include "Turret/upgrade_system.hpp"
+#include "UI/Component/Label.hpp"
 
 struct FloatingText {
     Engine::Point position;
@@ -66,10 +68,6 @@ public:
     float deathCountDown;
     std::vector <int> inputkey;
 
-
-
-
-
     // Map tiles.
     Group *TileMapGroup;
     Group *GroundEffectGroup;
@@ -119,5 +117,10 @@ public:
     int PrevSpeedMult;
     void QuitOnClick(void);
     void RestartOnClick(void);
+    Engine::Label* y;
+    Engine::Label* u;
+    Engine::Label* ii;
+    Engine::Label* o;
+    std::unordered_map<int, std::string> enemy_id_to_type;
 };
 #endif   // PLAYSCENE_HPP

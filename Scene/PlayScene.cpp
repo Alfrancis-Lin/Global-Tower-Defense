@@ -1,15 +1,15 @@
 #include <algorithm>
 #include <allegro5/allegro.h>
 #include <cmath>
-//#include <curl/curl.h>
+// #include <curl/curl.h>
 #include <fstream>
 #include <functional>
 #include <memory>
 #include <queue>
 #include <random>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include "Enemy/BadEnemy.hpp"
 #include "Enemy/BinaryEnemy.hpp"
@@ -26,21 +26,20 @@
 #include "Generator/ProceduralMapGenerator.hpp"
 #include "PlayScene.hpp"
 #include "Turret/AntiAirTurret.hpp"
+#include "Turret/CoinGen.hpp"
+#include "Turret/FireTurret.hpp"
 #include "Turret/FreezeTurret.hpp"
 #include "Turret/LaserTurret.hpp"
-#include "Turret/Turret.hpp"
 #include "Turret/MachineGunTurret.hpp"
-#include "Turret/FireTurret.hpp"
+#include "Turret/Turret.hpp"
 #include "Turret/TurretButton.hpp"
-#include "Turret/CoinGen.hpp"
+#include "Turret/Upgrade_system.hpp"
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
 #include "UI/Component/ImageButton.hpp"
 #include "UI/Component/Label.hpp"
-#include "Turret/Upgrade_system.hpp"
 
-
-UpgradeSystem* upgradeSystem;
+UpgradeSystem *upgradeSystem;
 #include "allegro5/allegro_primitives.h"
 #include "allegro5/color.h"
 
@@ -63,15 +62,15 @@ const std::vector<int> PlayScene::code = {
     /*ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT,
     ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER*/
 };
-//std::vector <std::string> ene(4);
-//std::vector <std::string> numm(4);
+// std::vector <std::string> ene(4);
+// std::vector <std::string> numm(4);
 Engine::Point PlayScene::GetClientSize()
 {
     return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
 }
 void PlayScene::Initialize()
 {
-    //mapTurret.clear();
+    // mapTurret.clear();
     mapState.clear();
     keyStrokes.clear();
     ticks = 0;
@@ -81,11 +80,18 @@ void PlayScene::Initialize()
     SpeedMult = 1;
     enemyOut.resize(4);
     inputkey.resize(4);
-    enemyOut[0]={-1,0.0};
-    enemyOut[1]={-1,0.0};
-    enemyOut[2]={-1,0.0};
-    enemyOut[3]={-1,0.0};
-    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
+    enemyOut[0] = {-1, 0.0};
+    enemyOut[1] = {-1, 0.0};
+    enemyOut[2] = {-1, 0.0};
+    enemyOut[3] = {-1, 0.0};
+    inputkey[0] = inputkey[1] = inputkey[2] = inputkey[3] = 0;
+    enemy_id_to_type[1] = "Soldier";
+    enemy_id_to_type[2] = "Plane";
+    enemy_id_to_type[3] = "Tank";
+    enemy_id_to_type[4] = "Big Tank";
+    enemy_id_to_type[5] = "Big Big Tank";
+    enemy_id_to_type[6] = "Bomber";
+    y = u = ii = o = nullptr;
     // Add groups from bottom to top.
     AddNewObject(TileMapGroup = new Group());
     AddNewObject(GroundEffectGroup = new Group());
@@ -129,15 +135,14 @@ void PlayScene::Update(float deltaTime)
 {
     // If we use deltaTime directly, then we might have Bullet-through-paper
     // problem. Reference: Bullet-Through-Paper
-    if (!paused)
-    {
+    if (!paused) {
         if (SpeedMult == 0)
             deathCountDown = -1;
         else if (deathCountDown != -1)
             SpeedMult = 1;
     }
     // Calculate danger zone.
-    //ene[0]=std::to_string(money);
+    // ene[0]=std::to_string(money);
     std::vector<float> reachEndTimes;
     for (auto &it : EnemyGroup->GetObjects()) {
         reachEndTimes.push_back(dynamic_cast<Enemy *>(it)->reachEndTime);
@@ -184,7 +189,7 @@ void PlayScene::Update(float deltaTime)
         IScene::Update(deltaTime);
         // Check if we should create new enemy.
         ticks += deltaTime;
-        if (enemyWaveData.empty()&&multiendd==true) {
+        if (enemyWaveData.empty() && multiendd == true) {
             if (EnemyGroup->GetObjects().empty()) {
                 // Free resources.
                 /*delete TileMapGroup;
@@ -208,136 +213,172 @@ void PlayScene::Update(float deltaTime)
                 continue;
             ticks -= current.second;
             enemyWaveData.pop_front();
-            const Engine::Point SpawnCoordinate =
-                Engine::Point(SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
-                              SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
+            const Engine::Point SpawnCoordinate = Engine::Point(
+                SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
+                SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
             Enemy *enemy;
 
             switch (current.first) {
+            case 1:
+                EnemyGroup->AddNewObject(
+                    enemy =
+                        new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 2:
+                EnemyGroup->AddNewObject(
+                    enemy =
+                        new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+
+            case 3:
+                EnemyGroup->AddNewObject(
+                    enemy =
+                        new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 4:
+                EnemyGroup->AddNewObject(
+                    enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 5:
+                EnemyGroup->AddNewObject(
+                    enemy =
+                        new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 6:
+                EnemyGroup->AddNewObject(
+                    enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            default:
+                continue;
+            }
+        }
+        else {
+            if (enemyOut[0].first == -1 || enemyOut[1].first == -1 ||
+                enemyOut[2].first == -1 || enemyOut[3].first == -1) {
+                if (enemyOut[0].first == -1) {
+                    auto current = enemyWaveData.front();
+                    if (ticks < current.second)
+                        continue;
+                    if (y)
+                        RemoveObject(y->GetObjectIterator());
+                    y = new Engine::Label(enemy_id_to_type[current.first],
+                                          "romulus.ttf", 58, 1450, 320, 0, 0, 0,
+                                          255, 0.5, 0.5);
+                    UIGroup->AddNewObject(y);
+                    ticks -= current.second;
+                    enemyOut[0] = current;
+                    enemyWaveData.pop_front();
+                }
+                if (enemyOut[1].first == -1) {
+                    auto current = enemyWaveData.front();
+                    if (ticks < current.second)
+                        continue;
+                    if (u)
+                        RemoveObject(u->GetObjectIterator());
+                    u = new Engine::Label(enemy_id_to_type[current.first],
+                                          "romulus.ttf", 58, 1450, 370, 0, 0, 0,
+                                          255, 0.5, 0.5);
+                    UIGroup->AddNewObject(u);
+
+                    ticks -= current.second;
+                    enemyOut[1] = current;
+                    enemyWaveData.pop_front();
+                }
+                if (enemyOut[2].first == -1) {
+                    auto current = enemyWaveData.front();
+                    if (ticks < current.second)
+                        continue;
+                    if (ii)
+                        RemoveObject(ii->GetObjectIterator());
+                    ii = new Engine::Label(enemy_id_to_type[current.first],
+                                           "romulus.ttf", 58, 1450, 420, 0, 0,
+                                           0, 255, 0.5, 0.5);
+                    UIGroup->AddNewObject(ii);
+
+                    ticks -= current.second;
+                    enemyOut[2] = current;
+                    enemyWaveData.pop_front();
+                }
+                if (enemyOut[3].first == -1) {
+                    auto current = enemyWaveData.front();
+                    if (ticks < current.second)
+                        continue;
+                    if (o)
+                        RemoveObject(o->GetObjectIterator());
+                    o = new Engine::Label(enemy_id_to_type[current.first],
+                                          "romulus.ttf", 58, 1450, 470, 0, 0, 0,
+                                          255, 0.5, 0.5);
+                    UIGroup->AddNewObject(o);
+
+                    ticks -= current.second;
+                    enemyOut[3] = current;
+                    enemyWaveData.pop_front();
+                }
+            }
+
+            if (inputkey[0] == 1 || inputkey[1] == 1 || inputkey[2] == 1 ||
+                inputkey[3] == 1) {
+                auto current = enemyOut[0];
+                if (inputkey[0] == 1 && enemyOut[0].first != -1) {
+                    current = enemyOut[0];
+                    enemyOut[0].first = -1;
+                    inputkey[0] = inputkey[1] = inputkey[2] = inputkey[3] = 0;
+                }
+                else if (inputkey[1] == 1 && enemyOut[1].first != -1) {
+                    current = enemyOut[1];
+                    enemyOut[1].first = -1;
+                    inputkey[0] = inputkey[1] = inputkey[2] = inputkey[3] = 0;
+                }
+                else if (inputkey[2] == 1 && enemyOut[2].first != -1) {
+                    current = enemyOut[2];
+                    enemyOut[2].first = -1;
+                    inputkey[0] = inputkey[1] = inputkey[2] = inputkey[3] = 0;
+                }
+                else if (inputkey[3] == 1 && enemyOut[3].first != -1) {
+                    current = enemyOut[3];
+                    enemyOut[3].first = -1;
+                    inputkey[0] = inputkey[1] = inputkey[2] = inputkey[3] = 0;
+                }
+
+                const Engine::Point SpawnCoordinate = Engine::Point(
+                    SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
+                    SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
+                Enemy *enemy;
+
+                switch (current.first) {
                 case 1:
                     EnemyGroup->AddNewObject(
-                        enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        enemy = new SoldierEnemy(SpawnCoordinate.x,
+                                                 SpawnCoordinate.y));
                     break;
                 case 2:
                     EnemyGroup->AddNewObject(
-                        enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        enemy = new PlaneEnemy(SpawnCoordinate.x,
+                                               SpawnCoordinate.y));
                     break;
 
                 case 3:
                     EnemyGroup->AddNewObject(
-                        enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        enemy = new TankEnemy(SpawnCoordinate.x,
+                                              SpawnCoordinate.y));
                     break;
                 case 4:
                     EnemyGroup->AddNewObject(
-                        enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        enemy =
+                            new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
                     break;
                 case 5:
                     EnemyGroup->AddNewObject(
-                        enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        enemy = new BinaryEnemy(SpawnCoordinate.x,
+                                                SpawnCoordinate.y));
                     break;
                 case 6:
                     EnemyGroup->AddNewObject(
-                        enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                        enemy =
+                            new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
                     break;
                 default:
                     continue;
-            }
-        }
-        else {
-            if (enemyOut[0].first==-1 ||enemyOut[1].first==-1 ||enemyOut[2].first==-1 ||enemyOut[3].first==-1 ) {
-                if (enemyOut[0].first==-1) {
-                    auto current = enemyWaveData.front();
-                    if (ticks < current.second)
-                        continue;
-
-                    ticks -= current.second;
-                    enemyOut[0]=current;
-                    enemyWaveData.pop_front();
-                }
-                if (enemyOut[1].first==-1) {
-                    auto current = enemyWaveData.front();
-                    if (ticks < current.second)
-                        continue;
-
-                    ticks -= current.second;
-                    enemyOut[1]=current;
-                    enemyWaveData.pop_front();
-                }
-                if (enemyOut[2].first==-1) {
-                    auto current = enemyWaveData.front();
-                    if (ticks < current.second)
-                        continue;
-
-                    ticks -= current.second;
-                    enemyOut[2]=current;
-                    enemyWaveData.pop_front();
-                }
-                if (enemyOut[3].first==-1) {
-                    auto current = enemyWaveData.front();
-                    if (ticks < current.second)
-                        continue;
-
-                    ticks -= current.second;
-                    enemyOut[3]=current;
-                    enemyWaveData.pop_front();
-                }
-            }
-
-            if (inputkey[0]==1 ||inputkey[1]==1 ||inputkey[2]==1 ||inputkey[3]==1 ) {
-                auto current = enemyOut[0];
-                if (inputkey[0]==1 && enemyOut[0].first!=-1) {
-                    current = enemyOut[0];
-                    enemyOut[0].first=-1;
-                    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
-                }
-                else if (inputkey[1]==1 && enemyOut[1].first!=-1) {
-                    current = enemyOut[1];
-                    enemyOut[1].first=-1;
-                    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
-                }
-                else if (inputkey[2]==1 && enemyOut[2].first!=-1) {
-                    current = enemyOut[2];
-                    enemyOut[2].first=-1;
-                    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
-                }
-                else if (inputkey[3]==1 && enemyOut[3].first!=-1) {
-                    current = enemyOut[3];
-                    enemyOut[3].first=-1;
-                    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
-                }
-                const Engine::Point SpawnCoordinate =
-                    Engine::Point(SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
-                                  SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
-                Enemy *enemy;
-
-                switch (current.first) {
-                    case 1:
-                        EnemyGroup->AddNewObject(
-                            enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                        break;
-                    case 2:
-                        EnemyGroup->AddNewObject(
-                            enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                        break;
-
-                    case 3:
-                        EnemyGroup->AddNewObject(
-                            enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                        break;
-                    case 4:
-                        EnemyGroup->AddNewObject(
-                            enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                        break;
-                    case 5:
-                        EnemyGroup->AddNewObject(
-                            enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                        break;
-                    case 6:
-                        EnemyGroup->AddNewObject(
-                            enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                        break;
-                    default:
-                        continue;
                 }
                 enemy->UpdatePath(mapDistance);
                 // Compensate the time lost.
@@ -351,14 +392,13 @@ void PlayScene::Update(float deltaTime)
         // To keep responding when paused.
         preview->Update(deltaTime);
     }
-    for (auto it = floatingTexts.begin(); it != floatingTexts.end(); ) {
+    for (auto it = floatingTexts.begin(); it != floatingTexts.end();) {
         it->timer -= deltaTime;
         if (it->timer <= 0)
             it = floatingTexts.erase(it);
         else
             ++it;
     }
-
 }
 
 void PlayScene::Draw() const
@@ -380,56 +420,57 @@ void PlayScene::Draw() const
             }
         }
     }
-    if (paused)
-    {
+    if (paused) {
         int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
         int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
-        al_draw_filled_rectangle(0, 0, 1280, h,
-                                al_map_rgba(0, 0, 0, 100));
+        al_draw_filled_rectangle(0, 0, 1280, h, al_map_rgba(0, 0, 0, 100));
 
-        Engine::Label pauseLabel("PAUSED", "romulus.ttf", 256,
-                                (double)w / 2.5, (double)h / 2);
+        Engine::Label pauseLabel("PAUSED", "romulus.ttf", 256, (double)w / 2.5,
+                                 (double)h / 2);
         pauseLabel.Color = al_map_rgba(255, 255, 255, 255);
         pauseLabel.Anchor = Engine::Point(0.5, 0.5);
         pauseLabel.Draw();
     }
-    for (auto& ft : floatingTexts) {
-        al_draw_text(Engine::Resources::GetInstance().GetFont("romulus.ttf", 52).get(),
-                      al_map_rgb(0, 0, 0),
-                      ft.position.x,
-                      ft.position.y - (1.0f - ft.timer / 1.0f) * 30, // 上浮動畫
-                      ALLEGRO_ALIGN_CENTER, ft.text.c_str());
+    for (auto &ft : floatingTexts) {
+        al_draw_text(
+            Engine::Resources::GetInstance().GetFont("romulus.ttf", 52).get(),
+            al_map_rgb(0, 0, 0), ft.position.x,
+            ft.position.y - (1.0f - ft.timer / 1.0f) * 30, // 上浮動畫
+            ALLEGRO_ALIGN_CENTER, ft.text.c_str());
     }
-    if (multiplay)
-    {
+    if (multiplay) {
 
-        UIGroup->AddNewObject(new Engine::Label("Y: ", "romulus.ttf", 70, 1320,320, 0,0,0, 255, 0.5, 0.5));
-        UIGroup->AddNewObject(new Engine::Label("U: ", "romulus.ttf", 70, 1320,370, 0,0,0, 255, 0.5, 0.5));
+        UIGroup->AddNewObject(new Engine::Label("Y: ", "romulus.ttf", 70, 1330,
+                                                320, 0, 0, 0, 255, 0.5, 0.5));
+        UIGroup->AddNewObject(new Engine::Label("U: ", "romulus.ttf", 70, 1330,
+                                                370, 0, 0, 0, 255, 0.5, 0.5));
 
+        UIGroup->AddNewObject(new Engine::Label("I: ", "romulus.ttf", 70, 1330,
+                                                420, 0, 0, 0, 255, 0.5, 0.5));
+        UIGroup->AddNewObject(new Engine::Label("O: ", "romulus.ttf", 70, 1330,
+                                                470, 0, 0, 0, 255, 0.5, 0.5));
 
-        UIGroup->AddNewObject(new Engine::Label("I: ", "romulus.ttf", 70, 1320,420, 0,0,0, 255, 0.5, 0.5));
-        UIGroup->AddNewObject(new Engine::Label("O: ", "romulus.ttf", 70, 1320,470, 0,0,0, 255, 0.5, 0.5));
+        // UIGroup->AddNewObject(new Engine::Label(, "romulus.ttf", 70,
+        // 1320,320, 0,0,0, 255, 0.5, 0.5)); UIGroup->AddNewObject(new
+        // Engine::Label( ene[1], "romulus.ttf", 70, 1320,370, 0,0,0, 255, 0.5,
+        // 0.5));
 
-        //UIGroup->AddNewObject(new Engine::Label(, "romulus.ttf", 70, 1320,320, 0,0,0, 255, 0.5, 0.5));
-        //UIGroup->AddNewObject(new Engine::Label( ene[1], "romulus.ttf", 70, 1320,370, 0,0,0, 255, 0.5, 0.5));
-
-
-        //UIGroup->AddNewObject(new Engine::Label(ene[2], "romulus.ttf", 70, 1320,420, 0,0,0, 255, 0.5, 0.5));
-        //UIGroup->AddNewObject(new Engine::Label(ene[3], "romulus.ttf", 70, 1320,470, 0,0,0, 255, 0.5, 0.5));
+        // UIGroup->AddNewObject(new Engine::Label(ene[2], "romulus.ttf", 70,
+        // 1320,420, 0,0,0, 255, 0.5, 0.5)); UIGroup->AddNewObject(new
+        // Engine::Label(ene[3], "romulus.ttf", 70, 1320,470, 0,0,0, 255, 0.5,
+        // 0.5));
     }
 }
 
 void PlayScene::OnMouseDown(int button, int mx, int my)
 {
-    if (!paused)
-    {
+    if (!paused) {
         if ((button & 1) && !imgTarget->Visible && preview) {
             // Cancel turret construct.
             UIGroup->RemoveObject(preview->GetObjectIterator());
             preview = nullptr;
         }
-        if (shovelActive)
-        {
+        if (shovelActive) {
             // remove the sprite
             UIGroup->RemoveObject(shovel->GetObjectIterator());
             shovelActive = false;
@@ -442,8 +483,10 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
                 mapState[y][x] = TILE_FLOOR;
                 // remove the turret
                 for (auto &it : TowerGroup->GetObjects()) {
-                    if (it->Position.x == x * BlockSize + (double)BlockSize / 2 &&
-                        it->Position.y == y * BlockSize + (double)BlockSize / 2) {
+                    if (it->Position.x ==
+                            x * BlockSize + (double)BlockSize / 2 &&
+                        it->Position.y ==
+                            y * BlockSize + (double)BlockSize / 2) {
                         EarnMoney(dynamic_cast<Turret *>(it)->GetPrice() / 2);
                         TowerGroup->RemoveObject(it->GetObjectIterator());
                         // create sfx of shovel
@@ -456,16 +499,19 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
         }
     }
     if (button == 2) { // 右鍵
-        for (auto& obj : UIGroup->GetObjects()) {
-                    TurretButton* btn = dynamic_cast<TurretButton*>(obj);
-                    if (!btn) continue;
-                    Engine::Point diff = Engine::Point(mx, my) - Engine::Point(btn->Position.x, btn->Position.y);
-
+        for (auto &obj : UIGroup->GetObjects()) {
+            TurretButton *btn = dynamic_cast<TurretButton *>(obj);
+            if (!btn)
+                continue;
+            Engine::Point diff =
+                Engine::Point(mx, my) -
+                Engine::Point(btn->Position.x, btn->Position.y);
         }
 
-        for (auto& obj : TowerGroup->GetObjects()) {
-            Turret* turret = dynamic_cast<Turret*>(obj);
-            if (!turret) continue;
+        for (auto &obj : TowerGroup->GetObjects()) {
+            Turret *turret = dynamic_cast<Turret *>(obj);
+            if (!turret)
+                continue;
             Engine::Point diff = turret->Position - Engine::Point(mx, my);
             if (diff.Magnitude() <= 20) {
                 int nextLevel = turret->GetLevel() + 1;
@@ -474,12 +520,11 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
 
                     // 🔥 加入升級提示
                     floatingTexts.push_back({
-                        turret->Position,
-                        "Level Up!",
+                        turret->Position, "Level Up!",
                         1.0f // 1秒消失
                     });
 
-                    //AudioHelper::PlayAudio("upgrade.wav");
+                    // AudioHelper::PlayAudio("upgrade.wav");
                 }
                 return; // 點到就升級完，結束
             }
@@ -492,8 +537,7 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
 void PlayScene::OnMouseMove(int mx, int my)
 {
     IScene::OnMouseMove(mx, my);
-    if (!paused)
-    {
+    if (!paused) {
         const int x = mx / BlockSize;
         const int y = my / BlockSize;
 
@@ -516,8 +560,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
 {
     IScene::OnMouseUp(button, mx, my);
 
-    if (!paused)
-    {
+    if (!paused) {
         if (!imgTarget->Visible)
             return;
         const int x = mx / BlockSize;
@@ -530,10 +573,10 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 if (!CheckSpaceValid(x, y)) {
                     Engine::Sprite *sprite;
                     GroundEffectGroup->AddNewObject(
-                        sprite =
-                            new DirtyEffect("play/target-invalid.png", 1,
-                                            x * BlockSize + (double)BlockSize / 2,
-                                            y * BlockSize + (double)BlockSize / 2));
+                        sprite = new DirtyEffect(
+                            "play/target-invalid.png", 1,
+                            x * BlockSize + (double)BlockSize / 2,
+                            y * BlockSize + (double)BlockSize / 2));
                     sprite->Rotation = 0;
                     return;
                 }
@@ -552,7 +595,8 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 // To keep responding when paused.
                 preview->Update(0);
 
-                preview->SetJustPlaced();//給進化砲塔用的，放置瞬間有效果，不要刪掉
+                preview
+                    ->SetJustPlaced(); // 給進化砲塔用的，放置瞬間有效果，不要刪掉
                 // Remove Preview.
                 preview = nullptr;
             }
@@ -570,9 +614,10 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
             if (!CheckSpaceValid(x, y)) {
                 Engine::Sprite *sprite;
                 GroundEffectGroup->AddNewObject(
-                    sprite = new DirtyEffect("play/target-invalid.png", 1,
-                                             x * BlockSize + (double)BlockSize / 2,
-                                             y * BlockSize + (double)BlockSize / 2));
+                    sprite =
+                        new DirtyEffect("play/target-invalid.png", 1,
+                                        x * BlockSize + (double)BlockSize / 2,
+                                        y * BlockSize + (double)BlockSize / 2));
                 sprite->Rotation = 0;
                 return;
             }
@@ -591,8 +636,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
             // To keep responding when paused.
             preview->Update(0);
 
-
-            if(preview->level == 6){
+            if (preview->level == 6) {
                 preview->SetJustPlaced();
             }
 
@@ -608,8 +652,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
 void PlayScene::OnKeyDown(int keyCode)
 {
     IScene::OnKeyDown(keyCode);
-    if (!paused)
-    {
+    if (!paused) {
         if (keyCode == ALLEGRO_KEY_TAB) {
             DebugMode = !DebugMode;
         }
@@ -638,16 +681,16 @@ void PlayScene::OnKeyDown(int keyCode)
             UIBtnClicked(0);
         }
         if (keyCode == ALLEGRO_KEY_Y) {
-            inputkey[0]=1;
+            inputkey[0] = 1;
         }
         if (keyCode == ALLEGRO_KEY_U) {
-            inputkey[1]=1;
+            inputkey[1] = 1;
         }
         if (keyCode == ALLEGRO_KEY_I) {
-            inputkey[2]=1;
+            inputkey[2] = 1;
         }
         if (keyCode == ALLEGRO_KEY_O) {
-            inputkey[3]=1;
+            inputkey[3] = 1;
         }
         if (keyCode == ALLEGRO_KEY_Q) {
             // Hotkey for MachineGunTurret.
@@ -670,7 +713,7 @@ void PlayScene::OnKeyDown(int keyCode)
             SpeedMult = keyCode - ALLEGRO_KEY_0;
         }
     }
-    
+
     keyStrokes.push_back(keyCode);
     if (keyStrokes.size() > code.size())
         keyStrokes.pop_front();
@@ -812,16 +855,14 @@ void PlayScene::ReadEnemyWave()
             enemyWaveData.emplace_back(type, wait);
     }
     fin.close();
-
 }
 void PlayScene::ConstructUI()
 {
 
     if (superEvolutionEnabled) {
-        UIGroup->AddNewObject(new Engine::Label(
-            "Next turret: SUPER EVOLUTION!",
-            "romulus.ttf", 52, 1300, 300, 255, 0, 0, 255
-        ));
+        UIGroup->AddNewObject(new Engine::Label("Next turret: SUPER EVOLUTION!",
+                                                "romulus.ttf", 52, 1300, 300,
+                                                255, 0, 0, 255));
     }
 
     // Background
@@ -874,42 +915,46 @@ void PlayScene::ConstructUI()
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
     UIGroup->AddNewControlObject(btn);
 
-    //freezeTurret
+    // freezeTurret
     btn = new TurretButton(
         "play/floor.png", "play/dirt.png",
-        Engine::Sprite("play/tower-base.png", 1294, 226, 0, 0, 0, 0), //x+76 y+76
+        Engine::Sprite("play/tower-base.png", 1294, 226, 0, 0, 0,
+                       0), // x+76 y+76
         Engine::Sprite("play/turret-6.png", 1294, 226 - 8, 0, 0, 0, 0), 1294,
         226, FreezeTurret::Price);
 
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
     UIGroup->AddNewControlObject(btn);
 
-    //fireTurret
+    // fireTurret
     btn = new TurretButton(
         "play/floor.png", "play/dirt.png",
-        Engine::Sprite("play/tower-base.png", 1370, 226, 0, 0, 0, 0), //x+76 y+76
+        Engine::Sprite("play/tower-base.png", 1370, 226, 0, 0, 0,
+                       0), // x+76 y+76
         Engine::Sprite("play/turret-6.png", 1370, 226 - 8, 0, 0, 0, 0), 1370,
         226, FreezeTurret::Price);
     btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 6));
     UIGroup->AddNewControlObject(btn);
 
-    //CoinGen
+    // CoinGen
     btn = new TurretButton(
-            "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1446, 226, 0, 0, 0, 0), //x+76 y+76
-            Engine::Sprite("play/turret-6.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
-            226, FreezeTurret::Price);
-        btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 7));
-        UIGroup->AddNewControlObject(btn);
+        "play/floor.png", "play/dirt.png",
+        Engine::Sprite("play/tower-base.png", 1446, 226, 0, 0, 0,
+                       0), // x+76 y+76
+        Engine::Sprite("play/turret-6.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
+        226, FreezeTurret::Price);
+    btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 7));
+    UIGroup->AddNewControlObject(btn);
 
     // 進化按鈕
     btn = new TurretButton(
-            "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1516, 188, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-7.png", 1516, 188 - 8, 0, 0, 0, 0), 1516,
-            188, 0); // 進化按鈕不需要金錢檢查
-        btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
-        UIGroup->AddNewControlObject(btn);
+        "play/floor.png", "play/dirt.png",
+        Engine::Sprite("play/tower-base.png", 1516, 188, 0, 0, 0, 0),
+        Engine::Sprite("play/turret-7.png", 1516, 188 - 8, 0, 0, 0, 0), 1516,
+        188,
+        0); // 進化按鈕不需要金錢檢查
+    btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
+    UIGroup->AddNewControlObject(btn);
 
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
@@ -943,7 +988,8 @@ void PlayScene::ConstructUI()
 
 void PlayScene::UIBtnClicked(int id)
 {
-    if (paused) return;
+    if (paused)
+        return;
     Turret *next_preview = nullptr;
     if (id == 1 && money >= MachineGunTurret::Price)
         next_preview = new MachineGunTurret(0, 0);
@@ -954,20 +1000,16 @@ void PlayScene::UIBtnClicked(int id)
     else if (id == 4 && money >= FreezeTurret::Price)
         next_preview = new FreezeTurret(0, 0);
     else if (id == 5) {
-                 superEvolutionEnabled = true;
-                 //AudioHelper::PlayAudio("upgrade.wav"); // 提示音效
-                 // 也可以加入浮動提示
-                 floatingTexts.push_back({
-                     Engine::Point(1300, 200),
-                     "Super Evolution Ready!",
-                     1.0f
-                 });
-                 return;
+        superEvolutionEnabled = true;
+        // AudioHelper::PlayAudio("upgrade.wav"); // 提示音效
+        //  也可以加入浮動提示
+        floatingTexts.push_back(
+            {Engine::Point(1300, 200), "Super Evolution Ready!", 1.0f});
+        return;
     }
     else if (id == 6 && money >= FireTurret::Price)
         next_preview = new FireTurret(0, 0);
-    else if (id == 7 && money >= CoinGen::Price)
-    {
+    else if (id == 7 && money >= CoinGen::Price) {
         AudioHelper::PlayAudio("farm.ogg");
         next_preview = new CoinGen(0, 0);
     }
@@ -992,14 +1034,11 @@ void PlayScene::UIBtnClicked(int id)
         return; // not enough money or invalid turret.
 
     if (superEvolutionEnabled) {
-            next_preview->Upgrade(6);
-            superEvolutionEnabled = false; // 一次性
-            floatingTexts.push_back({
-                Engine::Point(1300, 250),
-                "Super Evolution Applied!",
-                1.0f
-            });
-        }
+        next_preview->Upgrade(6);
+        superEvolutionEnabled = false; // 一次性
+        floatingTexts.push_back(
+            {Engine::Point(1300, 250), "Super Evolution Applied!", 1.0f});
+    }
 
     if (preview)
         UIGroup->RemoveObject(preview->GetObjectIterator());
@@ -1024,7 +1063,8 @@ bool PlayScene::CheckSpaceValid(int x, int y)
     if (map[0][0] == -1)
         return false;
     for (auto &it : EnemyGroup->GetObjects()) {
-        if (dynamic_cast<Enemy*>(it)->IsCrossing()) continue;
+        if (dynamic_cast<Enemy *>(it)->IsCrossing())
+            continue;
         Engine::Point pnt;
         pnt.x = floor(it->Position.x / BlockSize);
         pnt.y = floor(it->Position.y / BlockSize);
@@ -1077,8 +1117,7 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
 
 void PlayScene::PauseOrResume(void)
 {
-    if (!paused)
-    {
+    if (!paused) {
         PrevSpeedMult = SpeedMult;
         SpeedMult = 0;
         paused = true;
