@@ -917,6 +917,7 @@ bool PlayScene::CheckSpaceValid(int x, int y)
     mapDistance = map;
     for (auto &it : EnemyGroup->GetObjects())
     {
+        if (dynamic_cast<Enemy*>(it)->IsCrossing()) continue;
         dynamic_cast<Enemy *>(it)->UpdatePath(mapDistance);
     }
     return true;
