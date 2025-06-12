@@ -115,7 +115,7 @@ void Enemy::Update(float deltaTime)
     }
 
     // Pre-calculate the velocity.
-    float remainSpeed = speed * deltaTime;
+    float remainSpeed = speed * deltaTime * speedMultiplier; //fk it slow area
     while (remainSpeed != 0) {
         if (path.empty()) {
             // Reach end point.

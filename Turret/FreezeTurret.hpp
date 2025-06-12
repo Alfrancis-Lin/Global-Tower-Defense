@@ -9,5 +9,7 @@ public:
     static const int Price;
     FreezeTurret(float x, float y);
     void CreateBullet() override;
+    void Update(float deltaTime);
+    void Draw() const;
 };
 #endif   // FREEZETURRET_HPP

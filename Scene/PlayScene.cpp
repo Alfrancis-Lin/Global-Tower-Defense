@@ -429,7 +429,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 TowerGroup->AddNewObject(preview);
                 // To keep responding when paused.
                 preview->Update(0);
-
+                //preview->Upgrade(6);
                 preview->SetJustPlaced();//給進化砲塔用的，放置瞬間有效果，不要刪掉
                 // Remove Preview.
                 preview = nullptr;
@@ -778,8 +778,8 @@ void PlayScene::ConstructUI()
     //CoinGen
     btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1446, 226, 0, 0, 0, 0), //x+76 y+76
-            Engine::Sprite("play/turret-6.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
+            Engine::Sprite("play/farm.png", 1446, 226, 0, 0, 0, 0), //x+76 y+76
+            Engine::Sprite("play/farm.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
             226, CoinGen::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 7));
         UIGroup->AddNewControlObject(btn);

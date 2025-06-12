@@ -16,6 +16,7 @@ class FireTurret : public Turret {
     void CreateBullet() override;
     void Update(float deltaTime) override;
     std::vector<Enemy *> Targets;
+    void Upgrade(int newLevel) override;
 };
 
 #endif // FIRETURRET_H

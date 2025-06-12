@@ -139,6 +139,8 @@ void Turret::Upgrade(int newLevel) {
     }
     else if(level == 6){
         special_effect = true;
+        coolDown = std::max(0.1f, 1.1f - 0.1f * (level - 1)); // 更高等級射速更快
+        CollisionRadius += 5 * (level - 1); // 範例：更高等級範圍增加
         //BurstEffect();
     }
 
