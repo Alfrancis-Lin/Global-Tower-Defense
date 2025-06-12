@@ -288,18 +288,22 @@ void PlayScene::Update(float deltaTime)
                 if (inputkey[0]==1 && enemyOut[0].first!=-1) {
                     current = enemyOut[0];
                     enemyOut[0].first=-1;
+                    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
                 }
                 else if (inputkey[1]==1 && enemyOut[1].first!=-1) {
                     current = enemyOut[1];
                     enemyOut[1].first=-1;
+                    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
                 }
                 else if (inputkey[2]==1 && enemyOut[2].first!=-1) {
                     current = enemyOut[2];
                     enemyOut[2].first=-1;
+                    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
                 }
                 else if (inputkey[3]==1 && enemyOut[3].first!=-1) {
                     current = enemyOut[3];
                     enemyOut[3].first=-1;
+                    inputkey[0]=inputkey[1]=inputkey[2]=inputkey[3]=0;
                 }
                 const Engine::Point SpawnCoordinate =
                     Engine::Point(SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
