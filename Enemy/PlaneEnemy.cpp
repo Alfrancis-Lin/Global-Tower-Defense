@@ -15,12 +15,13 @@ PlaneEnemy::PlaneEnemy(int x, int y) : Enemy("play/enemy-2.png", x, y, 10, 20, 2
     int randomTileIdx = rand() % numTiles;
     
     Position.x = randomTileIdx * TILE_SIZE + (TILE_SIZE / 2.0);
-    
     Position.y = -50;
     Velocity = Engine::Point(0, speed);
     CollisionRadius = 20;
 }
+
 int put;
+
 void PlaneEnemy::Update(float deltaTime) {
 
     int x = static_cast<int>(Position.x / PlayScene::BlockSize);

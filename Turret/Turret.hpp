@@ -25,6 +25,7 @@ protected:
 
 
 public:
+    int up_cost;
     int level = 1; // 新增：初始等級
     bool special_effect = false;
     bool Enabled = true;

@@ -13,7 +13,7 @@ class Turret;
 
 SnowBullet::SnowBullet(Engine::Point position, Engine::Point forwardDirection,
                        float rotation, Turret *parent)
-    : Bullet("play/bullet-10.png", 500, 0.3, position, forwardDirection,
+    : Bullet("play/ice_bullet.png", 500, 0.3, position, forwardDirection,
              rotation - ALLEGRO_PI / 2, parent)
 {
 }
@@ -24,7 +24,7 @@ void SnowBullet::OnExplode(Enemy *enemy)
     std::uniform_int_distribution<std::mt19937::result_type> dist(2, 5);
     enemy->slowTime = parent->level;
     enemy->slowing = true;
-    enemy->Tint = al_map_rgba(0, 0, 255, 255);
+    enemy->Tint = al_map_rgba(0, 0, 155, 205);
     getPlayScene()->GroundEffectGroup->AddNewObject(new DirtyEffect(
-        "play/dirty-1.png", dist(rng), enemy->Position.x, enemy->Position.y));
+        "play/ice_dirty.png", dist(rng), enemy->Position.x, enemy->Position.y));
 }

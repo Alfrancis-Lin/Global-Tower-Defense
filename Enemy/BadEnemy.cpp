@@ -16,7 +16,7 @@
 #include "UI/Animation/Plane.hpp"
 
 BadEnemy::BadEnemy(int x, int y)
-    : Enemy("play/enemy-7.png", x, y, 10, 20, 200, 10)
+    : Enemy("play/enemy-7.png", x, y, 10, 20, 20, 10)
 {
 
     double min = 0.07;

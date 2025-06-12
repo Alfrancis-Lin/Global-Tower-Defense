@@ -17,6 +17,8 @@ class Bullet5 : public Bullet {
 public:
     explicit Bullet5(Engine::Point position, Engine::Point forwardDirection, float rotation, Turret *parent);
     void OnExplode(Enemy *enemy) override;
+    float explosionRadius = 20;
+    void Update(float deltaTime) override;
 
 };
 

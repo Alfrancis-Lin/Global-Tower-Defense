@@ -38,6 +38,8 @@ void AntiAirTurret::Update(float deltaTime) {
     imgBase.Position = Position;
     imgBase.Tint = Tint;
 
+    up_cost = 10;
+
     if (!Enabled)
         return;
 
