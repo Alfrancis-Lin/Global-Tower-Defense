@@ -34,7 +34,7 @@ void Turret::Update(float deltaTime) {
     imgBase.Tint = Tint;
 
     if (justPlaced && level == 6 && evo_times) {
-        std::cout << "Special Effect Activated\n";
+        // std::cout << "Special Effect Activated\n";
         const int bulletCount = 360;
         for (int i = 0; i < bulletCount; i++) {
             if(!(evo_times%30)){

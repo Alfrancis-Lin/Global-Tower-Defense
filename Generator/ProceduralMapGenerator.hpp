@@ -6,7 +6,6 @@
 #include <queue>
 #include <unordered_set>
 #include <array>
-#include <algorithm>
 
 class ProceduralMapGenerator {
 private:
