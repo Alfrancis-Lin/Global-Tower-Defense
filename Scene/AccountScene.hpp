@@ -4,6 +4,7 @@
 #include "AccountSystem/GlobalAccountSystem.hpp"
 #include "Engine/GameEngine.hpp"
 #include "UI/Component/ImageButton.hpp"
+#include "UI/Component/Label.hpp"
 #include "UI/Component/TextBox.hpp"
 #include <allegro5/allegro_audio.h>
 
@@ -22,12 +23,15 @@ class AccountScene final : public Engine::IScene {
     std::string statusMsg;
     float statusMsgTimer;
     Engine::ImageButton* popup;
+    Engine::Label* hint;
+    int color;
   public:
     bool passHide;
     explicit AccountScene() = default;
     void Initialize() override;
     void Terminate() override;
     void Update(float deltaTime) override;
+    void Draw() const override;
 
     void OnMouseDown(int button, int mx, int my) override;
     void OnKeyDown(int keyCode) override;

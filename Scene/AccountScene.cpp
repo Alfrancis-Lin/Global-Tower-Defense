@@ -1,9 +1,10 @@
 #include "AccountScene.hpp"
 #include "AccountSystem/AccountSystem.hpp"
+#include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"
+#include "Engine/IScene.hpp"
 #include "Engine/LOG.hpp"
 #include "Engine/Point.hpp"
-#include "Engine/AudioHelper.hpp"
 #include "PlayScene.hpp"
 #include "UI/Component/ImageButton.hpp"
 #include "UI/Component/Label.hpp"
@@ -34,7 +35,7 @@ void AccountScene::Initialize()
     int hr = local_time->tm_hour;
 
     std::string time_period;
-    int color = 0;
+    color = 0;
     if (hr >= 5 && hr <= 15) {
         time_period = "morning";
         color = 0;
@@ -136,14 +137,23 @@ void AccountScene::Initialize()
                                        color, 255, 0.5, 0.5));
 
         AddNewObject(new Engine::Label("Player: " + player.name, "romulus.ttf",
-                                       96, halfW, (double)halfH * 0.7, color, color,
-                                       color, 255, 0.5, 0.5));
+                                       96, halfW, (double)halfH * 0.7, color,
+                                       color, color, 255, 0.5, 0.5));
 
         btn = new Engine::ImageButton("clickable/back_normal.png",
                                       "clickable/back_hover.png", 50, 50, 100,
                                       100);
         btn->SetOnClickCallback(std::bind(&AccountScene::BackOnClick, this));
         AddNewControlObject(btn);
+
+        AddNewObject(new Engine::Label("Level: " + std::to_string(player.level),
+                                       "romulus.ttf", 64, halfW, halfH, color,
+                                       color, color, 255, 0.5, 0.5));
+        AddNewObject(new Engine::Label(
+            "Experience: " + std::to_string(player.experience) + " / " +
+                std::to_string(player.level * 100),
+            "romulus.ttf", 64, halfW, halfH + 50, color, color, color, 255, 0.5,
+            0.5));
 
         btn = new Engine::ImageButton("clickable/quit_normal.png",
                                       "clickable/quit_hover.png", halfW - 75,
@@ -152,8 +162,14 @@ void AccountScene::Initialize()
         AddNewControlObject(btn);
 
         AddNewObject(new Engine::Label("Logout", "romulus.ttf", 64, halfW,
-                                       h - 250, color, color, color, 255, 0.5, 0.5));
+                                       h - 250, color, color, color, 255, 0.5,
+                                       0.5));
     }
+}
+
+void AccountScene::Draw(void) const
+{
+    Engine::IScene::Draw();
 }
 
 // update the text boxes
@@ -212,22 +228,18 @@ void AccountScene::OnKeyDown(int keyCode)
         if (keyCode >= ALLEGRO_KEY_A && keyCode <= ALLEGRO_KEY_9) {
             OnCharInput(keyCode);
         }
-        else if (keyCode == ALLEGRO_KEY_TAB)
-        {
-            if (nameTextBox->IsFocused())
-            {
+        else if (keyCode == ALLEGRO_KEY_TAB) {
+            if (nameTextBox->IsFocused()) {
                 activeTextBox->LoseFocus();
                 passwordTextBox->SetFocus(true);
             }
-            else 
-            {
+            else {
                 activeTextBox->LoseFocus();
                 nameTextBox->SetFocus(true);
             }
         }
         else
             activeTextBox->HandleKeyPress(keyCode);
-
     }
 }
 
@@ -253,10 +265,10 @@ void AccountScene::BackOnClick(void)
 
 void AccountScene::SubmitOnClick(void)
 {
-    if (userName.empty() || userPass.empty()) {
-        ShowStatusMsg("Please fill in both Name && Password!");
-        return;
-    }
+    int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
+    int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
+    int halfW = w / 2;
+    int halfH = h / 2;
 
     // check if exists in database
     // yes login and switch to start sscene
@@ -268,23 +280,32 @@ void AccountScene::SubmitOnClick(void)
         ShowStatusMsg("Login Successful! Welcome, back " + userName + "!");
 
         const PlayerData &player = accountManager.getPlayer();
-        Engine::GameEngine::GetInstance().ChangeScene("start");
+        Engine::GameEngine::GetInstance().ChangeScene("account");
     }
     else {
         bool registered = accountManager.createAccount(userName, userPass);
 
         if (registered) {
-            ShowStatusMsg("Account created successfully! Welcome, " + userName +
-                          "!");
             const PlayerData &player = accountManager.getPlayer();
-            Engine::GameEngine::GetInstance().ChangeScene("start");
+            Engine::GameEngine::GetInstance().ChangeScene("account");
         }
         else {
-            ShowStatusMsg("Wrong password :\(");
+            if (userName.empty() || userPass.empty())
+                statusMsg = "Please don't leave empty!";
+            else if (userName.length() < 3 || userName.length() >= 10)
+                statusMsg = "Username must be between length of 3 to 10";
+            else if (userPass.length() < 6)
+                statusMsg = "Password must contain more than 5 characters!";
+            else statusMsg = "Wrong password! :(";
+
+            if (hint) RemoveObject(hint->GetObjectIterator());
+            hint = new Engine::Label(statusMsg, "romulus.ttf", 64, halfW,
+                                       h - 275, color, color, color, 255, 0.5,
+                                       0.5);
+            AddNewObject(hint);
         }
     }
 
-    Engine::GameEngine::GetInstance().ChangeScene("account");
 }
 
 void AccountScene::ToggleVisibility(void)
