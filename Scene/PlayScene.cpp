@@ -219,38 +219,40 @@ void PlayScene::Update(float deltaTime)
             Enemy *enemy;
 
             switch (current.first) {
-            case 1:
-                EnemyGroup->AddNewObject(
-                    enemy =
-                        new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                break;
-            case 2:
-                EnemyGroup->AddNewObject(
-                    enemy =
-                        new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                break;
+                case 1:
+                    EnemyGroup->AddNewObject(
+                        enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 2:
+                    EnemyGroup->AddNewObject(
+                        enemy =
+                            new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
 
-            case 3:
-                EnemyGroup->AddNewObject(
-                    enemy =
-                        new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                break;
-            case 4:
-                EnemyGroup->AddNewObject(
-                    enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                break;
-            case 5:
-                EnemyGroup->AddNewObject(
-                    enemy =
-                        new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                break;
-            case 6:
-                EnemyGroup->AddNewObject(
-                    enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                break;
-            default:
-                continue;
+                case 3:
+                    EnemyGroup->AddNewObject(
+                        enemy =
+                            new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 4:
+                    EnemyGroup->AddNewObject(
+                        enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 5:
+                    EnemyGroup->AddNewObject(
+                        enemy =
+                            new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 6:
+                    EnemyGroup->AddNewObject(
+                        enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                default:
+                    continue;
             }
+            enemy->UpdatePath(mapDistance);
+            // Compensate the time lost.
+            enemy->Update(ticks);
         }
         else {
             if (enemyOut[0].first == -1 || enemyOut[1].first == -1 ||
