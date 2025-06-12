@@ -345,7 +345,8 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
             Turret* turret = dynamic_cast<Turret*>(obj);
             if (!turret) continue;
             Engine::Point diff = turret->Position - Engine::Point(mx, my);
-            if (diff.Magnitude() <= 20) {
+            if (diff.Magnitude() <= 20 && money >= turret->up_cost) {
+                EarnMoney(-(turret->up_cost*turret->level));
                 int nextLevel = turret->GetLevel() + 1;
                 if (nextLevel <= 5) {
                     turret->Upgrade(nextLevel);
@@ -667,11 +668,20 @@ void PlayScene::ReadMap()
     for(int r=0; r<60; r++){
         int x = rand() % MapWidth;
         int y = rand() % MapHeight;
-        if(mapState[y][x] == TILE_FLOOR){
+        if(mapState[y][x] == TILE_FLOOR && r%3){
             Obstacle* obs = new Obstacle("play/rock.png",
                                          x * BlockSize + BlockSize / 2,
                                          y * BlockSize + BlockSize / 2,
-                                         5000, x, y); // 把格子座標帶進去
+                                         200, x, y); // 把格子座標帶進去
+
+            ObstacleGroup->AddNewObject(obs);
+            mapState[y][x] = TILE_OCCUPIED;
+        }
+        else if(mapState[y][x] == TILE_FLOOR && r%5){
+            Obstacle* obs = new Obstacle("play/wood.png",
+                                              x * BlockSize + BlockSize / 2,
+                                              y * BlockSize + BlockSize / 2,
+                                              2, x, y); // 把格子座標帶進去
 
             ObstacleGroup->AddNewObject(obs);
             mapState[y][x] = TILE_OCCUPIED;
@@ -787,8 +797,8 @@ void PlayScene::ConstructUI()
     // 進化按鈕
     btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1516, 188, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-7.png", 1516, 188 - 8, 0, 0, 0, 0), 1516,
+            Engine::Sprite("play/dirt.png", 1516, 188, 0, 0, 0, 0),
+            Engine::Sprite("play/evo_pic.png", 1516, 188 , 0, 0, 0, 0), 1516,
             188, 0); // 進化按鈕不需要金錢檢查
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
         UIGroup->AddNewControlObject(btn);
@@ -837,12 +847,12 @@ void PlayScene::UIBtnClicked(int id)
         next_preview = new FreezeTurret(0, 0);
     else if (id == 5) {
                  superEvolutionEnabled = true;
-                 //AudioHelper::PlayAudio("upgrade.wav"); // 提示音效
+                 AudioHelper::PlayAudio("hypercharge.wav"); // 提示音效
                  // 也可以加入浮動提示
                  floatingTexts.push_back({
-                     Engine::Point(1300, 200),
+                     Engine::Point(1400, 200),
                      "Super Evolution Ready!",
-                     1.0f
+                     2.0f
                  });
                  return;
     }

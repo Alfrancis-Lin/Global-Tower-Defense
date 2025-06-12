@@ -13,6 +13,8 @@ void CoinGen::Update(float deltaTime) {
     imgBase.Position = Position;
     imgBase.Tint = Tint;
 
+    up_cost = 70;
+
     // 不需要攻擊邏輯
     reload -= deltaTime;
     if (reload <= 0+0.02*level) {

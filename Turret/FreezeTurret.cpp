@@ -34,6 +34,8 @@ void FreezeTurret::Update(float deltaTime) {
     imgBase.Position = Position;
     imgBase.Tint = Tint;
 
+    up_cost = 40;
+
     CollisionRadius = 150 + 10 * (level - 1);//turret radius upgrade
 
 //     if (justPlaced && level == 6 && evo_times) {

@@ -11,5 +11,7 @@ public:
     void CreateBullet() override;
     void Update(float deltaTime);
     void Draw() const;
+
+
 };
 #endif   // FREEZETURRET_HPP

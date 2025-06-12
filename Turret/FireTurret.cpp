@@ -7,7 +7,7 @@
 #include <allegro5/base.h>
 #include <cmath>
 #include <string>
-
+#include "Bullet/Bullet8.hpp"
 #include "Bullet/Bullet9.hpp"
 #include "Enemy/Enemy.hpp"
 #include "Engine/AudioHelper.hpp"
@@ -46,6 +46,10 @@ void FireTurret::CreateBullet(Enemy *target)
     Engine::Point normalized = diff.Normalize();
     Engine::Point normal = Engine::Point(-normalized.y, normalized.x);
     // Change bullet position to the front of the gun barrel.
+    if(level == 6) getPlayScene()->BulletGroup->AddNewObject(
+                           new Bullet8(Position + normalized * 36, diff, rotation, this));
+
+    else
     getPlayScene()->BulletGroup->AddNewObject(
         new Bullet9(Position + normalized * 36, diff, rotation, this));
     // getPlayScene()->BulletGroup->AddNewObject(new LaserBullet(Position +
@@ -62,6 +66,8 @@ void FireTurret::Update(float deltaTime)
     imgBase.Tint = Tint;
     if (!Enabled)
         return;
+
+    up_cost = 50;
 
     CollisionRadius = 300 + 5 * (level - 1);//turret radius upgrade
 

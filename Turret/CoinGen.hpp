@@ -16,6 +16,8 @@ public:
     CoinGen(float x, float y);
     void CreateBullet();
     void Update(float deltaTime) override;
+
+
 };
 
 
