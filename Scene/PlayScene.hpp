@@ -67,7 +67,7 @@ public:
 
 
 
-    std::set <std::vector<float>> enemyy;
+
 
 
     // Map tiles.
@@ -92,6 +92,7 @@ public:
     std::vector<std::vector<TileType>> mapState;
     std::vector<std::vector<int>> mapDistance;
     std::list<std::pair<int, float>> enemyWaveData;
+    std::vector<std::pair<int, float>> enemyOut;
     std::list<int> keyStrokes;
     std::vector<FloatingText> floatingTexts; //文字生成
     static Engine::Point GetClientSize();

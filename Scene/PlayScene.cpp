@@ -215,47 +215,92 @@ void PlayScene::Update(float deltaTime)
             }
             continue;
         }
-        auto current = enemyWaveData.front();
-        if (ticks < current.second)
-            continue;
-        ticks -= current.second;
-        enemyWaveData.pop_front();
-        const Engine::Point SpawnCoordinate =
-            Engine::Point(SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
-                          SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
-        Enemy *enemy;
-        switch (current.first) {
-        case 1:
-            EnemyGroup->AddNewObject(
-                enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-            break;
-        case 2:
-            EnemyGroup->AddNewObject(
-                enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-            break;
+        if (!multiplay) {
+            auto current = enemyWaveData.front();
+            if (ticks < current.second)
+                continue;
+            ticks -= current.second;
+            enemyWaveData.pop_front();
+            const Engine::Point SpawnCoordinate =
+                Engine::Point(SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
+                              SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
+            Enemy *enemy;
 
-        case 3:
-            EnemyGroup->AddNewObject(
-                enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-            break;
-        case 4:
-            EnemyGroup->AddNewObject(
-                enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-            break;
-        case 5:
-            EnemyGroup->AddNewObject(
-                enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-            break;
-        case 6:
-            EnemyGroup->AddNewObject(
-                enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-            break;
-        default:
-            continue;
+            switch (current.first) {
+                case 1:
+                    EnemyGroup->AddNewObject(
+                        enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 2:
+                    EnemyGroup->AddNewObject(
+                        enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+
+                case 3:
+                    EnemyGroup->AddNewObject(
+                        enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 4:
+                    EnemyGroup->AddNewObject(
+                        enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 5:
+                    EnemyGroup->AddNewObject(
+                        enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 6:
+                    EnemyGroup->AddNewObject(
+                        enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                default:
+                    continue;
+            }
         }
-        enemy->UpdatePath(mapDistance);
-        // Compensate the time lost.
-        enemy->Update(ticks);
+        else {
+            auto current = enemyWaveData.front();
+            if (ticks < current.second)
+                continue;
+
+            ticks -= current.second;
+            enemyWaveData.pop_front();
+            const Engine::Point SpawnCoordinate =
+                Engine::Point(SpawnGridPoint.x * BlockSize + (double)BlockSize / 2,
+                              SpawnGridPoint.y * BlockSize + (double)BlockSize / 2);
+            Enemy *enemy;
+
+            switch (current.first) {
+                case 1:
+                    EnemyGroup->AddNewObject(
+                        enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 2:
+                    EnemyGroup->AddNewObject(
+                        enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+
+                case 3:
+                    EnemyGroup->AddNewObject(
+                        enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 4:
+                    EnemyGroup->AddNewObject(
+                        enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 5:
+                    EnemyGroup->AddNewObject(
+                        enemy = new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                case 6:
+                    EnemyGroup->AddNewObject(
+                        enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                    break;
+                default:
+                    continue;
+            }
+            enemy->UpdatePath(mapDistance);
+            // Compensate the time lost.
+            enemy->Update(ticks);
+        }
     }
     if (preview && !paused) {
         preview->Position =
@@ -730,37 +775,19 @@ void PlayScene::ReadMap()
 
 void PlayScene::ReadEnemyWave()
 {
-    if (!multiplay) {
-        std::string filename =
-            std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
-        // Read enemy file.
-        float type, wait, repeat;
-        enemyWaveData.clear();
-        std::ifstream fin(filename);
-        while (fin >> type && fin >> wait && fin >> repeat) {
-            for (int i = 0; i < repeat; i++)
-                enemyWaveData.emplace_back(type, wait);
-        }
-        fin.close();
-    }
-    else {
-        std::string filename =
-            std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
-        // Read enemy file.
-        float type, wait, repeat;
-        enemyWaveData.clear();
-        std::ifstream fin(filename);
-        while (fin >> type && fin >> wait && fin >> repeat) {
-            std::vector <float> puttt;
-            puttt.push_back(type);
-            puttt.push_back(wait);
-            puttt.push_back(repeat);
-            enemyy.insert(puttt);
 
-
-        }
-        fin.close();
+    std::string filename =
+        std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
+    // Read enemy file.
+    float type, wait, repeat;
+    enemyWaveData.clear();
+    std::ifstream fin(filename);
+    while (fin >> type && fin >> wait && fin >> repeat) {
+        for (int i = 0; i < repeat; i++)
+            enemyWaveData.emplace_back(type, wait);
     }
+    fin.close();
+
 }
 void PlayScene::ConstructUI()
 {
