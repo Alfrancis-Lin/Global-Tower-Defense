@@ -3,12 +3,15 @@
 #include <allegro5/allegro_audio.h>
 #include <list>
 #include <memory>
+#include <unordered_map>
 #include <utility>
 #include <vector>
+#include <set>
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
 #include "Turret/upgrade_system.hpp"
+#include "UI/Component/Label.hpp"
 
 struct FloatingText {
     Engine::Point position;
@@ -26,7 +29,7 @@ namespace Engine {
     class Sprite;
 }   // namespace Engine
 
-class PlayScene final : public Engine::IScene {
+class PlayScene : public Engine::IScene {
 private:
 
     ALLEGRO_SAMPLE_ID bgmId;
@@ -49,6 +52,8 @@ public:
         TILE_FLOOR,
         TILE_OCCUPIED,
     };
+    static bool multiendd;
+    static bool multiplay;
     static bool DebugMode;
     static const std::vector<Engine::Point> directions;
     static const int MapWidth, MapHeight;
@@ -61,6 +66,8 @@ public:
     int MapId;
     float ticks;
     float deathCountDown;
+    std::vector <int> inputkey;
+
     // Map tiles.
     Group *TileMapGroup;
     Group *GroundEffectGroup;
@@ -83,6 +90,7 @@ public:
     std::vector<std::vector<TileType>> mapState;
     std::vector<std::vector<int>> mapDistance;
     std::list<std::pair<int, float>> enemyWaveData;
+    std::vector<std::pair<int, float>> enemyOut;
     std::list<int> keyStrokes;
     std::vector<FloatingText> floatingTexts; //文字生成
     static Engine::Point GetClientSize();
@@ -99,7 +107,7 @@ public:
     int GetMoney() const;
     void EarnMoney(int money);
     void ReadMap();
-    void ReadEnemyWave();
+    virtual void ReadEnemyWave();
     void ConstructUI();
     void UIBtnClicked(int id);
     bool CheckSpaceValid(int x, int y);
@@ -112,5 +120,10 @@ public:
     int PrevSpeedMult;
     void QuitOnClick(void);
     void RestartOnClick(void);
+    Engine::Label* y;
+    Engine::Label* u;
+    Engine::Label* ii;
+    Engine::Label* o;
+    std::unordered_map<int, std::string> enemy_id_to_type;
 };
 #endif   // PLAYSCENE_HPP

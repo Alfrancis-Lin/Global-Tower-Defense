@@ -1,6 +1,7 @@
 #ifndef SettingsScene_HPP
 #define SettingsScene_HPP
 #include <memory>
+#include <set>
 
 #include "Engine/IScene.hpp"
 #include "UI/Component/Image.hpp"

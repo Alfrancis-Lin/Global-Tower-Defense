@@ -93,8 +93,7 @@ add_executable(2025_I2P2_TowerDefense
     Scene/LoseScene.hpp
     Scene/PlayScene.cpp
     Scene/PlayScene.hpp
-    Scene/Play3Scene.cpp
-    Scene/PlayScene.hpp
+
     Scene/StageSelectScene.cpp
     Scene/StageSelectScene.hpp
     Scene/StartScene.cpp
@@ -155,8 +154,7 @@ add_executable(2025_I2P2_TowerDefense
     main.cpp
         Enemy/BadEnemy.cpp
         Enemy/BadEnemy.hpp
-        Scene/Play3Scene.cpp
-        Scene/Play3Scene.hpp
+
 )
 
 IF (WIN32)
