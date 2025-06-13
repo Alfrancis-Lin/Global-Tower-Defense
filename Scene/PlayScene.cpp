@@ -1145,7 +1145,6 @@ void PlayScene::ConstructUI()
         UIGroup->AddNewObject(
                     new Engine::Label(std::string("20/40/60/80/100$"),
                                       "romulus.ttf", 26, 1370, 185));
-
         // Button 2
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
