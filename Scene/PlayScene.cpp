@@ -489,6 +489,10 @@ void PlayScene::Draw() const
                                                 320, 0, 0, 0, 255, 0.5, 0.5));
         UIGroup->AddNewObject(new Engine::Label("U: ", "romulus.ttf", 70, 1330,
                                                 370, 0, 0, 0, 255, 0.5, 0.5));
+        UIGroup->AddNewObject(new Engine::Label("I: ", "romulus.ttf", 70, 1330,
+                                                420, 0, 0, 0, 255, 0.5, 0.5));
+        UIGroup->AddNewObject(new Engine::Label("O: ", "romulus.ttf", 70, 1330,
+                                                470, 0, 0, 0, 255, 0.5, 0.5));
     }
 }
 
