@@ -882,6 +882,11 @@ void PlayScene::ReadMap()
             }
         }
     }
+    int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
+    int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
+
+    TileMapGroup->AddNewObject(new Engine::Label("START", "romulus.ttf", 18, 5, 24));
+    TileMapGroup->AddNewObject(new Engine::Label("END", "romulus.ttf", 18, 1280 - 48, h - 40));
 
     // generate rocks
     for (int r = 0; r < 60; r++) {
