@@ -89,7 +89,7 @@ void PlayScene::Initialize()
     enemy_id_to_type[2] = "Plane";
     enemy_id_to_type[3] = "Tank";
     enemy_id_to_type[4] = "Big Tank";
-    enemy_id_to_type[5] = "Big Big Tank";
+    enemy_id_to_type[5] = "Huge Tank";
     enemy_id_to_type[6] = "Bomber";
     y = u = ii = o = nullptr;
     // Add groups from bottom to top.
@@ -255,8 +255,18 @@ void PlayScene::Update(float deltaTime)
             enemy->Update(ticks);
         }
         else {
-            if (enemyOut[0].first == -1 || enemyOut[1].first == -1 ||
-                enemyOut[2].first == -1 || enemyOut[3].first == -1) {
+            if (enemyWaveData.empty() && enemyOut[0].first == -1 && enemyOut[1].first == -1 &&
+                enemyOut[2].first == -1 && enemyOut[3].first == -1) {
+                    multiendd = true;
+            }
+            else if (enemyWaveData.empty()) {
+
+            }
+            else if (enemyOut[0].first == -1 || enemyOut[1].first == -1 ||
+                enemyOut[2].first == -1 || enemyOut[3].first == -1 ) {
+                if (enemyWaveData.empty()) {
+
+                }
                 if (enemyOut[0].first == -1) {
                     auto current = enemyWaveData.front();
                     if (ticks < current.second)
@@ -264,7 +274,7 @@ void PlayScene::Update(float deltaTime)
                     if (y)
                         RemoveObject(y->GetObjectIterator());
                     y = new Engine::Label(enemy_id_to_type[current.first],
-                                          "romulus.ttf", 58, 1450, 320, 0, 0, 0,
+                                          "romulus.ttf", 58, 1480, 320, 0, 0, 0,
                                           255, 0.5, 0.5);
                     UIGroup->AddNewObject(y);
                     ticks -= current.second;
@@ -278,7 +288,7 @@ void PlayScene::Update(float deltaTime)
                     if (u)
                         RemoveObject(u->GetObjectIterator());
                     u = new Engine::Label(enemy_id_to_type[current.first],
-                                          "romulus.ttf", 58, 1450, 370, 0, 0, 0,
+                                          "romulus.ttf", 58, 1480, 370, 0, 0, 0,
                                           255, 0.5, 0.5);
                     UIGroup->AddNewObject(u);
 
@@ -293,7 +303,7 @@ void PlayScene::Update(float deltaTime)
                     if (ii)
                         RemoveObject(ii->GetObjectIterator());
                     ii = new Engine::Label(enemy_id_to_type[current.first],
-                                           "romulus.ttf", 58, 1450, 420, 0, 0,
+                                           "romulus.ttf", 58, 1480, 420, 0, 0,
                                            0, 255, 0.5, 0.5);
                     UIGroup->AddNewObject(ii);
 
@@ -308,7 +318,7 @@ void PlayScene::Update(float deltaTime)
                     if (o)
                         RemoveObject(o->GetObjectIterator());
                     o = new Engine::Label(enemy_id_to_type[current.first],
-                                          "romulus.ttf", 58, 1450, 470, 0, 0, 0,
+                                          "romulus.ttf", 58, 1480, 470, 0, 0, 0,
                                           255, 0.5, 0.5);
                     UIGroup->AddNewObject(o);
 
@@ -317,7 +327,7 @@ void PlayScene::Update(float deltaTime)
                     enemyWaveData.pop_front();
                 }
             }
-
+            //Enemy *enemy;
             if (inputkey[0] == 1 || inputkey[1] == 1 || inputkey[2] == 1 ||
                 inputkey[3] == 1) {
                 auto current = enemyOut[0];
@@ -383,11 +393,16 @@ void PlayScene::Update(float deltaTime)
                     continue;
                 }
                 enemy->UpdatePath(mapDistance);
-                // Compensate the time lost.
-                enemy->Update(ticks);
+                //enemy->Update(ticks);
             }
+            //
+            //enemy->UpdatePath(mapDistance);
+            // Compensate the time lost.
+            //enemy->Update(ticks);
         }
+
     }
+
     if (preview && !paused) {
         preview->Position =
             Engine::GameEngine::GetInstance().GetMousePosition();
