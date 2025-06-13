@@ -23,5 +23,5 @@ void LaserTurret::CreateBullet() {
     // Change bullet position to the front of the gun barrel.
     getPlayScene()->BulletGroup->AddNewObject(new Bullet5(Position + normalized * 36 - normal * 6, diff, rotation, this));
     getPlayScene()->BulletGroup->AddNewObject(new Bullet5(Position + normalized * 36 + normal * 6, diff, rotation, this));
-    AudioHelper::PlayAudio("laser.wav");
+    AudioHelper::PlayAudio("gun.wav");
 }
