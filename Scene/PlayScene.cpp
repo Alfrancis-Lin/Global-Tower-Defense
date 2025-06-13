@@ -979,7 +979,7 @@ void PlayScene::ReadMap()
             Obstacle *obs = new Obstacle("play/wood.png",
                                          x * BlockSize + (double)BlockSize / 2,
                                          y * BlockSize + (double)BlockSize / 2,
-                                         2, x, y); // 把格子座標帶進去
+                                         10, x, y); // 把格子座標帶進去
 
             ObstacleGroup->AddNewObject(obs);
             mapState[y][x] = TILE_OCCUPIED;
