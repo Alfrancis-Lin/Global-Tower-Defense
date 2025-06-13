@@ -170,6 +170,7 @@ namespace Engine {
       static GameEngine &GetInstance();
       static void TerminateAccountManager();
       static GlobalAccountManager& GetAccountManager();
+      bool annoyingMode;
     };
 }
 #endif   // GAMEENGINE_HPP

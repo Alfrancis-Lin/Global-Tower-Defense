@@ -1,17 +1,19 @@
 #include <algorithm>
 #include <allegro5/allegro.h>
 #include <cmath>
-//#include <curl/curl.h>
+#include <curl/curl.h>
 #include <fstream>
 #include <functional>
 #include <memory>
 #include <queue>
 #include <random>
+#include <sstream>
 #include <string>
-#include <vector>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
+#include "AccountSystem/AccountSystem.hpp"
 #include "AccountSystem/GlobalAccountSystem.hpp"
 #include "Enemy/BadEnemy.hpp"
 #include "Enemy/BinaryEnemy.hpp"
@@ -41,12 +43,33 @@
 #include "UI/Animation/Plane.hpp"
 #include "UI/Component/ImageButton.hpp"
 #include "UI/Component/Label.hpp"
-#include "Turret/Upgrade_system.hpp"
-
 
 UpgradeSystem *upgradeSystem;
 #include "allegro5/allegro_primitives.h"
 #include "allegro5/color.h"
+
+// api setup
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
+                            void *userp)
+{
+    ((std::string *)userp)->append((char *)contents, size * nmemb);
+    return size * nmemb;
+}
+
+std::string fetchTrivia()
+{
+    std::string response;
+    CURL *curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL,
+                         "http://numbersapi.com/random/math");
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+    }
+    return response;
+}
 
 bool PlayScene::shovelActive = false;
 bool PlayScene::multiendd = true;
@@ -72,9 +95,10 @@ Engine::Point PlayScene::GetClientSize()
 {
     return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
 }
+
 void PlayScene::Initialize()
 {
-    //mapTurret.clear();
+    // mapTurret.clear();
     mapState.clear();
     keyStrokes.clear();
     ticks = 0;
@@ -127,6 +151,9 @@ void PlayScene::Initialize()
 
     paused = false;
     PrevSpeedMult = 1;
+    random_trivia = nullptr;
+    annoying_timer = 0.0f;
+    trivia.clear();
 }
 
 void PlayScene::Terminate()
@@ -141,12 +168,63 @@ void PlayScene::Update(float deltaTime)
 {
     // If we use deltaTime directly, then we might have Bullet-through-paper
     // problem. Reference: Bullet-Through-Paper
-    if (!paused)
-    {
+    if (!paused) {
         if (SpeedMult == 0)
             deathCountDown = -1;
         else if (deathCountDown != -1)
             SpeedMult = 1;
+
+        if (Engine::GameEngine::GetInstance().annoyingMode) {
+            if (annoying_timer >= 5.0f) {
+                for (auto &it : trivia) {
+                    RemoveObject(it->GetObjectIterator());
+                }
+                trivia.clear();
+
+                random_trivia = new Engine::Label(
+                    "Loading interesting fact...", "impact.ttf", 128,
+                    (double)1600 / 2, (double)832 / 2, 0, 0, 0, 255, 0.5, 0.5);
+                trivia.emplace_back(random_trivia);
+                AddNewObject(random_trivia);
+
+                std::thread([this]() {
+                    fact = fetchTrivia();
+
+                    for (auto &it : trivia) {
+                        RemoveObject(it->GetObjectIterator());
+                    }
+                    trivia.clear();
+
+                    std::stringstream ss(fact);
+                    std::string word;
+                    std::string currentLine = "";
+                    int wordCount = 0;
+                    int yPos = 400 / 2; 
+
+                    while (ss >> word) {
+                        if (wordCount > 0)
+                            currentLine += " ";
+                        currentLine += word;
+                        wordCount++;
+
+                        if (wordCount == 5 || ss.peek() == EOF) {
+                            random_trivia = new Engine::Label(
+                                currentLine, "impact.ttf", 128,
+                                (double)1600 / 2, (double)yPos, 0, 0, 0, 255,
+                                0.5, 0.5);
+                            trivia.emplace_back(random_trivia);
+                            AddNewObject(random_trivia);
+                            currentLine = "";
+                            wordCount = 0;
+                            yPos += 125; 
+                        }
+                    }
+                }).detach();
+
+                annoying_timer = 0.0f;
+            }
+            annoying_timer += deltaTime;
+        }
     }
     // Calculate danger zone.
 
@@ -245,53 +323,53 @@ void PlayScene::Update(float deltaTime)
             Enemy *enemy;
 
             switch (current.first) {
-                case 1:
-                    EnemyGroup->AddNewObject(
-                        enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                case 2:
-                    EnemyGroup->AddNewObject(
-                        enemy =
-                            new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
+            case 1:
+                EnemyGroup->AddNewObject(
+                    enemy =
+                        new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 2:
+                EnemyGroup->AddNewObject(
+                    enemy =
+                        new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
 
-                case 3:
-                    EnemyGroup->AddNewObject(
-                        enemy =
-                            new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                case 4:
-                    EnemyGroup->AddNewObject(
-                        enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                case 5:
-                    EnemyGroup->AddNewObject(
-                        enemy =
-                            new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                case 6:
-                    EnemyGroup->AddNewObject(
-                        enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-                    break;
-                default:
-                    continue;
+            case 3:
+                EnemyGroup->AddNewObject(
+                    enemy =
+                        new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 4:
+                EnemyGroup->AddNewObject(
+                    enemy = new NewEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 5:
+                EnemyGroup->AddNewObject(
+                    enemy =
+                        new BinaryEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 6:
+                EnemyGroup->AddNewObject(
+                    enemy = new BadEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            default:
+                continue;
             }
             enemy->UpdatePath(mapDistance);
             // Compensate the time lost.
             enemy->Update(ticks);
         }
         else {
-            if (enemyWaveData.empty() && enemyOut[0].first == -1 && enemyOut[1].first == -1 &&
-                enemyOut[2].first == -1 && enemyOut[3].first == -1) {
-                    multiendd = true;
+            if (enemyWaveData.empty() && enemyOut[0].first == -1 &&
+                enemyOut[1].first == -1 && enemyOut[2].first == -1 &&
+                enemyOut[3].first == -1) {
+                multiendd = true;
             }
             else if (enemyWaveData.empty()) {
-
             }
             else if (enemyOut[0].first == -1 || enemyOut[1].first == -1 ||
-                enemyOut[2].first == -1 || enemyOut[3].first == -1 ) {
+                     enemyOut[2].first == -1 || enemyOut[3].first == -1) {
                 if (enemyWaveData.empty()) {
-
                 }
                 if (enemyOut[0].first == -1) {
                     auto current = enemyWaveData.front();
@@ -353,7 +431,7 @@ void PlayScene::Update(float deltaTime)
                     enemyWaveData.pop_front();
                 }
             }
-            //Enemy *enemy;
+            // Enemy *enemy;
             if (inputkey[0] == 1 || inputkey[1] == 1 || inputkey[2] == 1 ||
                 inputkey[3] == 1) {
                 auto current = enemyOut[0];
@@ -419,14 +497,13 @@ void PlayScene::Update(float deltaTime)
                     continue;
                 }
                 enemy->UpdatePath(mapDistance);
-                //enemy->Update(ticks);
+                // enemy->Update(ticks);
             }
             //
-            //enemy->UpdatePath(mapDistance);
+            // enemy->UpdatePath(mapDistance);
             // Compensate the time lost.
-            //enemy->Update(ticks);
+            // enemy->Update(ticks);
         }
-
     }
 
     if (preview && !paused) {
@@ -435,14 +512,13 @@ void PlayScene::Update(float deltaTime)
         // To keep responding when paused.
         preview->Update(deltaTime);
     }
-    for (auto it = floatingTexts.begin(); it != floatingTexts.end(); ) {
+    for (auto it = floatingTexts.begin(); it != floatingTexts.end();) {
         it->timer -= deltaTime;
         if (it->timer <= 0)
             it = floatingTexts.erase(it);
         else
             ++it;
     }
-
 }
 
 void PlayScene::Draw() const
@@ -464,25 +540,23 @@ void PlayScene::Draw() const
             }
         }
     }
-    if (paused)
-    {
+    if (paused) {
         int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
         int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
-        al_draw_filled_rectangle(0, 0, 1280, h,
-                                al_map_rgba(0, 0, 0, 100));
+        al_draw_filled_rectangle(0, 0, 1280, h, al_map_rgba(0, 0, 0, 100));
 
-        Engine::Label pauseLabel("PAUSED", "romulus.ttf", 256,
-                                (double)w / 2.5, (double)h / 2);
+        Engine::Label pauseLabel("PAUSED", "romulus.ttf", 256, (double)w / 2.5,
+                                 (double)h / 2);
         pauseLabel.Color = al_map_rgba(255, 255, 255, 255);
         pauseLabel.Anchor = Engine::Point(0.5, 0.5);
         pauseLabel.Draw();
     }
-    for (auto& ft : floatingTexts) {
-        al_draw_text(Engine::Resources::GetInstance().GetFont("romulus.ttf", 52).get(),
-                      al_map_rgb(0, 0, 0),
-                      ft.position.x,
-                      ft.position.y - (1.0f - ft.timer / 1.0f) * 30, // 上浮動畫
-                      ALLEGRO_ALIGN_CENTER, ft.text.c_str());
+    for (auto &ft : floatingTexts) {
+        al_draw_text(
+            Engine::Resources::GetInstance().GetFont("romulus.ttf", 52).get(),
+            al_map_rgb(0, 0, 0), ft.position.x,
+            ft.position.y - (1.0f - ft.timer / 1.0f) * 30, // 上浮動畫
+            ALLEGRO_ALIGN_CENTER, ft.text.c_str());
     }
     if (multiplay) {
         UIGroup->AddNewObject(new Engine::Label("Y: ", "romulus.ttf", 70, 1330,
@@ -498,15 +572,13 @@ void PlayScene::Draw() const
 
 void PlayScene::OnMouseDown(int button, int mx, int my)
 {
-    if (!paused)
-    {
+    if (!paused) {
         if ((button & 1) && !imgTarget->Visible && preview) {
             // Cancel turret construct.
             UIGroup->RemoveObject(preview->GetObjectIterator());
             preview = nullptr;
         }
-        if (shovelActive)
-        {
+        if (shovelActive) {
             // remove the sprite
             UIGroup->RemoveObject(shovel->GetObjectIterator());
             shovelActive = false;
@@ -519,8 +591,10 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
                 mapState[y][x] = TILE_FLOOR;
                 // remove the turret
                 for (auto &it : TowerGroup->GetObjects()) {
-                    if (it->Position.x == x * BlockSize + (double)BlockSize / 2 &&
-                        it->Position.y == y * BlockSize + (double)BlockSize / 2) {
+                    if (it->Position.x ==
+                            x * BlockSize + (double)BlockSize / 2 &&
+                        it->Position.y ==
+                            y * BlockSize + (double)BlockSize / 2) {
                         EarnMoney(dynamic_cast<Turret *>(it)->GetPrice() / 2);
                         TowerGroup->RemoveObject(it->GetObjectIterator());
                         // create sfx of shovel
@@ -558,12 +632,11 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
 
                     // 加入升級提示
                     floatingTexts.push_back({
-                        turret->Position,
-                        "Level Up!",
+                        turret->Position, "Level Up!",
                         1.0f // 1秒消失
                     });
 
-                    //AudioHelper::PlayAudio("upgrade.wav");
+                    // AudioHelper::PlayAudio("upgrade.wav");
                 }
                 return; // 點到就升級完，結束
             }
@@ -576,8 +649,7 @@ void PlayScene::OnMouseDown(int button, int mx, int my)
 void PlayScene::OnMouseMove(int mx, int my)
 {
     IScene::OnMouseMove(mx, my);
-    if (!paused)
-    {
+    if (!paused) {
         const int x = mx / BlockSize;
         const int y = my / BlockSize;
 
@@ -600,8 +672,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
 {
     IScene::OnMouseUp(button, mx, my);
 
-    if (!paused)
-    {
+    if (!paused) {
         if (!imgTarget->Visible)
             return;
         const int x = mx / BlockSize;
@@ -614,10 +685,10 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 if (!CheckSpaceValid(x, y)) {
                     Engine::Sprite *sprite;
                     GroundEffectGroup->AddNewObject(
-                        sprite =
-                            new DirtyEffect("play/target-invalid.png", 1,
-                                            x * BlockSize + (double)BlockSize / 2,
-                                            y * BlockSize + (double)BlockSize / 2));
+                        sprite = new DirtyEffect(
+                            "play/target-invalid.png", 1,
+                            x * BlockSize + (double)BlockSize / 2,
+                            y * BlockSize + (double)BlockSize / 2));
                     sprite->Rotation = 0;
                     return;
                 }
@@ -638,7 +709,8 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
                 // To keep responding when paused.
                 preview->Update(0);
 
-                preview->SetJustPlaced();//給進化砲塔用的，放置瞬間有效果，不要刪掉
+                preview
+                    ->SetJustPlaced(); // 給進化砲塔用的，放置瞬間有效果，不要刪掉
                 // Remove Preview.
                 preview = nullptr;
             }
@@ -678,8 +750,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
             // To keep responding when paused.
             preview->Update(0);
 
-
-            if(preview->level == 6){
+            if (preview->level == 6) {
                 preview->SetJustPlaced();
             }
 
@@ -756,7 +827,7 @@ void PlayScene::OnKeyDown(int keyCode)
             SpeedMult = keyCode - ALLEGRO_KEY_0;
         }
     }
-    
+
     keyStrokes.push_back(keyCode);
     if (keyStrokes.size() > code.size())
         keyStrokes.pop_front();
@@ -885,8 +956,10 @@ void PlayScene::ReadMap()
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
 
-    TileMapGroup->AddNewObject(new Engine::Label("START", "romulus.ttf", 18, 5, 24));
-    TileMapGroup->AddNewObject(new Engine::Label("END", "romulus.ttf", 18, 1280 - 48, h - 40));
+    TileMapGroup->AddNewObject(
+        new Engine::Label("START", "romulus.ttf", 18, 5, 24));
+    TileMapGroup->AddNewObject(
+        new Engine::Label("END", "romulus.ttf", 18, 1280 - 48, h - 40));
 
     // generate rocks
     for (int r = 0; r < 60; r++) {
@@ -1072,11 +1145,6 @@ void PlayScene::ConstructUI()
         UIGroup->AddNewObject(
                     new Engine::Label(std::string("20/40/60/80/100$"),
                                       "romulus.ttf", 26, 1370, 185));
-
-
-
-
-
         // Button 2
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
@@ -1206,13 +1274,6 @@ void PlayScene::ConstructUI()
                                       "romulus.ttf", 24, 1370, 621));
 
     }
-
-
-
-
-
-
-
 
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;

@@ -55,6 +55,7 @@ public:
     static bool multiendd;
     static bool multiplay;
     static bool DebugMode;
+    float annoying_timer;
     static const std::vector<Engine::Point> directions;
     static const int MapWidth, MapHeight;
     static const int BlockSize;
@@ -125,5 +126,8 @@ public:
     Engine::Label* ii;
     Engine::Label* o;
     std::unordered_map<int, std::string> enemy_id_to_type;
+    Engine::Label* random_trivia;
+    std::string fact;
+    std::vector<Engine::Label*> trivia;
 };
 #endif   // PLAYSCENE_HPP

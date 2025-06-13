@@ -1,6 +1,6 @@
 #include <allegro5/allegro_audio.h>
 #include <ctime>
-//#include <curl/curl.h>
+// #include <curl/curl.h>
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -14,29 +14,6 @@
 #include "StageSelectScene.hpp"
 #include "UI/Component/ImageButton.hpp"
 #include "UI/Component/Label.hpp"
-
-// api setup
-static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
-                            void *userp)
-{
-    ((std::string *)userp)->append((char *)contents, size * nmemb);
-    return size * nmemb;
-}
-
-// std::string fetchTrivia()
-// {
-//     std::string response;
-//     CURL *curl = curl_easy_init();
-//     if (curl) {
-//         curl_easy_setopt(curl, CURLOPT_URL,
-//                          "http://numbersapi.com/random/math");
-//         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-//         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-//         curl_easy_perform(curl);
-//         curl_easy_cleanup(curl);
-//     }
-//     return response;
-// }
 
 void StageSelectScene::Initialize()
 {
@@ -59,8 +36,8 @@ void StageSelectScene::Initialize()
     difficulty[3] = 5;
 
     info = new Engine::Label(
-        "Level " + std::to_string(page + 1) + "\'s" +
-            " Interesting Level: " + ((difficulty[page] == -1) ? "?" : std::to_string(difficulty[page])),
+        "Level " + std::to_string(page + 1) + "\'s" + " Interesting Level: " +
+            ((difficulty[page] == -1) ? "?" : std::to_string(difficulty[page])),
         "romulus.ttf", 56,
         Engine::GameEngine::GetInstance().GetScreenSize().x / 2, 100, 255, 255,
         255, 255, 0.5, 0.5);
@@ -97,13 +74,23 @@ void StageSelectScene::Initialize()
     // remember the play button so that can track which stage to play
     play_button = btn;
 
-    // fetch random trivia api and truncate if text is too long
-    // std::string fact = fetchTrivia();
-    // if (fact.size() > 60)
-    //     fact = fact.substr(0, 60) + "...";
-    // AddNewObject(new Engine::Label("Random Fact: " + fact, "romulus.ttf", 24,
-    //                                halfW, (double)halfH * 1.8, 255, 255, 255,
-    //                                255, 0.5, 0.5));
+    if (Engine::GameEngine::GetInstance().annoyingMode) {
+        annoying_label =
+            new Engine::Label("Annoying: True", "romulus.ttf", 56, halfW * 1.5,
+                              h - 200, 255, 255, 255, 255, 0.5, 0.5);
+    }
+    else {
+        annoying_label =
+            new Engine::Label("Annoying: False", "romulus.ttf", 56, halfW * 1.5,
+                              h - 200, 255, 255, 255, 255, 0.5, 0.5);
+    }
+    AddNewObject(annoying_label);
+
+    btn = new Engine::ImageButton("clickable/tick_normal.png",
+                                  "clickable/tick_hover.png", halfW * 1.5,
+                                  h - 150, 100, 100);
+    btn->SetOnClickCallback(std::bind(&StageSelectScene::ToggleAnnoying, this));
+    AddNewControlObject(btn);
 
     // Not safe if release resource while playing, however we only free while
     // change scene, so it's fine.
@@ -130,18 +117,19 @@ void StageSelectScene::BackOnClick(void)
     Engine::GameEngine::GetInstance().ChangeScene("start");
 }
 
-void StageSelectScene::PlayOnClick(int stage) {
+void StageSelectScene::PlayOnClick(int stage)
+{
     PlayScene *scene = dynamic_cast<PlayScene *>(
         Engine::GameEngine::GetInstance().GetScene("play"));
     // the stage stored using page is 0-indexed
     scene->MapId = stage + 1;
-    if (scene->MapId==3) {
-        PlayScene::multiendd=false;
-        PlayScene::multiplay=true;
+    if (scene->MapId == 3) {
+        PlayScene::multiendd = false;
+        PlayScene::multiplay = true;
     }
     else {
-        PlayScene::multiendd=true;
-        PlayScene::multiplay=false;
+        PlayScene::multiendd = true;
+        PlayScene::multiplay = false;
     }
     Engine::GameEngine::GetInstance().ChangeScene("play");
 }
@@ -177,4 +165,30 @@ void StageSelectScene::PreviewStage(int stage)
 
     play_button->SetOnClickCallback(
         std::bind(&StageSelectScene::PlayOnClick, this, page));
+}
+
+void StageSelectScene::ToggleAnnoying(void)
+{
+    int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
+    int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
+    int halfW = w / 2;
+    int halfH = h / 2;
+
+    Engine::GameEngine::GetInstance().annoyingMode =
+        !Engine::GameEngine::GetInstance().annoyingMode;
+    bool annoying = Engine::GameEngine::GetInstance().annoyingMode;
+    if (annoying_label)
+        RemoveObject(annoying_label->GetObjectIterator());
+
+    if (annoying) {
+        annoying_label =
+            new Engine::Label("Annoying: True", "romulus.ttf", 56, halfW * 1.5,
+                              h - 200, 255, 255, 255, 255, 0.5, 0.5);
+    }
+    else {
+        annoying_label =
+            new Engine::Label("Annoying: False", "romulus.ttf", 56, halfW * 1.5,
+                              h - 200, 255, 255, 255, 255, 0.5, 0.5);
+    }
+    AddNewObject(annoying_label);
 }

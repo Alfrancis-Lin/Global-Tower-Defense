@@ -95,7 +95,6 @@ void WinScene::Initialize() {
                                   (double)h - 200, 150, 150);
     btn->SetOnClickCallback(std::bind(&WinScene::BackOnClick, this, 1));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Back", "romulus.ttf", 48, halfW, halfH * 7 / 4, 0, 0, 0, 255, 0.5, 0.5));
     bgmId = AudioHelper::PlayAudio("win.wav");
 
 

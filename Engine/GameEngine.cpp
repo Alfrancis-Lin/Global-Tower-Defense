@@ -211,6 +211,7 @@ namespace Engine {
         activeScene = scenes[firstSceneName];
 
         GlobalAccountManager::Initialize();
+        this->annoyingMode = false;
 
         initAllegro5();
         LOG(INFO) << "Allegro5 initialized";
