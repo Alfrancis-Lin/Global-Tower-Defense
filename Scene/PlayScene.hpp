@@ -78,6 +78,9 @@ public:
     Group *EffectGroup;
     Group *UIGroup;
     Group *ButtonsGroup;
+
+    Group *ObstacleGroup;
+
     Engine::Label *UIMoney;
     Engine::Label *UILives;
     Engine::Image *imgTarget;

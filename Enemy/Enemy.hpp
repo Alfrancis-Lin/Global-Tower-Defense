@@ -14,13 +14,15 @@ class Turret;
 class Enemy : public Engine::Sprite {
 protected:
     std::vector<Engine::Point> path;
-    float speed;
+
     float hp;
     int money;
     PlayScene *getPlayScene();
     virtual void OnExplode();
 
 public:
+    float speed;
+    float speedMultiplier = 1;
     float slowTime;
     bool slowing;
     float reachEndTime;

@@ -5,13 +5,15 @@
 const int CoinGen::Price = 30; // 放置需要 100 金幣
 
 CoinGen::CoinGen(float x, float y)
-    : Turret("play/tower-base.png", "play/coin.png", x, y, 0, Price, 5.0f) { // cooldown 每 5 秒產一次
+    : Turret("play/tower-base.png", "play/farm.png", x, y, 0, Price, 5.0f) { // cooldown 每 5 秒產一次
 }
 
 void CoinGen::Update(float deltaTime) {
     // 更新底座和動畫
     imgBase.Position = Position;
     imgBase.Tint = Tint;
+
+    up_cost = 70;
 
     // 不需要攻擊邏輯
     reload -= deltaTime;
@@ -27,7 +29,7 @@ void CoinGen::Update(float deltaTime) {
         PlayScene* scene = getPlayScene();
         scene->floatingTexts.push_back({
             Position,        // 文字出現的位置
-            "+10",            // 文字內容
+            "+5",            // 文字內容
             1.0f              // 1 秒後消失
         });
     }

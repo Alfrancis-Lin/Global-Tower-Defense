@@ -7,19 +7,21 @@
 #include "Scene/PlayScene.hpp"
 
 PlaneEnemy::PlaneEnemy(int x, int y) : Enemy("play/enemy-2.png", x, y, 10, 20, 2, 10) {
-    double min = 0.07;
-    double max = 0.93;
-
-    /* 產生 [min , max) 的浮點數亂數 */
-    double xx = (max - min) * rand() / (RAND_MAX + 1.0) + min;
-    Position.x = Engine::GameEngine::GetInstance().GetScreenSize().x *0.8*xx;
+    const int TILE_SIZE = 64;
+    
+    const int PLAYABLE_WIDTH = 1280;
+    
+    int numTiles = PLAYABLE_WIDTH / TILE_SIZE;
+    int randomTileIdx = rand() % numTiles;
+    
+    Position.x = randomTileIdx * TILE_SIZE + (TILE_SIZE / 2.0);
     Position.y = -50;
-
     Velocity = Engine::Point(0, speed);
-
     CollisionRadius = 20;
 }
+
 int put;
+
 void PlaneEnemy::Update(float deltaTime) {
 
     int x = static_cast<int>(Position.x / PlayScene::BlockSize);
@@ -54,8 +56,8 @@ void PlaneEnemy::Update(float deltaTime) {
 void PlaneEnemy::DropSoldiers() {
     PlayScene* scene = getPlayScene();
 
-    for (int i = 0; i < 5; i++) {
-        float offsetX = (i - 1) * 20; // -20, 0, 20 offset
+    for (int i = 0; i < 3; i++) {
+        float offsetX = (i - 1) * 10; // -20, 0, 20 offset
         Enemy* soldier = new SoldierEnemy(Position.x + offsetX-5, Position.y+5);
         scene->EnemyGroup->AddNewObject(soldier);
         soldier->UpdatePath(scene->mapDistance);

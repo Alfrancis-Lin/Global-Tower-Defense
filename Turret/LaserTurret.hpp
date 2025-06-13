@@ -7,5 +7,7 @@ public:
     static const int Price;
     LaserTurret(float x, float y);
     void CreateBullet() override;
+
+
 };
 #endif   // LASERTURRET_HPP

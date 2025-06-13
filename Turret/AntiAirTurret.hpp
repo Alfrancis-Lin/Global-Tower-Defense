@@ -14,6 +14,8 @@ public:
     void CreateBullet() override;
     //bool ValidPlacement(int x, int y) const override;
     void Update(float deltaTime) override;
+
+
 };
 
 #endif //ANTIAIRTURRET_HPP
