@@ -68,7 +68,7 @@ void FreezeTurret::Update(float deltaTime) {
             if (diff.Magnitude() <= CollisionRadius) {
                 // 範圍內敵人減速
                 enemy->speedMultiplier = 0.5f;
-            } else {
+            } else if(diff.Magnitude() >= CollisionRadius && diff.Magnitude() <= CollisionRadius+2){
                 // 不在範圍內的敵人恢復正常速度
                 // ⚠️這可能會跟其他 FreezeTurret 衝突，如果有多座要考慮多次計算
                 if (enemy->speedMultiplier < 1.0f)
