@@ -18,6 +18,7 @@ public:
     Engine::Sprite* stage_preview;
     std::vector<Engine::Sprite*> previews;
     Engine::Label* info;
+    Engine::Label* annoying_label;
     std::unordered_map<int, int> difficulty;
     int page;
     int maxPage;
@@ -29,6 +30,7 @@ public:
     void ScoreboardOnClick();
     void BackOnClick(void);
     void PreviewStage(int stage);
+    void ToggleAnnoying(void);
 };
 
 #endif   // STAGESELECTSCENE_HPP

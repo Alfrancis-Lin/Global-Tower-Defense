@@ -154,7 +154,7 @@ void PlayScene::Initialize()
     PrevSpeedMult = 1;
     random_trivia = nullptr;
     annoying_timer = 0.0f;
-    annoying = true;
+    annoying = false;
 }
 
 void PlayScene::Terminate()
