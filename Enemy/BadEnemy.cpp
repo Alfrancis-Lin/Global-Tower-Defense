@@ -101,7 +101,7 @@ void BadEnemy::Update(float deltaTime)
                                   (double)PlayScene::BlockSize / 2 &&sss==1)
             {
 
-            if (tttime >= 300) {
+            if (tttime >= 420) {
                 scene->TowerGroup->RemoveObject(
                     it->GetObjectIterator());
                 scene->mapState[gridY][gridX] = PlayScene::TILE_FLOOR;
