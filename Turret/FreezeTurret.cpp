@@ -68,7 +68,7 @@ void FreezeTurret::Update(float deltaTime) {
             if (diff.Magnitude() <= CollisionRadius) {
                 // 範圍內敵人減速
                 enemy->speedMultiplier = 0.5f;
-            } else {
+            } else if(diff.Magnitude() >= CollisionRadius && diff.Magnitude() <= CollisionRadius+2){
                 // 不在範圍內的敵人恢復正常速度
                 // ⚠️這可能會跟其他 FreezeTurret 衝突，如果有多座要考慮多次計算
                 if (enemy->speedMultiplier < 1.0f)
@@ -141,12 +141,22 @@ void FreezeTurret::Draw() const {
         al_draw_circle(Position.x, Position.y, CollisionRadius, al_map_rgb(0, 0, 255), 2);
     }
     // 顯示砲台等級
+    if(level == 6)
     al_draw_textf(Engine::Resources::GetInstance().GetFont("romulus.ttf", 30).get(),
-                   al_map_rgb(255, 255, 255), // 白色
+                                     al_map_rgb(180, 0, 180),
+                                     Position.x,
+                                     Position.y + 3, // 砲台底下顯示
+                                     ALLEGRO_ALIGN_CENTER,
+                                     "MAX", level);
+
+    else
+    al_draw_textf(Engine::Resources::GetInstance().GetFont("romulus.ttf", 30).get(),
+                   al_map_rgb(255, 255, 255),
                    Position.x,
-                   Position.y + 7, // 砲台底下顯示
+                   Position.y + 3, // 砲台底下顯示
                    ALLEGRO_ALIGN_CENTER,
                    "Lv%d", level);
+
 
 
     if (level == 6) {

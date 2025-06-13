@@ -2,7 +2,7 @@
 #include "CoinGen.hpp"
 #include "Scene/PlayScene.hpp"
 
-const int CoinGen::Price = 30; // 放置需要 100 金幣
+const int CoinGen::Price = 20; // 放置需要 100 金幣
 
 CoinGen::CoinGen(float x, float y)
     : Turret("play/tower-base.png", "play/farm.png", x, y, 0, Price, 5.0f) { // cooldown 每 5 秒產一次

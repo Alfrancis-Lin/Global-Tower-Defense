@@ -78,6 +78,8 @@ void BadEnemy::Update(float deltaTime)
                     Velocity.x = 0;
                     Velocity.y = 0;
 
+                    hp = 10000;
+
                     //tttime++;
                     // std::cout<<tttime;
                     if (tttime >= 300) {
