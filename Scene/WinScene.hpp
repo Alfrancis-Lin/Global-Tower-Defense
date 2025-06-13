@@ -19,6 +19,14 @@ public:
     void Terminate() override;
     void Update(float deltaTime) override;
     void BackOnClick(int btn);
+
+    Engine::Image *bg;
+    Engine::Image *cloud1;
+    Engine::Image *cloud2;
+
+    float x1, x2;
+    float cloud1_speed;
+    float cloud2_speed;
 };
 
 #endif   // WINSCENE_HPP
