@@ -2,7 +2,9 @@
 Assets that aren't credited are made by National Tsing Hua University, CS135601 Introduction to Programming(II) course, Final Project's staff.
 
 ## Fonts: 
-- Pix3M, [Pixel fonts](https://opengameart.org/content/pixel-fonts-by-pix3m), ([CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/)) <br>
+- Pix3M, [Pixel fonts](https://opengameart.org/content/pixel-fonts-by-pix3m), ([CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/))
+- Geoffrey Lee, [Impact Font Family](https://font.download/font/impact) 
+<br>
 ## Images:
 - schwarnhild, [Basic Tileset and Asset Pack 32x32 Pixels](https://schwarnhild.itch.io/basic-tileset-and-asset-pack-32x32-pixels)<br>
 
