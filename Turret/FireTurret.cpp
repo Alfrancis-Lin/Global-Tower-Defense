@@ -15,7 +15,7 @@
 #include "Engine/Point.hpp"
 #include "Scene/PlayScene.hpp"
 
-const int FireTurret::Price = 20;
+const int FireTurret::Price = 50;
 
 FireTurret::FireTurret(float x, float y)
     : Turret("play/tower-base.png", "play/fire_turret.png", x, y, 300, Price, 0.1)
