@@ -15,7 +15,7 @@
 
 class Turret;
 
-Bullet6::Bullet6(Engine::Point position, Engine::Point forwardDirection, float rotation, Turret *parent) : Bullet("play/bullet-6.png", 500, 1, position, forwardDirection, rotation - ALLEGRO_PI / 2, parent) {
+Bullet6::Bullet6(Engine::Point position, Engine::Point forwardDirection, float rotation, Turret *parent) : Bullet("play/arrow.png", 1000, 0.1, position, forwardDirection, rotation + ALLEGRO_PI / 2, parent) {
 }
 void Bullet6::OnExplode(Enemy *enemy) {
     std::random_device dev;
