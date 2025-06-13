@@ -74,7 +74,6 @@ std::string fetchTrivia()
 bool PlayScene::shovelActive = false;
 bool PlayScene::multiendd = true;
 bool PlayScene::multiplay = false;
-bool PlayScene::annoying = false;
 
 bool PlayScene::DebugMode = false;
 const std::vector<Engine::Point> PlayScene::directions = {
@@ -154,7 +153,7 @@ void PlayScene::Initialize()
     PrevSpeedMult = 1;
     random_trivia = nullptr;
     annoying_timer = 0.0f;
-    annoying = false;
+    trivia.clear()
 }
 
 void PlayScene::Terminate()
@@ -175,7 +174,7 @@ void PlayScene::Update(float deltaTime)
         else if (deathCountDown != -1)
             SpeedMult = 1;
 
-        if (annoying) {
+        if (Engine::GameEngine::GetInstance().annoyingMode) {
             if (annoying_timer >= 5.0f) {
                 for (auto &it : trivia) {
                     RemoveObject(it->GetObjectIterator());

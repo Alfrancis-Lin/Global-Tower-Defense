@@ -74,14 +74,21 @@ void StageSelectScene::Initialize()
     // remember the play button so that can track which stage to play
     play_button = btn;
 
-    annoying_label =
-        new Engine::Label("Annoying: false", "romulus.ttf", 56, halfW - 100,
-                          h - 200, 255, 255, 255, 255, 0.5, 0.5);
+    if (Engine::GameEngine::GetInstance().annoyingMode) {
+        annoying_label =
+            new Engine::Label("Annoying: True", "romulus.ttf", 56, halfW * 1.5,
+                              h - 200, 255, 255, 255, 255, 0.5, 0.5);
+    }
+    else {
+        annoying_label =
+            new Engine::Label("Annoying: False", "romulus.ttf", 56, halfW * 1.5,
+                              h - 200, 255, 255, 255, 255, 0.5, 0.5);
+    }
     AddNewObject(annoying_label);
 
     btn = new Engine::ImageButton("clickable/tick_normal.png",
                                   "clickable/tick_hover.png", halfW * 1.5,
-                                  h - 200, 100, 100);
+                                  h - 150, 100, 100);
     btn->SetOnClickCallback(std::bind(&StageSelectScene::ToggleAnnoying, this));
     AddNewControlObject(btn);
 
@@ -162,7 +169,26 @@ void StageSelectScene::PreviewStage(int stage)
 
 void StageSelectScene::ToggleAnnoying(void)
 {
-    PlayScene::annoying = !PlayScene::annoying;
-    if (PlayScene::annoying) {
+    int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
+    int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
+    int halfW = w / 2;
+    int halfH = h / 2;
+
+    Engine::GameEngine::GetInstance().annoyingMode =
+        !Engine::GameEngine::GetInstance().annoyingMode;
+    bool annoying = Engine::GameEngine::GetInstance().annoyingMode;
+    if (annoying_label)
+        RemoveObject(annoying_label->GetObjectIterator());
+
+    if (annoying) {
+        annoying_label =
+            new Engine::Label("Annoying: True", "romulus.ttf", 56, halfW * 1.5,
+                              h - 200, 255, 255, 255, 255, 0.5, 0.5);
     }
+    else {
+        annoying_label =
+            new Engine::Label("Annoying: False", "romulus.ttf", 56, halfW * 1.5,
+                              h - 200, 255, 255, 255, 255, 0.5, 0.5);
+    }
+    AddNewObject(annoying_label);
 }

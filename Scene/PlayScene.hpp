@@ -55,7 +55,6 @@ public:
     static bool multiendd;
     static bool multiplay;
     static bool DebugMode;
-    static bool annoying;
     float annoying_timer;
     static const std::vector<Engine::Point> directions;
     static const int MapWidth, MapHeight;
