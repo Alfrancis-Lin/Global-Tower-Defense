@@ -159,9 +159,6 @@ void PlayScene::Initialize()
         std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
     std::ifstream infile(filename);
 
-
-
-
     std::vector<std::string> lines;
     std::string line;
 
@@ -169,7 +166,7 @@ void PlayScene::Initialize()
     while (std::getline(infile, line)) {
         if (!line.empty()) {
             lines.push_back(line);
-            std::cout<<line;
+            std::cout << line;
         }
     }
     infile.close();
@@ -180,11 +177,9 @@ void PlayScene::Initialize()
 
     std::ofstream outfile(filename);
     // 寫出亂序後的結果
-    for (const auto& l : lines) {
+    for (const auto &l : lines) {
         outfile << l << "\n";
     }
-
-
 }
 
 void PlayScene::Terminate()
@@ -255,7 +250,7 @@ void PlayScene::Update(float deltaTime)
                 annoying_timer = 0.0f;
             }
             annoying_timer += deltaTime;
-       }
+        }
     }
     // Calculate danger zone.
 
@@ -396,77 +391,62 @@ void PlayScene::Update(float deltaTime)
                 enemyOut[3].first == -1) {
                 if (y)
                     RemoveObject(y->GetObjectIterator());
-                y = new Engine::Label("No More",
-                                      "romulus.ttf", 58, 1480, 320, 0, 0, 0,
-                                      255, 0.5, 0.5);
+                y = new Engine::Label("No More", "romulus.ttf", 58, 1480, 320,
+                                      0, 0, 0, 255, 0.5, 0.5);
                 UIGroup->AddNewObject(y);
                 if (u)
                     RemoveObject(u->GetObjectIterator());
-                u = new Engine::Label("No More",
-                                      "romulus.ttf", 58, 1480, 370, 0, 0, 0,
-                                      255, 0.5, 0.5);
+                u = new Engine::Label("No More", "romulus.ttf", 58, 1480, 370,
+                                      0, 0, 0, 255, 0.5, 0.5);
                 UIGroup->AddNewObject(u);
                 if (ii)
                     RemoveObject(ii->GetObjectIterator());
-                ii = new Engine::Label("No More",
-                                       "romulus.ttf", 58, 1480, 420, 0, 0,
-                                       0, 255, 0.5, 0.5);
+                ii = new Engine::Label("No More", "romulus.ttf", 58, 1480, 420,
+                                       0, 0, 0, 255, 0.5, 0.5);
                 UIGroup->AddNewObject(ii);
                 multiendd = true;
                 if (o)
                     RemoveObject(o->GetObjectIterator());
-                o = new Engine::Label("No More",
-                                      "romulus.ttf", 58, 1480, 470, 0, 0, 0,
-                                      255, 0.5, 0.5);
+                o = new Engine::Label("No More", "romulus.ttf", 58, 1480, 470,
+                                      0, 0, 0, 255, 0.5, 0.5);
                 UIGroup->AddNewObject(o);
             }
             else if (enemyWaveData.empty()) {
                 if (enemyOut[0].first == -1) {
                     if (y)
                         RemoveObject(y->GetObjectIterator());
-                    y = new Engine::Label("No More",
-                                          "romulus.ttf", 58, 1480, 320, 0, 0, 0,
-                                          255, 0.5, 0.5);
+                    y = new Engine::Label("No More", "romulus.ttf", 58, 1480,
+                                          320, 0, 0, 0, 255, 0.5, 0.5);
                     UIGroup->AddNewObject(y);
                 }
                 if (enemyOut[1].first == -1) {
 
                     if (u)
                         RemoveObject(u->GetObjectIterator());
-                    u = new Engine::Label("No More",
-                                          "romulus.ttf", 58, 1480, 370, 0, 0, 0,
-                                          255, 0.5, 0.5);
+                    u = new Engine::Label("No More", "romulus.ttf", 58, 1480,
+                                          370, 0, 0, 0, 255, 0.5, 0.5);
                     UIGroup->AddNewObject(u);
-
-
                 }
                 if (enemyOut[2].first == -1) {
 
                     if (ii)
                         RemoveObject(ii->GetObjectIterator());
-                    ii = new Engine::Label("No More",
-                                           "romulus.ttf", 58, 1480, 420, 0, 0,
-                                           0, 255, 0.5, 0.5);
+                    ii = new Engine::Label("No More", "romulus.ttf", 58, 1480,
+                                           420, 0, 0, 0, 255, 0.5, 0.5);
                     UIGroup->AddNewObject(ii);
-
-
                 }
                 if (enemyOut[3].first == -1) {
 
                     if (o)
                         RemoveObject(o->GetObjectIterator());
-                    o = new Engine::Label("No More",
-                                          "romulus.ttf", 58, 1480, 470, 0, 0, 0,
-                                          255, 0.5, 0.5);
+                    o = new Engine::Label("No More", "romulus.ttf", 58, 1480,
+                                          470, 0, 0, 0, 255, 0.5, 0.5);
                     UIGroup->AddNewObject(o);
-
-
                 }
             }
             else if (enemyOut[0].first == -1 || enemyOut[1].first == -1 ||
                      enemyOut[2].first == -1 || enemyOut[3].first == -1) {
                 if (enemyWaveData.empty()) {
-
                 }
                 if (enemyOut[0].first == -1) {
                     auto current = enemyWaveData.front();
@@ -924,26 +904,6 @@ void PlayScene::OnKeyDown(int keyCode)
             SpeedMult = keyCode - ALLEGRO_KEY_0;
         }
     }
-
-    keyStrokes.push_back(keyCode);
-    if (keyStrokes.size() > code.size())
-        keyStrokes.pop_front();
-    if (keyStrokes.size() == code.size()) {
-        bool match = true;
-        auto stroke = keyStrokes.begin();
-        for (auto i : code) {
-            if (stroke == keyStrokes.end() || *stroke != i) {
-                match = false;
-                break;
-            }
-            ++stroke;
-        }
-        if (match) {
-            EffectGroup->AddNewObject(new Plane());
-            EarnMoney(10000);
-            keyStrokes.clear();
-        }
-    }
 }
 
 void PlayScene::Hit()
@@ -1019,7 +979,7 @@ void PlayScene::ReadMap()
         }
     }
 
-    // Second pass: Apply autotiling
+    // Second pass to apply autotiling
     for (int i = 0; i < MapHeight; i++) {
         for (int j = 0; j < MapWidth; j++) {
             if (mapState[i][j] == TILE_FLOOR) {
@@ -1029,14 +989,15 @@ void PlayScene::ReadMap()
             }
             else {
                 int mask = 0;
+                // mask for N, E, S, W
                 if (i > 0 && mapState[i - 1][j] == TILE_DIRT)
-                    mask |= 1; // N
+                    mask |= 1;
                 if (j < MapWidth - 1 && mapState[i][j + 1] == TILE_DIRT)
-                    mask |= 2; // E
+                    mask |= 2;
                 if (i < MapHeight - 1 && mapState[i + 1][j] == TILE_DIRT)
-                    mask |= 4; // S
+                    mask |= 4;
                 if (j > 0 && mapState[i][j - 1] == TILE_DIRT)
-                    mask |= 8; // W
+                    mask |= 8;
                 if (i == 0 && j == 0)
                     mask |= 8;
                 if (i == MapHeight - 1 && j == MapWidth - 1)
@@ -1106,7 +1067,7 @@ void PlayScene::ConstructUI()
                                                 255, 0, 0, 255));
     }
 
-    if(MapId == 3){
+    if (MapId == 3) {
         // Background
         UIGroup->AddNewObject(
             new Engine::Image("play/sand.png", 1280, 0, 320, 832));
@@ -1114,9 +1075,9 @@ void PlayScene::ConstructUI()
         UIGroup->AddNewObject(
             new Engine::Label(std::string("Stage ") + std::to_string(MapId),
                               "romulus.ttf", 64, 1280 + 25, 0));
-        UIGroup->AddNewObject(
-            UIMoney = new Engine::Label(std::string("$") + std::to_string(money),
-                                        "romulus.ttf", 48, 1280 + 25, 50));
+        UIGroup->AddNewObject(UIMoney = new Engine::Label(
+                                  std::string("$") + std::to_string(money),
+                                  "romulus.ttf", 48, 1280 + 25, 50));
         UIGroup->AddNewObject(UILives = new Engine::Label(
                                   std::string("Life ") + std::to_string(lives),
                                   "romulus.ttf", 48, 1280 + 25, 85));
@@ -1125,8 +1086,8 @@ void PlayScene::ConstructUI()
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/shovel-base.png", 1500, 92 - 36, 64, 64, 0, 0),
-            Engine::Sprite("play/shovel.png", 1500, 92 - 36, 64, 64, 0, 0), 1500,
-            92 - 36, 0);
+            Engine::Sprite("play/shovel.png", 1500, 92 - 36, 64, 64, 0, 0),
+            1500, 92 - 36, 0);
         // Reference: Class Member Function Pointer and std::bind.
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 0));
         UIGroup->AddNewControlObject(btn);
@@ -1135,8 +1096,8 @@ void PlayScene::ConstructUI()
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1294, 150, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-1.png", 1294, 150 - 8, 0, 0, 0, 0), 1294,
-            150, MachineGunTurret::Price);
+            Engine::Sprite("play/turret-1.png", 1294, 150 - 8, 0, 0, 0, 0),
+            1294, 150, MachineGunTurret::Price);
         // Reference: Class Member Function Pointer and std::bind.
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 1));
         UIGroup->AddNewControlObject(btn);
@@ -1144,45 +1105,46 @@ void PlayScene::ConstructUI()
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1370, 150, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-2.png", 1370, 150 - 8, 0, 0, 0, 0), 1370,
-            150, LaserTurret::Price);
+            Engine::Sprite("play/turret-2.png", 1370, 150 - 8, 0, 0, 0, 0),
+            1370, 150, LaserTurret::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 2));
         UIGroup->AddNewControlObject(btn);
         // Button 3
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1446, 150, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-5.png", 1446, 150 - 8, 0, 0, 0, 0), 1446,
-            150, AntiAirTurret::Price);
+            Engine::Sprite("play/turret-5.png", 1446, 150 - 8, 0, 0, 0, 0),
+            1446, 150, AntiAirTurret::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
         UIGroup->AddNewControlObject(btn);
 
-        //freezeTurret
+        // freezeTurret
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1294, 226, 0, 0, 0,
                            0), // x+76 y+76
-            Engine::Sprite("play/ice_turret.png", 1294, 226 - 8, 0, 0, 0, 0), 1294,
-            226, FreezeTurret::Price);
+            Engine::Sprite("play/ice_turret.png", 1294, 226 - 8, 0, 0, 0, 0),
+            1294, 226, FreezeTurret::Price);
 
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
         UIGroup->AddNewControlObject(btn);
 
-        //fireTurret
+        // fireTurret
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1370, 226, 0, 0, 0, 0), //x+76 y+76
-            Engine::Sprite("play/fire_turret.png", 1370, 226 - 8, 0, 0, 0, 0), 1370,
-            226, FreezeTurret::Price);
+            Engine::Sprite("play/tower-base.png", 1370, 226, 0, 0, 0,
+                           0), // x+76 y+76
+            Engine::Sprite("play/fire_turret.png", 1370, 226 - 8, 0, 0, 0, 0),
+            1370, 226, FreezeTurret::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 6));
         UIGroup->AddNewControlObject(btn);
 
-        //CoinGen
+        // CoinGen
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/farm.png", 1446, 226, 0, 0, 0, 0), // x+76 y+76
-            Engine::Sprite("play/farm.png", 1446, 226 - 8, 0, 0, 0, 0), 1446, 226,
-            CoinGen::Price);
+            Engine::Sprite("play/farm.png", 1446, 226 - 8, 0, 0, 0, 0), 1446,
+            226, CoinGen::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 7));
         UIGroup->AddNewControlObject(btn);
 
@@ -1190,7 +1152,8 @@ void PlayScene::ConstructUI()
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/dirt.png", 1516, 188, 0, 0, 0, 0),
-            Engine::Sprite("play/evo_pic.png", 1516, 188, 0, 0, 0, 0), 1516, 188,
+            Engine::Sprite("play/evo_pic.png", 1516, 188, 0, 0, 0, 0), 1516,
+            188,
             1000); // 進化按鈕不需要金錢檢查
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
         UIGroup->AddNewControlObject(btn);
@@ -1204,9 +1167,9 @@ void PlayScene::ConstructUI()
         UIGroup->AddNewObject(
             new Engine::Label(std::string("Stage ") + std::to_string(MapId),
                               "romulus.ttf", 64, 1280 + 25, 0));
-        UIGroup->AddNewObject(
-            UIMoney = new Engine::Label(std::string("$") + std::to_string(money),
-                                        "romulus.ttf", 48, 1280 + 25, 50));
+        UIGroup->AddNewObject(UIMoney = new Engine::Label(
+                                  std::string("$") + std::to_string(money),
+                                  "romulus.ttf", 48, 1280 + 25, 50));
         UIGroup->AddNewObject(UILives = new Engine::Label(
                                   std::string("Life ") + std::to_string(lives),
                                   "romulus.ttf", 48, 1280 + 25, 85));
@@ -1215,8 +1178,8 @@ void PlayScene::ConstructUI()
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/shovel-base.png", 1500, 92 - 36, 64, 64, 0, 0),
-            Engine::Sprite("play/shovel.png", 1500, 92 - 36, 64, 64, 0, 0), 1500,
-            92 - 36, 0);
+            Engine::Sprite("play/shovel.png", 1500, 92 - 36, 64, 64, 0, 0),
+            1500, 92 - 36, 0);
         // Reference: Class Member Function Pointer and std::bind.
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 0));
         UIGroup->AddNewControlObject(btn);
@@ -1225,151 +1188,128 @@ void PlayScene::ConstructUI()
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1294, 150, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-1.png", 1294, 150 - 8, 0, 0, 0, 0), 1294,
-            150, MachineGunTurret::Price);
+            Engine::Sprite("play/turret-1.png", 1294, 150 - 8, 0, 0, 0, 0),
+            1294, 150, MachineGunTurret::Price);
         // Reference: Class Member Function Pointer and std::bind.
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 1));
         UIGroup->AddNewControlObject(btn);
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Basic Turret      "),
-                                      "romulus.ttf", 30, 1370, 145));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("50$"),
-                                      "romulus.ttf", 32, 1557, 145));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Upgrade cost:"),
-                                      "romulus.ttf", 22, 1370, 170));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("20/40/60/80/100$"),
-                                      "romulus.ttf", 26, 1370, 185));
+        UIGroup->AddNewObject(new Engine::Label(
+            std::string("Basic Turret      "), "romulus.ttf", 30, 1370, 145));
+        UIGroup->AddNewObject(new Engine::Label(std::string("50$"),
+                                                "romulus.ttf", 32, 1557, 145));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Upgrade cost:"),
+                                                "romulus.ttf", 22, 1370, 170));
+        UIGroup->AddNewObject(new Engine::Label(std::string("20/40/60/80/100$"),
+                                                "romulus.ttf", 26, 1370, 185));
         // Button 2
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1294, 226, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-2.png", 1294, 226 - 8, 0, 0, 0, 0), 1294,
-            226, LaserTurret::Price);
+            Engine::Sprite("play/turret-2.png", 1294, 226 - 8, 0, 0, 0, 0),
+            1294, 226, LaserTurret::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 2));
         UIGroup->AddNewControlObject(btn);
 
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Double Turret"),
-                                      "romulus.ttf", 30, 1370, 221));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("50$"),
-                                      "romulus.ttf", 32, 1557, 221));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Upgrade cost:"),
-                                      "romulus.ttf", 22, 1370, 246));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("40/80/120/160/200$"),
-                                      "romulus.ttf", 26, 1370, 261));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Double Turret"),
+                                                "romulus.ttf", 30, 1370, 221));
+        UIGroup->AddNewObject(new Engine::Label(std::string("50$"),
+                                                "romulus.ttf", 32, 1557, 221));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Upgrade cost:"),
+                                                "romulus.ttf", 22, 1370, 246));
+        UIGroup->AddNewObject(new Engine::Label(
+            std::string("40/80/120/160/200$"), "romulus.ttf", 26, 1370, 261));
         // Button 3
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1294, 302, 0, 0, 0, 0),
-            Engine::Sprite("play/turret-5.png", 1294, 302 - 8, 0, 0, 0, 0), 1294,
-            302, AntiAirTurret::Price);
+            Engine::Sprite("play/turret-5.png", 1294, 302 - 8, 0, 0, 0, 0),
+            1294, 302, AntiAirTurret::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
         UIGroup->AddNewControlObject(btn);
 
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Bow Turret"),
-                                      "romulus.ttf", 30, 1370, 297));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("100$"),
-                                      "romulus.ttf", 32, 1546, 297));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Upgrade cost:"),
-                                      "romulus.ttf", 22, 1370, 322));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("40/80/120/160/200$"),
-                                      "romulus.ttf", 26, 1370, 337));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Bow Turret"),
+                                                "romulus.ttf", 30, 1370, 297));
+        UIGroup->AddNewObject(new Engine::Label(std::string("100$"),
+                                                "romulus.ttf", 32, 1546, 297));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Upgrade cost:"),
+                                                "romulus.ttf", 22, 1370, 322));
+        UIGroup->AddNewObject(new Engine::Label(
+            std::string("40/80/120/160/200$"), "romulus.ttf", 26, 1370, 337));
 
-        //freezeTurret
+        // freezeTurret
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/tower-base.png", 1294, 378, 0, 0, 0,
                            0), // x+76 y+76
-            Engine::Sprite("play/ice_turret.png", 1294, 378 - 8, 0, 0, 0, 0), 1294,
-            378, FreezeTurret::Price);
+            Engine::Sprite("play/ice_turret.png", 1294, 378 - 8, 0, 0, 0, 0),
+            1294, 378, FreezeTurret::Price);
 
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
         UIGroup->AddNewControlObject(btn);
 
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Freeze Turret"),
-                                      "romulus.ttf", 30, 1370, 373));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("50$"),
-                                      "romulus.ttf", 32, 1557, 373));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Upgrade cost:"),
-                                      "romulus.ttf", 22, 1370, 398));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("40/80/120/160/200$"),
-                                      "romulus.ttf", 26, 1370, 413));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Freeze Turret"),
+                                                "romulus.ttf", 30, 1370, 373));
+        UIGroup->AddNewObject(new Engine::Label(std::string("50$"),
+                                                "romulus.ttf", 32, 1557, 373));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Upgrade cost:"),
+                                                "romulus.ttf", 22, 1370, 398));
+        UIGroup->AddNewObject(new Engine::Label(
+            std::string("40/80/120/160/200$"), "romulus.ttf", 26, 1370, 413));
 
-        //fireTurret
+        // fireTurret
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
-            Engine::Sprite("play/tower-base.png", 1294, 454, 0, 0, 0, 0), //x+76 y+76
-            Engine::Sprite("play/fire_turret.png", 1294, 454 - 8, 0, 0, 0, 0), 1294,
-            454, FreezeTurret::Price);
+            Engine::Sprite("play/tower-base.png", 1294, 454, 0, 0, 0,
+                           0), // x+76 y+76
+            Engine::Sprite("play/fire_turret.png", 1294, 454 - 8, 0, 0, 0, 0),
+            1294, 454, FreezeTurret::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 6));
         UIGroup->AddNewControlObject(btn);
 
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Inferno Turret"),
-                                      "romulus.ttf", 30, 1370, 449));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("50$"),
-                                      "romulus.ttf", 32, 1557, 449));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Upgrade cost:"),
-                                      "romulus.ttf", 22, 1370, 474));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("50/100/150/200/250$"),
-                                      "romulus.ttf", 26, 1370, 489));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Inferno Turret"),
+                                                "romulus.ttf", 30, 1370, 449));
+        UIGroup->AddNewObject(new Engine::Label(std::string("50$"),
+                                                "romulus.ttf", 32, 1557, 449));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Upgrade cost:"),
+                                                "romulus.ttf", 22, 1370, 474));
+        UIGroup->AddNewObject(new Engine::Label(
+            std::string("50/100/150/200/250$"), "romulus.ttf", 26, 1370, 489));
 
-        //CoinGen
+        // CoinGen
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/farm.png", 1294, 530, 0, 0, 0, 0), // x+76 y+76
-            Engine::Sprite("play/farm.png", 1294, 530 - 8, 0, 0, 0, 0), 1294, 530,
-            CoinGen::Price);
+            Engine::Sprite("play/farm.png", 1294, 530 - 8, 0, 0, 0, 0), 1294,
+            530, CoinGen::Price);
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 7));
 
         UIGroup->AddNewControlObject(btn);
 
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Backyard"),
-                                      "romulus.ttf", 30, 1370, 525));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("20$"),
-                                      "romulus.ttf", 32, 1557, 525));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Upgrade cost:"),
-                                      "romulus.ttf", 22, 1370, 550));
-        UIGroup->AddNewObject(
-                    new Engine::Label(std::string("70/140/210/280/350$"),
-                                      "romulus.ttf", 26, 1370, 565));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Backyard"),
+                                                "romulus.ttf", 30, 1370, 525));
+        UIGroup->AddNewObject(new Engine::Label(std::string("20$"),
+                                                "romulus.ttf", 32, 1557, 525));
+        UIGroup->AddNewObject(new Engine::Label(std::string("Upgrade cost:"),
+                                                "romulus.ttf", 22, 1370, 550));
+        UIGroup->AddNewObject(new Engine::Label(
+            std::string("70/140/210/280/350$"), "romulus.ttf", 26, 1370, 565));
 
         // 進化按鈕
         btn = new TurretButton(
             "play/floor.png", "play/dirt.png",
             Engine::Sprite("play/dirt.png", 1294, 606, 0, 0, 0, 0),
-            Engine::Sprite("play/evo_pic.png", 1294, 606, 0, 0, 0, 0), 1294, 606,
+            Engine::Sprite("play/evo_pic.png", 1294, 606, 0, 0, 0, 0), 1294,
+            606,
             1000); // 進化按鈕不需要金錢檢查
         btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 5));
         UIGroup->AddNewControlObject(btn);
 
         UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Super Evolution 1000$"),
-                                      "romulus.ttf", 26, 1370, 601));
+            new Engine::Label(std::string("Super Evolution 1000$"),
+                              "romulus.ttf", 26, 1370, 601));
         UIGroup->AddNewObject(
-                    new Engine::Label(std::string("Next one is Evo Turret"),
-                                      "romulus.ttf", 24, 1370, 621));
-
+            new Engine::Label(std::string("Next one is Evo Turret"),
+                              "romulus.ttf", 24, 1370, 621));
     }
 
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;

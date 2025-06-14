@@ -157,7 +157,7 @@ void StageSelectScene::PreviewStage(int stage)
     delete info;
     info = nullptr;
     info = new Engine::Label(
-        "Level " + std::to_string(page + 1) + "\'s" +
+          ((page == 2) ? ("Multiplayer,") : ("Level " + std::to_string(page + 1) + "\'s")) +
             " Interesting Level: " + ((difficulty[page] == -1) ? "?" : std::to_string(difficulty[page])),
         "romulus.ttf", 56,
         Engine::GameEngine::GetInstance().GetScreenSize().x / 2, 100, 255, 255,
