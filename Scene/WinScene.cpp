@@ -133,7 +133,7 @@ void WinScene::OnKeyDown(int keyCode)
 void WinScene::BackOnClick(int btn)
 {
     if (btn == 1) {
-        std::ofstream fout("Scene/leaderboard.txt", std::ios::app);
+        std::ofstream fout("Scene/leader/leaderboard.txt", std::ios::app);
         std::cout << "Writing to leaderboard: " << playerName << " "
                   << GetCurrentTimeString() << " " << score << std::endl;
         if (fout.is_open()) {

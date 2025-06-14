@@ -1,6 +1,3 @@
-//
-// Created by 林威佑 on 2025/5/21.
-//
 #include <algorithm>
 #include <allegro5/allegro_audio.h>
 #include <cstdlib>
@@ -88,10 +85,6 @@ void LeaderScene::Initialize()
                                   "clickable/back_hover.png", 50, 50, 100, 100);
     btn->SetOnClickCallback(std::bind(&LeaderScene::BackOnClick, this, 1));
     AddNewControlObject(btn);
-
-    bgmInstance =
-        AudioHelper::PlaySample("happy.ogg", true, AudioHelper::BGMVolume);
-
 }
 
 void LeaderScene::Update(float deltaTime)
@@ -111,8 +104,6 @@ void LeaderScene::Update(float deltaTime)
 }
 
 void LeaderScene::Terminate() { 
-    AudioHelper::StopSample(bgmInstance);
-    bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();
 }
 
@@ -124,7 +115,7 @@ void LeaderScene::BackOnClick(int stage)
 void LeaderScene::LoadLeaderboard()
 {
     entries.clear();
-    std::ifstream fin("Scene/leaderboard.txt");
+    std::ifstream fin("Scene/leader/leaderboard.txt");
     if (!fin.is_open()) {
         std::cerr << "Failed to open leaderboard.txt" << std::endl;
         return;
