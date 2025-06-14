@@ -394,13 +394,79 @@ void PlayScene::Update(float deltaTime)
             if (enemyWaveData.empty() && enemyOut[0].first == -1 &&
                 enemyOut[1].first == -1 && enemyOut[2].first == -1 &&
                 enemyOut[3].first == -1) {
+                if (y)
+                    RemoveObject(y->GetObjectIterator());
+                y = new Engine::Label("No More",
+                                      "romulus.ttf", 58, 1480, 320, 0, 0, 0,
+                                      255, 0.5, 0.5);
+                UIGroup->AddNewObject(y);
+                if (u)
+                    RemoveObject(u->GetObjectIterator());
+                u = new Engine::Label("No More",
+                                      "romulus.ttf", 58, 1480, 370, 0, 0, 0,
+                                      255, 0.5, 0.5);
+                UIGroup->AddNewObject(u);
+                if (ii)
+                    RemoveObject(ii->GetObjectIterator());
+                ii = new Engine::Label("No More",
+                                       "romulus.ttf", 58, 1480, 420, 0, 0,
+                                       0, 255, 0.5, 0.5);
+                UIGroup->AddNewObject(ii);
                 multiendd = true;
+                if (o)
+                    RemoveObject(o->GetObjectIterator());
+                o = new Engine::Label("No More",
+                                      "romulus.ttf", 58, 1480, 470, 0, 0, 0,
+                                      255, 0.5, 0.5);
+                UIGroup->AddNewObject(o);
             }
             else if (enemyWaveData.empty()) {
+                if (enemyOut[0].first == -1) {
+                    if (y)
+                        RemoveObject(y->GetObjectIterator());
+                    y = new Engine::Label("No More",
+                                          "romulus.ttf", 58, 1480, 320, 0, 0, 0,
+                                          255, 0.5, 0.5);
+                    UIGroup->AddNewObject(y);
+                }
+                if (enemyOut[1].first == -1) {
+
+                    if (u)
+                        RemoveObject(u->GetObjectIterator());
+                    u = new Engine::Label("No More",
+                                          "romulus.ttf", 58, 1480, 370, 0, 0, 0,
+                                          255, 0.5, 0.5);
+                    UIGroup->AddNewObject(u);
+
+
+                }
+                if (enemyOut[2].first == -1) {
+
+                    if (ii)
+                        RemoveObject(ii->GetObjectIterator());
+                    ii = new Engine::Label("No More",
+                                           "romulus.ttf", 58, 1480, 420, 0, 0,
+                                           0, 255, 0.5, 0.5);
+                    UIGroup->AddNewObject(ii);
+
+
+                }
+                if (enemyOut[3].first == -1) {
+
+                    if (o)
+                        RemoveObject(o->GetObjectIterator());
+                    o = new Engine::Label("No More",
+                                          "romulus.ttf", 58, 1480, 470, 0, 0, 0,
+                                          255, 0.5, 0.5);
+                    UIGroup->AddNewObject(o);
+
+
+                }
             }
             else if (enemyOut[0].first == -1 || enemyOut[1].first == -1 ||
                      enemyOut[2].first == -1 || enemyOut[3].first == -1) {
                 if (enemyWaveData.empty()) {
+
                 }
                 if (enemyOut[0].first == -1) {
                     auto current = enemyWaveData.front();
