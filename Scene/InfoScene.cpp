@@ -33,7 +33,7 @@ void InfoScene::Initialize()
     }
     else if (hr > 15 && hr <= 18) {
         time_period = "evening";
-        color = 255;
+        color = 0;
     }
     else {
         time_period = "night";
@@ -59,23 +59,23 @@ void InfoScene::Initialize()
     AddNewControlObject(btn);
 
 
-    AddNewObject(new Engine::Label("Developers:", "romulus.ttf", 72,
-                                           halfW, (double)halfH / 2.5 -70, color, color,
-                                           color, 255, 0.5, 0.5));
-    AddNewObject(new Engine::Label("Fufu", "romulus.ttf", 72,
+    AddNewObject(new Engine::Label("Developers:", "romulus.ttf", 128,
                                            halfW, (double)halfH / 2.5, color, color,
                                            color, 255, 0.5, 0.5));
-    AddNewObject(new Engine::Label("Xinsheng Ooi", "romulus.ttf", 72,
-                                           halfW, (double)halfH / 2.5 +70, color, color,
+    AddNewObject(new Engine::Label("Fufu", "romulus.ttf", 96,
+                                           halfW, (double)halfH / 2.5 + 100, color, color,
                                            color, 255, 0.5, 0.5));
-    AddNewObject(new Engine::Label("Alfrancis-Lin", "romulus.ttf", 72,
-                                           halfW, (double)halfH / 2.5 +140, color, color,
+    AddNewObject(new Engine::Label("Xinsheng Ooi", "romulus.ttf", 96,
+                                           halfW, (double)halfH / 2.5 + 200, color, color,
                                            color, 255, 0.5, 0.5));
-    AddNewObject(new Engine::Label("Our Github:", "romulus.ttf", 72,
-                                           halfW, (double)halfH / 2.5 +245, color, color,
+    AddNewObject(new Engine::Label("Alfrancis-Lin", "romulus.ttf", 96,
+                                           halfW, (double)halfH / 2.5 + 300, color, color,
+                                           color, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Github Project Link:", "romulus.ttf", 128,
+                                           halfW, (double)halfH / 2.5 + 450, color, color,
                                            color, 255, 0.5, 0.5));
     AddNewObject(new Engine::Label("https://github.com/Alfrancis-Lin/Global-Tower-Defense", "romulus.ttf", 50,
-                                           halfW, (double)halfH / 2.5 +315, color, color,
+                                           halfW, (double)halfH / 2.5 + 550, color, color,
                                            color, 255, 0.5, 0.5));
 }
 

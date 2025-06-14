@@ -1,6 +1,6 @@
 #include <allegro5/allegro_audio.h>
 #include <ctime>
-// #include <curl/curl.h>
+#include <curl/curl.h>
 #include <functional>
 #include <iostream>
 #include <memory>

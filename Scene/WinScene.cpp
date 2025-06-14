@@ -14,17 +14,17 @@
 #include "UI/Component/Label.hpp"
 #include "WinScene.hpp"
 
-
-
-std::string GetCurrentTimeString() {
+std::string GetCurrentTimeString()
+{
     std::time_t now = std::time(nullptr);
-    std::tm* ltm = std::localtime(&now);
+    std::tm *ltm = std::localtime(&now);
     char buffer[64];
     std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", ltm);
     return std::string(buffer);
 }
 
-void WinScene::Initialize() {
+void WinScene::Initialize()
+{
     ticks = 0;
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
@@ -69,13 +69,13 @@ void WinScene::Initialize() {
                                1600, 832, 0, 0);
     AddNewObject(cloud2);
 
-
     AddNewObject(new Engine::Label("You Win!", "romulus.ttf", 96, halfW,
-                                   (double)halfH / 4, 255, 255, 255, 255,
-                                   0.5, 0.5));
+                                   (double)halfH / 4, 255, 255, 255, 255, 0.5,
+                                   0.5));
     Engine::ImageButton *btn;
     AddNewObject(new Engine::Label("Enter Your Name ", "romulus.ttf", 64, halfW,
-                                   (double)halfH / 1.5, 255, 255, 255, 255, 0.5, 0.5));
+                                   (double)halfH / 1.5, 255, 255, 255, 255, 0.5,
+                                   0.5));
 
     score = dynamic_cast<PlayScene *>(
                 Engine::GameEngine::GetInstance().GetScene("play"))
@@ -96,36 +96,43 @@ void WinScene::Initialize() {
     btn->SetOnClickCallback(std::bind(&WinScene::BackOnClick, this, 1));
     AddNewControlObject(btn);
     bgmId = AudioHelper::PlayAudio("win.wav");
-
-
 }
-void WinScene::Terminate() {
+void WinScene::Terminate()
+{
     IScene::Terminate();
     AudioHelper::StopBGM(bgmId);
 }
-void WinScene::Update(float deltaTime) {
+void WinScene::Update(float deltaTime)
+{
     ticks += deltaTime;
     if (ticks > 4 && ticks < 100 &&
-        dynamic_cast<PlayScene *>(Engine::GameEngine::GetInstance().GetScene("play"))->MapId == 2) {
+        dynamic_cast<PlayScene *>(
+            Engine::GameEngine::GetInstance().GetScene("play"))
+                ->MapId == 2) {
         ticks = 100;
         bgmId = AudioHelper::PlayBGM("happy.ogg");
     }
 }
 
-void WinScene::OnKeyDown(int keyCode) {
+void WinScene::OnKeyDown(int keyCode)
+{
     if (keyCode == ALLEGRO_KEY_BACKSPACE && !playerName.empty()) {
         playerName.pop_back();
-    } else if (playerName.length() < 10) {
-        if (keyCode >= ALLEGRO_KEY_A && keyCode <= ALLEGRO_KEY_Z)
-            playerName += static_cast<char>('A' + keyCode - ALLEGRO_KEY_A);
     }
-    nameLabel->Text = playerName + "_";
+    else if (playerName.length() < 10) {
+        if (keyCode >= ALLEGRO_KEY_A && keyCode <= ALLEGRO_KEY_Z) {
+            char c = static_cast<char>('A' + keyCode - ALLEGRO_KEY_A);
+            if (isalpha(c))
+                playerName += c;
+        }
+    }
+    if (nameLabel)
+        nameLabel->Text = playerName + "_";
 }
 
 void WinScene::BackOnClick(int btn)
 {
-    if (btn == 1)
-    {
+    if (btn == 1) {
         std::ofstream fout("Scene/leaderboard.txt", std::ios::app);
         std::cout << "Writing to leaderboard: " << playerName << " "
                   << GetCurrentTimeString() << " " << score << std::endl;
@@ -139,10 +146,10 @@ void WinScene::BackOnClick(int btn)
             }
         }
         else {
-            std::cerr << "Unable to open leaderboard file for writing" << std::endl;
+            std::cerr << "Unable to open leaderboard file for writing"
+                      << std::endl;
         }
     }
-
 
     Engine::GameEngine::GetInstance().ChangeScene("start");
 }
