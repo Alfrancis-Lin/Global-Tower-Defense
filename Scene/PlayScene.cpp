@@ -154,6 +154,37 @@ void PlayScene::Initialize()
     random_trivia = nullptr;
     annoying_timer = 0.0f;
     trivia.clear();
+
+    std::string filename =
+        std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
+    std::ifstream infile(filename);
+
+
+
+
+    std::vector<std::string> lines;
+    std::string line;
+
+    // 讀入每一行
+    while (std::getline(infile, line)) {
+        if (!line.empty()) {
+            lines.push_back(line);
+            std::cout<<line;
+        }
+    }
+    infile.close();
+    // 使用隨機亂數生成器打亂
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(lines.begin(), lines.end(), g);
+
+    std::ofstream outfile(filename);
+    // 寫出亂序後的結果
+    for (const auto& l : lines) {
+        outfile << l << "\n";
+    }
+
+
 }
 
 void PlayScene::Terminate()
