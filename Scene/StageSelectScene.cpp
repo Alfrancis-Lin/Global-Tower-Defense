@@ -158,7 +158,7 @@ void StageSelectScene::PreviewStage(int stage)
     info = nullptr;
     info = new Engine::Label(
         "Level " + std::to_string(page + 1) + "\'s" +
-            " Interesting Level: " + std::to_string(difficulty[page]),
+            " Interesting Level: " + ((difficulty[page] == -1) ? "?" : std::to_string(difficulty[page])),
         "romulus.ttf", 56,
         Engine::GameEngine::GetInstance().GetScreenSize().x / 2, 100, 255, 255,
         255, 255, 0.5, 0.5);

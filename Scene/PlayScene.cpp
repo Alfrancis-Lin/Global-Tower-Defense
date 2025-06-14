@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <allegro5/allegro.h>
 #include <cmath>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include <fstream>
 #include <functional>
 #include <memory>
@@ -56,20 +56,20 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
     return size * nmemb;
 }
 
-std::string fetchTrivia()
-{
-    std::string response;
-    CURL *curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL,
-                         "http://numbersapi.com/random/math");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-        curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-    }
-    return response;
-}
+// std::string fetchTrivia()
+// {
+//     std::string response;
+//     CURL *curl = curl_easy_init();
+//     if (curl) {
+//         curl_easy_setopt(curl, CURLOPT_URL,
+//                          "http://numbersapi.com/random/math");
+//         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+//         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+//         curl_easy_perform(curl);
+//         curl_easy_cleanup(curl);
+//     }
+//     return response;
+// }
 
 bool PlayScene::shovelActive = false;
 bool PlayScene::multiendd = true;
@@ -205,57 +205,57 @@ void PlayScene::Update(float deltaTime)
         else if (deathCountDown != -1)
             SpeedMult = 1;
 
-        if (Engine::GameEngine::GetInstance().annoyingMode) {
-            if (annoying_timer >= 5.0f) {
-                for (auto &it : trivia) {
-                    RemoveObject(it->GetObjectIterator());
-                }
-                trivia.clear();
-
-                random_trivia = new Engine::Label(
-                    "Loading interesting fact...", "impact.ttf", 128,
-                    (double)1600 / 2, (double)832 / 2, 0, 0, 0, 255, 0.5, 0.5);
-                trivia.emplace_back(random_trivia);
-                AddNewObject(random_trivia);
-
-                std::thread([this]() {
-                    fact = fetchTrivia();
-
-                    for (auto &it : trivia) {
-                        RemoveObject(it->GetObjectIterator());
-                    }
-                    trivia.clear();
-
-                    std::stringstream ss(fact);
-                    std::string word;
-                    std::string currentLine = "";
-                    int wordCount = 0;
-                    int yPos = 400 / 2; 
-
-                    while (ss >> word) {
-                        if (wordCount > 0)
-                            currentLine += " ";
-                        currentLine += word;
-                        wordCount++;
-
-                        if (wordCount == 5 || ss.peek() == EOF) {
-                            random_trivia = new Engine::Label(
-                                currentLine, "impact.ttf", 128,
-                                (double)1600 / 2, (double)yPos, 0, 0, 0, 255,
-                                0.5, 0.5);
-                            trivia.emplace_back(random_trivia);
-                            AddNewObject(random_trivia);
-                            currentLine = "";
-                            wordCount = 0;
-                            yPos += 125; 
-                        }
-                    }
-                }).detach();
-
-                annoying_timer = 0.0f;
-            }
-            annoying_timer += deltaTime;
-        }
+//         if (Engine::GameEngine::GetInstance().annoyingMode) {
+//             if (annoying_timer >= 5.0f) {
+//                 for (auto &it : trivia) {
+//                     RemoveObject(it->GetObjectIterator());
+//                 }
+//                 trivia.clear();
+//
+//                 random_trivia = new Engine::Label(
+//                     "Loading interesting fact...", "impact.ttf", 128,
+//                     (double)1600 / 2, (double)832 / 2, 0, 0, 0, 255, 0.5, 0.5);
+//                 trivia.emplace_back(random_trivia);
+//                 AddNewObject(random_trivia);
+//
+//                 std::thread([this]() {
+//                     fact = fetchTrivia();
+//
+//                     for (auto &it : trivia) {
+//                         RemoveObject(it->GetObjectIterator());
+//                     }
+//                     trivia.clear();
+//
+//                     std::stringstream ss(fact);
+//                     std::string word;
+//                     std::string currentLine = "";
+//                     int wordCount = 0;
+//                     int yPos = 400 / 2;
+//
+//                     while (ss >> word) {
+//                         if (wordCount > 0)
+//                             currentLine += " ";
+//                         currentLine += word;
+//                         wordCount++;
+//
+//                         if (wordCount == 5 || ss.peek() == EOF) {
+//                             random_trivia = new Engine::Label(
+//                                 currentLine, "impact.ttf", 128,
+//                                 (double)1600 / 2, (double)yPos, 0, 0, 0, 255,
+//                                 0.5, 0.5);
+//                             trivia.emplace_back(random_trivia);
+//                             AddNewObject(random_trivia);
+//                             currentLine = "";
+//                             wordCount = 0;
+//                             yPos += 125;
+//                         }
+//                     }
+//                 }).detach();
+//
+//                 annoying_timer = 0.0f;
+//             }
+//             annoying_timer += deltaTime;
+//        }
     }
     // Calculate danger zone.
 
@@ -966,7 +966,7 @@ void PlayScene::EarnMoney(int money)
 void PlayScene::ReadMap()
 {
     // procedural map generation code
-    if (MapId == 4) {
+    if (MapId == 3 || MapId == 4) {
         auto seed = std::random_device{}();
         ProceduralMapGenerator generator(seed);
         auto proceduralMap = generator.generateMap(3);

@@ -57,6 +57,26 @@ void InfoScene::Initialize()
                                   "clickable/back_hover.png", 50, 50, 100, 100);
     btn->SetOnClickCallback(std::bind(&InfoScene::BackOnClick, this));
     AddNewControlObject(btn);
+
+
+    AddNewObject(new Engine::Label("Developers:", "romulus.ttf", 72,
+                                           halfW, (double)halfH / 2.5 -70, color, color,
+                                           color, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Fufu", "romulus.ttf", 72,
+                                           halfW, (double)halfH / 2.5, color, color,
+                                           color, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Xinsheng Ooi", "romulus.ttf", 72,
+                                           halfW, (double)halfH / 2.5 +70, color, color,
+                                           color, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Alfrancis-Lin", "romulus.ttf", 72,
+                                           halfW, (double)halfH / 2.5 +140, color, color,
+                                           color, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Our Github:", "romulus.ttf", 72,
+                                           halfW, (double)halfH / 2.5 +245, color, color,
+                                           color, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("https://github.com/Alfrancis-Lin/Global-Tower-Defense", "romulus.ttf", 50,
+                                           halfW, (double)halfH / 2.5 +315, color, color,
+                                           color, 255, 0.5, 0.5));
 }
 
 void InfoScene::Update(float deltaTime)
